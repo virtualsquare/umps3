@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,6 +21,7 @@
  */
 
 #include "qmps/machine_config_view.h"
+#include "qmps/ui_utils.h"
 
 #include <QGridLayout>
 #include <QLabel>
@@ -50,6 +52,10 @@ MachineConfigView::MachineConfigView(QWidget* parent)
     layout->addWidget(new QLabel("TLB size:"), rows, 1);
     tlbSizeLabel = new QLabel;
     layout->addWidget(tlbSizeLabel, rows++, propertyValueColumn);
+    
+    layout->addWidget(new QLabel("TLB Floor Address:"), rows, 1);
+    tlbFloorAddressLabel = new QLabel;
+    layout->addWidget(tlbFloorAddressLabel, rows++, propertyValueColumn);
 
     layout->addWidget(new QLabel("RAM size:"), rows, 1);
     ramSizeLabel = new QLabel;
@@ -114,6 +120,7 @@ void MachineConfigView::Update()
     numCpusLabel->setNum((int) config->getNumProcessors());
     clockRateLabel->setText(QString("%1 MHz").arg(config->getClockRate()));
     tlbSizeLabel->setNum((int) config->getTLBSize());
+    tlbFloorAddressLabel->setText(FormatAddress(config->getTLBFloorAddress()));
     ramSizeLabel->setText(QString("%1 Frames").arg(config->getRamSize()));
 
     bootstrapROMLabel->setText(config->getROM(ROM_TYPE_BOOT).c_str());

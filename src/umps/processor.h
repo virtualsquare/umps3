@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,6 +200,8 @@ private:
 
     size_t tlbSize;
     scoped_array<TLBEntry> tlb;
+    
+    Word tlbFloorAddress;
 
     // private methods
     void setStatus(ProcessorStatus newStatus);

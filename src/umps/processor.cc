@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,6 +200,7 @@ Processor::Processor(const MachineConfig* config, Word cpuId, Machine* machine, 
       bus(bus),
       status(PS_HALTED),
       tlbSize(config->getTLBSize()),
+      tlbFloorAddress(config->getTLBFloorAddress()),
       tlb(new TLBEntry[tlbSize])
 {}
 
@@ -792,6 +794,8 @@ void Processor::completeLoad()
 // AccType details memory access type (READ/WRITE/EXECUTE)
 bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
 {
+    const MachineConfig* config;
+    
     if (BitVal(cpreg[STATUS], VMCBITPOS)) {
         // VM is on
 	
@@ -813,7 +817,7 @@ bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
                 SignalExc(ADELEXCEPTION);
 
             return true;
-        } else if (vaddr >= KSEG0BASE && vaddr < KSEG0TOP) {
+        } else if (vaddr >= KSEG0BASE && vaddr < tlbFloorAddress) {
             // no bad offset; if vaddr < KUSEG2BASE the processor is surely 
             // in kernelMode
             // valid access to KSEG0 area

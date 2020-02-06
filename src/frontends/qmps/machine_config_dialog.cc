@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010, 2011 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +46,9 @@
 #include "qmps/address_line_edit.h"
 #include "qmps/mac_id_edit.h"
 #include "qmps/machine_config_dialog_priv.h"
+#include "qmps/ui_utils.h"
+
+constexpr Word MachineConfig::TLB_FLOOR_ADDRESS[];
 
 MachineConfigDialog::MachineConfigDialog(MachineConfig* config, QWidget* parent)
     : QDialog(parent),
@@ -101,74 +105,85 @@ QWidget* MachineConfigDialog::createGeneralTab()
         currentIndex++;
     }
     layout->addWidget(tlbSizeList, 3, 3);
+    
+    layout->addWidget(new QLabel("TLB Floor Address:"), 4, 1);
+    tlbFloorAddressList = new QComboBox;
+    currentIndex = 0;
+    for (unsigned int val : MachineConfig::TLB_FLOOR_ADDRESS) {
+        tlbFloorAddressList->addItem(FormatAddress(val));
+        if (config->getTLBFloorAddress() == val)
+            tlbFloorAddressList->setCurrentIndex(currentIndex);
+        currentIndex++;
+    }
+    layout->addWidget(tlbFloorAddressList, 4, 3);
 
-    layout->addWidget(new QLabel("RAM Size (Frames):"), 4, 1);
+    layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
     ramSizeSpinner = new QSpinBox();
     ramSizeSpinner->setMinimum(MachineConfig::MIN_RAM);
     ramSizeSpinner->setMaximum(MachineConfig::MAX_RAM);
     ramSizeSpinner->setValue(config->getRamSize());
-    layout->addWidget(ramSizeSpinner, 4, 3);
+    layout->addWidget(ramSizeSpinner, 5, 3);
 
     QSignalMapper* fileChooserMapper = new QSignalMapper(this);
     connect(fileChooserMapper, SIGNAL(mapped(int)), this, SLOT(getROMFileName(int)));
     QPushButton* fileChooserButton;
 
-    layout->addWidget(new QLabel("<b>BIOS</b>"), 6, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>BIOS</b>"), 7, 0, 1, 3);
 
-    layout->addWidget(new QLabel("Bootstrap ROM:"), 7, 1);
+    layout->addWidget(new QLabel("Bootstrap ROM:"), 8, 1);
     romFileInfo[ROM_TYPE_BOOT].description = "Bootstrap ROM";
     romFileInfo[ROM_TYPE_BOOT].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_BOOT].lineEdit, 7, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_BOOT].lineEdit, 8, 3, 1, 2);
     romFileInfo[ROM_TYPE_BOOT].lineEdit->setText(config->getROM(ROM_TYPE_BOOT).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_BOOT);
-    layout->addWidget(fileChooserButton, 7, 5);
+    layout->addWidget(fileChooserButton, 8, 5);
 
-    layout->addWidget(new QLabel("Execution ROM:"), 8, 1);
+    layout->addWidget(new QLabel("Execution ROM:"), 9, 1);
     romFileInfo[ROM_TYPE_BIOS].description = "Execution ROM";
     romFileInfo[ROM_TYPE_BIOS].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_BIOS].lineEdit, 8, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_BIOS].lineEdit, 9, 3, 1, 2);
     romFileInfo[ROM_TYPE_BIOS].lineEdit->setText(config->getROM(ROM_TYPE_BIOS).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_BIOS);
-    layout->addWidget(fileChooserButton, 8, 5);
+    layout->addWidget(fileChooserButton, 9, 5);
 
-    layout->addWidget(new QLabel("<b>Boot</b>"), 10, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>Boot</b>"), 11, 0, 1, 3);
 
     coreBootCheckBox = new QCheckBox("Load core file");
     coreBootCheckBox->setChecked(config->isLoadCoreEnabled());
-    layout->addWidget(coreBootCheckBox, 11, 1, 1, 3);
+    layout->addWidget(coreBootCheckBox, 12, 1, 1, 3);
 
-    layout->addWidget(new QLabel("Core file:"), 12, 1);
+    layout->addWidget(new QLabel("Core file:"), 13, 1);
     romFileInfo[ROM_TYPE_CORE].description = "Core";
     romFileInfo[ROM_TYPE_CORE].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_CORE].lineEdit, 12, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_CORE].lineEdit, 13, 3, 1, 2);
     romFileInfo[ROM_TYPE_CORE].lineEdit->setText(config->getROM(ROM_TYPE_CORE).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_CORE);
-    layout->addWidget(fileChooserButton, 12, 5);
+    layout->addWidget(fileChooserButton, 13, 5);
 
-    layout->addWidget(new QLabel("<b>Debugging Support</b>"), 14, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>Debugging Support</b>"), 15, 0, 1, 3);
 
-    layout->addWidget(new QLabel("Symbol Table:"), 15, 1);
+    layout->addWidget(new QLabel("Symbol Table:"), 16, 1);
 
     romFileInfo[ROM_TYPE_STAB].description = "Symbol Table";
     romFileInfo[ROM_TYPE_STAB].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_STAB].lineEdit, 15, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_STAB].lineEdit, 16, 3, 1, 2);
     romFileInfo[ROM_TYPE_STAB].lineEdit->setText(config->getROM(ROM_TYPE_STAB).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_STAB);
-    layout->addWidget(fileChooserButton, 15, 5);
+    layout->addWidget(fileChooserButton, 16, 5);
 
-    layout->addWidget(new QLabel("Symbol Table ASID:"), 16, 1);
+    layout->addWidget(new QLabel("Symbol Table ASID:"), 17, 1);
     stabAsidEdit = new AsidLineEdit;
     stabAsidEdit->setMaximumWidth(100);
     stabAsidEdit->setAsid(config->getSymbolTableASID());
-    layout->addWidget(stabAsidEdit, 16, 3);
+    layout->addWidget(stabAsidEdit, 17, 3);
 
     layout->setColumnMinimumWidth(0, 10);
     layout->setColumnMinimumWidth(2, 10);
@@ -287,6 +302,7 @@ void MachineConfigDialog::saveConfigChanges()
     config->setNumProcessors(cpuSpinner->value());
     config->setClockRate(clockRateSpinner->value());
     config->setTLBSize(MachineConfig::MIN_TLB << tlbSizeList->currentIndex());
+    config->setTLBFloorAddress(MachineConfig::TLB_FLOOR_ADDRESS[tlbFloorAddressList->currentIndex()]);
     config->setRamSize(ramSizeSpinner->value());
 
     config->setROM(ROM_TYPE_BOOT,

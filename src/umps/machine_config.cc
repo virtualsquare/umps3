@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,6 +88,8 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
             config->setClockRate(root->Get("clock-rate")->AsNumber());
         if (root->HasMember("tlb-size"))
             config->setTLBSize(root->Get("tlb-size")->AsNumber());
+        if (root->HasMember("tlb-floor-address"))
+            config->setTLBFloorAddress(std::stoul(root->Get("tlb-floor-address")->AsString()));
         if (root->HasMember("num-ram-frames"))
             config->setRamSize(root->Get("num-ram-frames")->AsNumber());
 
@@ -155,6 +158,7 @@ void MachineConfig::Save()
     root->Set("num-processors", (int) getNumProcessors());
     root->Set("clock-rate", (int) getClockRate());
     root->Set("tlb-size", (int) getTLBSize());
+    root->Set("tlb-floor-address", std::__cxx11::to_string(getTLBFloorAddress()));
     root->Set("num-ram-frames", (int) getRamSize());
 
     JsonObject* bootOpt = new JsonObject;
@@ -242,6 +246,11 @@ void MachineConfig::setTLBSize(Word size)
     tlbSize = bumpProperty(MIN_TLB, size, MAX_TLB);
 }
 
+void MachineConfig::setTLBFloorAddress(Word addr)
+{
+    tlbFloorAddress = addr;
+}
+
 void MachineConfig::setROM(ROMType type, const std::string& fileName)
 {
     romFiles[type] = fileName;
@@ -318,6 +327,7 @@ void MachineConfig::resetToFactorySettings()
     setNumProcessors(DEFAULT_NUM_CPUS);
     setClockRate(DEFAULT_CLOCK_RATE);
     setTLBSize(DEFAULT_TLB_SIZE);
+    setTLBFloorAddress(DEFAULT_TLB_FLOOR_ADDRESS);
     setRamSize(DEFAUlT_RAM_SIZE);
 
     std::string dataDir = PACKAGE_DATA_DIR;
