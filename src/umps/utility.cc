@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -234,4 +235,13 @@ std::string MACIdToString(const uint8_t* id)
             (unsigned int) id[4],
             (unsigned int) id[5]);
     return std::string(buf);
+}
+
+std::string IntToHexString(Word addr)
+{
+  std::stringstream stream;
+  stream << "0x"
+         << std::setfill ('0') << std::setw(sizeof(Word)*2)
+         << std::hex << addr;
+  return stream.str();
 }

@@ -30,6 +30,7 @@
 #include "base/basic_types.h"
 #include "umps/arch.h"
 #include "umps/types.h"
+#include "umps/utility.h"
 
 enum ROMType {
     ROM_TYPE_BOOT,

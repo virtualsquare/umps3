@@ -89,7 +89,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
         if (root->HasMember("tlb-size"))
             config->setTLBSize(root->Get("tlb-size")->AsNumber());
         if (root->HasMember("tlb-floor-address"))
-            config->setTLBFloorAddress(std::stoul(root->Get("tlb-floor-address")->AsString()));
+            config->setTLBFloorAddress(stoul((root->Get("tlb-floor-address")->AsString()).erase(0, 2), 0, 16));
         if (root->HasMember("num-ram-frames"))
             config->setRamSize(root->Get("num-ram-frames")->AsNumber());
 
@@ -158,7 +158,7 @@ void MachineConfig::Save()
     root->Set("num-processors", (int) getNumProcessors());
     root->Set("clock-rate", (int) getClockRate());
     root->Set("tlb-size", (int) getTLBSize());
-    root->Set("tlb-floor-address", std::__cxx11::to_string(getTLBFloorAddress()));
+    root->Set("tlb-floor-address", IntToHexString(getTLBFloorAddress()));
     root->Set("num-ram-frames", (int) getRamSize());
 
     JsonObject* bootOpt = new JsonObject;

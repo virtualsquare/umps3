@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +24,7 @@
 #define UMPS_UTILITY_H
 
 #include <string>
+#include <iomanip>
 
 #include "umps/types.h"
 
@@ -87,5 +89,7 @@ bool StrToWord(const char * str, Word * value);
 uint8_t* ParseMACId(const std::string& input, uint8_t* id);
 
 std::string MACIdToString(const uint8_t* id);
+
+std::string IntToHexString(Word addr);
 
 #endif // UMPS_UTILITY_H
