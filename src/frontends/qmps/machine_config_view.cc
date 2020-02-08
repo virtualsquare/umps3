@@ -53,7 +53,7 @@ MachineConfigView::MachineConfigView(QWidget* parent)
     tlbSizeLabel = new QLabel;
     layout->addWidget(tlbSizeLabel, rows++, propertyValueColumn);
     
-    layout->addWidget(new QLabel("TLB Floor Address:"), rows, 1);
+    layout->addWidget(new QLabel("TLB floor address:"), rows, 1);
     tlbFloorAddressLabel = new QLabel;
     layout->addWidget(tlbFloorAddressLabel, rows++, propertyValueColumn);
 

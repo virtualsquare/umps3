@@ -109,12 +109,19 @@ QWidget* MachineConfigDialog::createGeneralTab()
     layout->addWidget(new QLabel("TLB Floor Address:"), 4, 1);
     tlbFloorAddressList = new QComboBox;
     currentIndex = 0;
+    bool ramtop = true;
     for (unsigned int val : MachineConfig::TLB_FLOOR_ADDRESS) {
-        tlbFloorAddressList->addItem(FormatAddress(val));
-        if (config->getTLBFloorAddress() == val)
+        if (val == 0xFFFFFFFF) 
+            tlbFloorAddressList->addItem("RAMTOP");
+        else 
+            tlbFloorAddressList->addItem(FormatAddress(val));
+        if (config->getTLBFloorAddress() == val) {
             tlbFloorAddressList->setCurrentIndex(currentIndex);
+            ramtop = false;
+        }
         currentIndex++;
     }
+    if (ramtop) tlbFloorAddressList->setCurrentIndex(currentIndex-1);
     layout->addWidget(tlbFloorAddressList, 4, 3);
 
     layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
@@ -302,8 +309,8 @@ void MachineConfigDialog::saveConfigChanges()
     config->setNumProcessors(cpuSpinner->value());
     config->setClockRate(clockRateSpinner->value());
     config->setTLBSize(MachineConfig::MIN_TLB << tlbSizeList->currentIndex());
-    config->setTLBFloorAddress(MachineConfig::TLB_FLOOR_ADDRESS[tlbFloorAddressList->currentIndex()]);
     config->setRamSize(ramSizeSpinner->value());
+    config->setTLBFloorAddress(MachineConfig::TLB_FLOOR_ADDRESS[tlbFloorAddressList->currentIndex()]);
 
     config->setROM(ROM_TYPE_BOOT,
                    QFile::encodeName(romFileInfo[ROM_TYPE_BOOT].lineEdit->text()).constData());

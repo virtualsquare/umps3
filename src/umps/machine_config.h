@@ -57,7 +57,7 @@ public:
     static const Word MAX_TLB = 64;
     static const Word DEFAULT_TLB_SIZE = 16;
     
-    static constexpr Word TLB_FLOOR_ADDRESS [2] = { 0x20000000, 0x80000000 }; 
+    static constexpr Word TLB_FLOOR_ADDRESS [4] = { 0x00000000, 0x20000000, 0x80000000, 0xFFFFFFFF }; 
     static const Word DEFAULT_TLB_FLOOR_ADDRESS = 0x20000000;
 
     static const Word MIN_ASID = 0;
