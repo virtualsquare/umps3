@@ -4,7 +4,7 @@
  *
  * Copyright (C) 2004 Mauro Morsiani
  * Copyright (C) 2011 Tomislav Jonjic
- * Copyright (C) 2020 Mikey Goldweber
+ * Copyright (C) 2020 Mattia Biondi, Mikey Goldweber
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -170,7 +170,7 @@ LInitSecondaryProcessor:
  * $k1 is address of kernel branch address
  */
 LUTLBHandler:
-  li  $k1, 0x20000000
+  li  $k1, KERNEL_UTLB_ADDR
   b   LSOldLNewArea
 
   
@@ -204,7 +204,7 @@ LEXCHandler:
 /* Else: save processor state into ROM space and pass
  * along handling to the kernel 
  */
-	li  $k1, 0x20000004
+	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
 
 
@@ -230,7 +230,7 @@ LBreakHandler:
 	beq	  $k0, $0, LisKernel
   
   /* If in user mode, pass along to kernel */
-	li  $k1, 0x20000004
+	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
 
 LisKernel:
@@ -253,7 +253,7 @@ LisKernel:
 	beq     $0, $k1, LHalt
 
 	/* any other break is passed up to SYS handler */
-	li  $k1, 0x20000004
+	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
   
 

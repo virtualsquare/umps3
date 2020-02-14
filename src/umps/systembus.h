@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -121,6 +122,13 @@ public:
     void setToDHI(Word hi);
     void setToDLO(Word lo);
     void setTimer(Word time);
+    
+    // These methods allow to inspect or modify the general exception
+    // and the UTLB-Refill exception handlers
+    Word getUTLBHandler() const { return utlbHandler; }
+    Word getExcptHandler() const { return excptHandler; }
+    void setUTLBHandler(Word addr);
+    void setExcptHandler(Word addr);
 
     // These methods allow Watch to inspect or modify single memory
     // locations; they return TRUE if address is invalid or cannot be
@@ -141,6 +149,13 @@ private:
     // system clock & interval timer
     uint64_t tod;
     Word timer;
+    
+    // TLB floor addres
+    Word tlbFloorAddr;
+    
+    // exception handling functions
+    Word utlbHandler;
+    Word excptHandler;
 
     // device events queue
     EventQueue * eventQ;
