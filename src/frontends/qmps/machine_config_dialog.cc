@@ -42,6 +42,7 @@
 #include <QFileDialog>
 
 #include "umps/arch.h"
+#include "umps/const.h"
 #include "qmps/application.h"
 #include "qmps/address_line_edit.h"
 #include "qmps/mac_id_edit.h"
@@ -111,8 +112,8 @@ QWidget* MachineConfigDialog::createGeneralTab()
     currentIndex = 0;
     bool ramtop = true;
     for (unsigned int val : MachineConfig::TLB_FLOOR_ADDRESS) {
-        if (val == 0xFFFFFFFF) 
-            tlbFloorAddressList->addItem("RAMTOP");
+        if (val == MAXWORDVAL) 
+            tlbFloorAddressList->addItem("VM OFF");
         else 
             tlbFloorAddressList->addItem(FormatAddress(val));
         if (config->getTLBFloorAddress() == val) {

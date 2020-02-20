@@ -29,6 +29,7 @@
 #include "base/lang.h"
 #include "base/basic_types.h"
 #include "umps/arch.h"
+#include "umps/const.h"
 #include "umps/types.h"
 #include "umps/utility.h"
 
@@ -58,8 +59,8 @@ public:
     static const Word MAX_TLB = 64;
     static const Word DEFAULT_TLB_SIZE = 16;
     
-    static constexpr Word TLB_FLOOR_ADDRESS [4] = { 0x00000000, 0x20000000, 0x80000000, 0xFFFFFFFF }; 
-    static const Word DEFAULT_TLB_FLOOR_ADDRESS = 0x20000000;
+    static constexpr Word TLB_FLOOR_ADDRESS [4] = { 0x20000000, 0x40000000, 0x80000000, MAXWORDVAL }; 
+    static const Word DEFAULT_TLB_FLOOR_ADDRESS = 0x40000000;
 
     static const Word MIN_ASID = 0;
     static const Word MAX_ASID = 64;

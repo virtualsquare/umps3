@@ -116,11 +116,17 @@ MachineConfigView::MachineConfigView(QWidget* parent)
 void MachineConfigView::Update()
 {
     const MachineConfig* config = Appl()->getConfig();
+    Word tlbFloorAddr = config->getTLBFloorAddress();
 
     numCpusLabel->setNum((int) config->getNumProcessors());
     clockRateLabel->setText(QString("%1 MHz").arg(config->getClockRate()));
     tlbSizeLabel->setNum((int) config->getTLBSize());
-    tlbFloorAddressLabel->setText(FormatAddress(config->getTLBFloorAddress()));
+    
+    if (tlbFloorAddr == MAXWORDVAL) 
+        tlbFloorAddressLabel->setText("VM OFF");
+    else
+        tlbFloorAddressLabel->setText(FormatAddress(tlbFloorAddr));
+        
     ramSizeLabel->setText(QString("%1 Frames").arg(config->getRamSize()));
 
     bootstrapROMLabel->setText(config->getROM(ROM_TYPE_BOOT).c_str());
