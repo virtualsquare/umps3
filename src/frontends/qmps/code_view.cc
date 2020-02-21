@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -118,13 +119,12 @@ void CodeView::loadCode()
 
     Word pc = cpu->getPC();
     if (pc >= RAM_BASE) {
-        if (!cpu->getVM() && config->getSymbolTableASID() == MAXASID) {
-            const Symbol* symbol = symbolTable->Probe(MAXASID, pc, false);
-            if (symbol != NULL) {
-                startPC = symbol->getStart();
-                endPC = symbol->getEnd();
-                codeLoaded = true;
-            }
+        Word asid = cpu->getASID();
+        const Symbol* symbol = symbolTable->Probe(asid, pc, false);
+        if (symbol != NULL) {
+            startPC = symbol->getStart();
+            endPC = symbol->getEnd();
+            codeLoaded = true;
         }
     } else if (pc >= KSEGOS_BOOT_BASE) {
         Word bootSize;
@@ -213,10 +213,7 @@ void CodeView::onMachineStopped()
     if (!codeLoaded) {
         loadCode();
     } else {
-        if (cpu->getVM()) {
-            clear();
-            codeLoaded = false;
-        } else if (startPC <= cpu->getPC() && cpu->getPC() <= endPC) {
+        if (startPC <= cpu->getPC() && cpu->getPC() <= endPC) {
             codeMargin->update();
             ensureCurrentInstuctionVisible();
         } else {

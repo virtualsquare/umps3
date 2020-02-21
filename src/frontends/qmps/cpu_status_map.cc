@@ -3,6 +3,8 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
+
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -135,7 +137,7 @@ void CpuStatusMap::formatActiveCpuLocation(Processor* cpu)
 {
     SymbolTable* stab = dbgSession->getSymbolTable();
 
-    Word asid = (cpu->getVM()) ? cpu->getASID() : MachineConfig::MAX_ASID;
+    Word asid = cpu->getASID();
     SWord offset;
     const char* symbol = GetSymbolicAddress(stab, asid, cpu->getPC(), true, &offset);
     if (symbol)

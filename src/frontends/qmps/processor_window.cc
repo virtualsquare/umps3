@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,7 +78,6 @@ ProcessorWindow::ProcessorWindow(Word cpuId, QWidget* parent)
     QHBoxLayout* secStatusLayout = new QHBoxLayout(secStatusWidget);
     secStatusLayout->setSpacing(12);
     secStatusLayout->setContentsMargins(0, 0, 0, 0);
-    secStatusLayout->addWidget(vmIndicator = new QLabel("VM"));
     secStatusLayout->addWidget(bdIndicator = new QLabel("BD"));
     secStatusLayout->addWidget(ldIndicator = new QLabel("LD"));
 
@@ -215,18 +215,16 @@ void ProcessorWindow::updateStatusInfo()
         prevPCLabel->setText(str.sprintf("0x%.8X: %s", prevPC, StrInstr(prevInstr)));
 
         Word asid, pc, instr;
-        bool isLD, isBD, isVM;
-        cpu->getCurrStatus(&asid, &pc, &instr, &isLD, &isBD, &isVM);
+        bool isLD, isBD;
+        cpu->getCurrStatus(&asid, &pc, &instr, &isLD, &isBD);
         pcLabel->setText(str.sprintf("0x%.8X: %s", pc, StrInstr(instr)));
 
-        vmIndicator->setEnabled(isVM);
         bdIndicator->setEnabled(isBD);
         ldIndicator->setEnabled(isLD);
     } else {
         prevPCLabel->clear();
         pcLabel->clear();
 
-        vmIndicator->setEnabled(false);
         bdIndicator->setEnabled(false);
         ldIndicator->setEnabled(false);
     }

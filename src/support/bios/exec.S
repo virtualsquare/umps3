@@ -46,7 +46,7 @@
 
 #define CAUSENEGMASK      0xFFFFFF83
 #define KUPSTATUSMASK     0x00000008
-#define SAFESTATUSMASK    0xFEFFFFFC
+#define SAFESTATUSMASK    0xFFFFFFFC
 
 
 	/*
@@ -265,7 +265,7 @@ LFORK:
 	
 	# STATUS preparation
 	move 	$k1, $a1
-	# this for BIOS safety: no KU, IE or VM bits on
+	# this for BIOS safety: no KU or IE bits on
 	li	$k0, SAFESTATUSMASK
 	and	$k1, $k1, $k0
 

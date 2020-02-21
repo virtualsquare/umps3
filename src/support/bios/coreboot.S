@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +27,7 @@
 
  	/* Constants */
 
-	STATUSMASK 	= 0xFDBFFFF3
+	STATUSMASK 	= 0xFFBFFFF3
 	BIOSPANIC	= 0x00000108
 	VECTAREANUM	= 8
 	VECTPCPOS	= 12
@@ -79,8 +80,8 @@ LCoreBootStart:
 	/*
 	 * Mapping all exception vectors to BIOS code
 	 * This is done resetting bit 22 in STATUS CP0 register
-	 * we also assure that kernel will start in kernel mode, with
-	 * interrupts and VM disabled: this is done zeroing bits 3, 2 and 25.
+	 * we also assure that kernel will start in kernel mode with
+	 * interrupts disabled: this is done zeroing bits 3 and 2.
 	 */
 	mfc0	$a0, $CP0_Status
 	li	$a1, STATUSMASK   

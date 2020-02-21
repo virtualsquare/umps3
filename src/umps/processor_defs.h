@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,13 +93,11 @@ enum {
 // except BEV bit, 0 fixed parts)
 #define STATUSMASK      0x1F40FF3FUL
 
-// STATUS kernel/user, interrupt enable, VM bit positions
+// STATUS kernel/user, interrupt enable
 #define KUOBITPOS	5
 #define IEOBITPOS	4
 #define KUCBITPOS	1
 #define IECBITPOS	0
-#define VMOBITPOS	26
-#define VMCBITPOS	24
 
 // instruction decode field masks and constants
 

@@ -87,12 +87,11 @@ public:
     // physical ones), and all index checking must be performed from
     // caller.
 
-    void getCurrStatus(Word * asid, Word * pc, Word * instr, bool * inLD, bool * inBD, bool * inVM);
+    void getCurrStatus(Word * asid, Word * pc, Word * instr, bool * isLD, bool * isBD);
 
     Word getASID() const;
     Word getPC() const { return currPC; }
     Word getInstruction() const { return currInstr; }
-    bool getVM() const;
 
     bool InUserMode() const;
     bool InKernelMode() const;
@@ -224,8 +223,8 @@ private:
 
     void randomRegTick(void);
 
-    void pushKUIEVMStack(void);
-    void popKUIEVMStack(void);
+    void pushKUIEStack(void);
+    void popKUIEStack(void);
 
     void setTLBRegs(Word vaddr);
     bool checkForInt();
