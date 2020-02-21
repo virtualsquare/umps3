@@ -35,6 +35,7 @@
 #define WORD_SIZE 4
 #define WS        WORD_SIZE
 
+#define BIOS_DATA_BASE  0x0FFFF000
 #define MMIO_BASE 0x10000000
 #define RAM_BASE  0x20000000
 

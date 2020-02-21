@@ -297,7 +297,7 @@ LLDST:
  *  and pass along handling to the kernel (address in $k1)
  */
 LSOldLNewArea:  
-  li  $k0, 0x20000500
+  li  $k0, BIOS_DATA_BASE
 LSave:	
 	sw	$1, 16($k0)
 	sw	$v0, 20($k0)
@@ -365,8 +365,8 @@ LSave:
   
   /* Restore $a0 and Pass Control along to kernel */
   add $k1, $0, $a0
-  li  $k0, 0x20000528
-  lw  $a0, 0($k0)
+  li  $k0, BIOS_DATA_BASE
+  lw  $a0, 28($k0)
   lw  $k0, 0($k1)
   jr  $k0
   nop

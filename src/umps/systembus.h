@@ -162,6 +162,7 @@ private:
 
     // physical memory spaces
     RamSpace * ram;
+    RamSpace * biosdata;
     BiosSpace * bios;
     BiosSpace * boot;
 

@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -138,11 +139,15 @@
 #define KSEG0TOP	0x20000000UL
 #define KUSEG2BASE	0x80000000UL
 
-// bus memory mapping constants (BIOS/device registers/BOOT/RAM)
+// bus memory mapping constants (BIOS/BIOS data/device registers/BOOT/RAM)
 #define BIOSBASE	0x00000000UL
+#define BIOSDATABASE  0x0FFFF000UL
 #define DEVBASE		0x10000000UL
 #define BOOTBASE	0x1FC00000UL
 #define RAMBASE		0x20000000UL
+
+// size of bios data structure area (in words)
+#define BIOSDATASIZE ((DEVBASE - BIOSDATABASE) / WORDLEN)
 
 // Processor structure register numbers
 #define CPUREGNUM	34

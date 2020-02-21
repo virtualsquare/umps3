@@ -112,6 +112,7 @@ SystemBus::SystemBus(const MachineConfig* conf, Machine* machine)
         coreFile = config->getROM(ROM_TYPE_CORE).c_str();
     ram = new RamSpace(config->getRamSize() * FRAMESIZE, coreFile);
 
+    biosdata = new RamSpace(BIOSDATASIZE, NULL);
     bios = new BiosSpace(config->getROM(ROM_TYPE_BIOS).c_str());
     boot = new BiosSpace(config->getROM(ROM_TYPE_BOOT).c_str());
 
@@ -134,6 +135,7 @@ SystemBus::~SystemBus()
     delete eventQ;
 
     delete ram;
+    delete biosdata;
     delete bios;
     delete boot;
 
@@ -419,6 +421,8 @@ bool SystemBus::busRead(Word addr, Word* datap, Processor* cpu)
 {
     if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size()))
         *datap = ram->MemRead(CONVERT(addr, RAMBASE));
+    else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size()))
+        *datap = biosdata->MemRead(CONVERT(addr, BIOSDATABASE));
     else if (INBOUNDS(addr, BIOSBASE, BIOSBASE + bios->Size()))
         *datap = bios->MemRead(CONVERT(addr,BIOSBASE));
     else if (INBOUNDS(addr, BOOTBASE, BOOTBASE + boot->Size()))
@@ -441,7 +445,7 @@ Word SystemBus::busRegRead(Word addr, Processor* cpu)
 {
     Word data;
 
-    if (DEV_REG_START <= addr && addr < DEV_REG_END) {
+    if (INBOUNDS(addr, DEV_REG_START, DEV_REG_END)) {
         // We're in the device register space
         DeviceAreaAddress da(addr);
         Device* device = devTable[da.line()][da.device()];
@@ -555,6 +559,8 @@ bool SystemBus::busWrite(Word addr, Word data, Processor* cpu)
 {
     if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size())) {
         ram->MemWrite(CONVERT(addr, RAMBASE), data);
+    } else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size())) {
+        biosdata->MemWrite(CONVERT(addr, BIOSDATABASE), data);
     } else if (INBOUNDS(addr, MMIO_BASE, MMIO_END)) {
         if (DEV_REG_START <= addr && addr < DEV_REG_END) {
             DeviceAreaAddress dva(addr);
