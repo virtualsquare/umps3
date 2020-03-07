@@ -50,7 +50,7 @@ static T bumpProperty(T minValue, T value, T maxValue)
 
 const char* const MachineConfig::deviceKeyPrefix[N_EXT_IL] = {
     "disk",
-    "tape",
+    "flash",
     "eth",
     "printer",
     "terminal"
@@ -271,7 +271,7 @@ unsigned int MachineConfig::getDeviceType(unsigned int il, unsigned int devNo) c
     assert(il < N_EXT_IL && devNo < N_DEV_PER_IL);
 
     static unsigned int types[] = {
-        DISKDEV, TAPEDEV, ETHDEV, PRNTDEV, TERMDEV
+        DISKDEV, FLASHDEV, ETHDEV, PRNTDEV, TERMDEV
     };
 
     if (getDeviceEnabled(il, devNo) && !getDeviceFile(il, devNo).empty())

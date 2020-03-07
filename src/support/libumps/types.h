@@ -7,7 +7,7 @@
 #ifndef UMPS_TYPES_H
 #define UMPS_TYPES_H
 
-/* Device register type for disks, tapes and printers (dtp) */
+/* Device register type for disks, flash devices and printers (dtp) */
 typedef struct dtpreg {
     unsigned int status;
     unsigned int command;

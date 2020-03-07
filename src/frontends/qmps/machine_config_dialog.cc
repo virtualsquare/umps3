@@ -243,10 +243,10 @@ QWidget* MachineConfigDialog::createDeviceTab()
                         "Disks", "Disk",
                         true);
 
-    registerDeviceClass("Tapes\n Interrupt Line 4",
+    registerDeviceClass("Flash Devices\n Interrupt Line 4",
                         ":/icons/tape-32.png",
-                        EXT_IL_INDEX(IL_TAPE),
-                        "Tapes", "Tape");
+                        EXT_IL_INDEX(IL_FLASH),
+                        "Flash Devices", "Flash");
 
     registerDeviceClass("Network\n Interrupt Line 5",
                         ":/icons/network-32.png",

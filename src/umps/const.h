@@ -157,7 +157,7 @@
 // device type codes
 #define NULLDEV	0
 #define DISKDEV	1
-#define TAPEDEV	2
+#define FLASHDEV 2
 #define ETHDEV 3
 #define PRNTDEV 4	
 #define TERMDEV 5

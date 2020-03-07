@@ -69,7 +69,7 @@
 #define IL_CPUTIMER         1
 #define IL_TIMER            2
 #define IL_DISK             3
-#define IL_TAPE             4
+#define IL_FLASH            4
 #define IL_ETHERNET         5
 #define IL_PRINTER          6
 #define IL_TERMINAL         7

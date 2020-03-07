@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +23,9 @@
 /****************************************************************************
  *
  * This module provides some utility classes for block devices handling.
- * They are: Block for block devices sectors/tape blocks representation; and
- * DriveParams for simulated disk devices performance parameters.
+ * They are: Block for block devices sectors/flash device blocks representation;
+ * DiskParams for simulated disk devices performance parameters;
+ * FlashParams for simulated flash devices performance parameters.
  *
  ****************************************************************************/
 
@@ -104,12 +106,12 @@ void Block::setWord(unsigned int ofs, Word value)
 /****************************************************************************/
 
 
-// This method reads from disk parameters from file header, builds a
-// DriveParams object, and returns the disk sectors start offset: this
+// This method reads disk parameters from file header, builds a
+// DiskParams object, and returns the disk sectors start offset: this
 // allows to modify the parameters' size without changing the caller.
 // If fileOfs returned is 0, something has gone wrong; file is rewound after
 // use
-DriveParams::DriveParams(FILE * diskFile, SWord * fileOfs) 
+DiskParams::DiskParams(FILE * diskFile, SWord * fileOfs) 
 {
 	SWord ret;
 	unsigned int i;
@@ -123,12 +125,12 @@ DriveParams::DriveParams(FILE * diskFile, SWord * fileOfs)
 	{
 		// if DISKFILEID is present all parameters should be correct; 
 		// fills the object
-		for (i = 0; i < DRIVEPNUM; i++)
+		for (i = 0; i < DISKPNUM; i++)
 			parms[i] = (unsigned int) blk->getWord(i + 1);
 	
 		rewind(diskFile);
 		// sets the disk contents start position 
-		ret = DRIVEPNUM + 1;
+		ret = DISKPNUM + 1;
 	}	
 	delete blk;
 	
@@ -138,32 +140,77 @@ DriveParams::DriveParams(FILE * diskFile, SWord * fileOfs)
 // All the following methods return the corresponding geometry or
 // performance figure
 
-unsigned int DriveParams::getCylNum(void)
+unsigned int DiskParams::getCylNum(void)
 {
 	return(parms[CYLNUM]);
 }
 
-unsigned int DriveParams::getHeadNum(void)
+unsigned int DiskParams::getHeadNum(void)
 {
 	return(parms[HEADNUM]);
 }
 
-unsigned int DriveParams::getSectNum(void)
+unsigned int DiskParams::getSectNum(void)
 {
 	return(parms[SECTNUM]);
 }
 
-unsigned int DriveParams::getRotTime(void)
+unsigned int DiskParams::getRotTime(void)
 {
 	return(parms[ROTTIME]);
 }
 
-unsigned int DriveParams::getSeekTime(void)
+unsigned int DiskParams::getSeekTime(void)
 {
 	return(parms[SEEKTIME]);
 }
 
-unsigned int DriveParams::getDataSect(void)
+unsigned int DiskParams::getDataSect(void)
 {
 	return(parms[DATASECT]);
+}
+
+
+// This method reads flash device parameters from file header, builds a
+// FlashParams object, and returns the flash device blocks start offset: this
+// allows to modify the parameters' size without changing the caller.
+// If fileOfs returned is 0, something has gone wrong; file is rewound after
+// use
+FlashParams::FlashParams(FILE * flashFile, SWord * fileOfs) 
+{
+	SWord ret;
+	unsigned int i;
+	Block * blk = new Block();
+	
+	rewind(flashFile);
+	if (blk->ReadBlock(flashFile, 0) || blk->getWord(0) != FLASHFILEID)
+		// errors in file reading or flash device file magic number missing
+		ret = 0;
+	else
+	{
+		// if FLASHFILEID is present all parameters should be correct; 
+		// fills the object
+		for (i = 0; i < FLASHPNUM; i++)
+			parms[i] = (unsigned int) blk->getWord(i + 1);
+	
+		rewind(flashFile);
+		// sets the flash device contents start position 
+		ret = FLASHPNUM + 1;
+	}	
+	delete blk;
+	
+	*fileOfs = ret;
+}
+
+// All the following methods return the corresponding geometry or
+// performance figure
+
+unsigned int FlashParams::getBlocksNum(void)
+{
+	return(parms[BLOCKSNUM]);
+}
+
+unsigned int FlashParams::getWTime(void)
+{
+	return(parms[WTIME]);
 }

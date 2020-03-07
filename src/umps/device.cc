@@ -4,6 +4,7 @@
  *
  * Copyright (C) 2004 Mauro Morsiani
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -87,9 +88,6 @@ HIDDEN char strbuf[STRBUFSIZE];
 // PrinterDevice specific commands, error codes, completion times (in microseconds)
 //
 
-// static buffer size
-#define PRNTBUFSIZE     128
-
 #define PRNTCHR 2
 
 #define PRNTERR 4
@@ -102,9 +100,6 @@ HIDDEN char strbuf[STRBUFSIZE];
 
 // TerminalDevice specific definitions, commands, status codes, completion
 // times
-
-// static buffer size
-#define TERMBUFSIZE     128
 
 // terminal register names
 #define RECVSTATUS      0
@@ -132,61 +127,41 @@ HIDDEN char strbuf[STRBUFSIZE];
 
 // DiskDevice specific commands / status codes 
 
-// static buffer size
-#define DISKBUFSIZE     128
-
 // controller reset time (microsecs)
 #define DISKRESETTIME   400     
 
 // other performance figures are loaded from file
 
 // controller commands
-#define SEEKCYL   2
-#define READBLK   3
-#define WRITEBLK  4
+#define DSEEKCYL   2
+#define DREADBLK   3
+#define DWRITEBLK  4
 
 // specific error codes
-#define SEEKERR 4
-#define READERR 5
-#define WRITERR 6
-#define DMAERR  7
+#define DSEEKERR 4
+#define DREADERR 5
+#define DWRITERR 6
+#define DDMAERR  7
 
 
-// TapeDevice specific commands / status codes
+// FlashDevice specific commands / status codes 
 
-// static buffer size
-#define TAPEBUFSIZE     128
+// controller reset time (microsecs)
+#define FLASHRESETTIME   400 
 
-// specific commands
-#define SKIPBLK 2
-// READBLK (3) is the same as for DiskDevice
-#define BACKBLK 4
+// other performance figures are loaded from file
 
-// error codes
-#define SKIPERR 4
-// READERR (5)  and DMAERR (7) as for DiskDevice too
-#define BACKERR 6
+// controller commands
+#define FREADBLK   2
+#define FWRITEBLK  3
 
-// tape op completion times (microsecs)
-#define TAPERESETTIME   200
-#define REWBLKTIME      60
-#define BACKBLKTIME     100
-#define READBLKTIME     122
-#define SKIPBLKTIME     100
+// specific error codes
+#define FREADERR 4
+#define FWRITERR 5
+#define FDMAERR  6
 
-// this means a throughput of 2000 KB/s with 1 Mhz DMA transfer, and
-// around 4032 KB/s with 99 Mhz DMA transfer
-// It would read a full 1GB cartridge in around 9 minutes (1 Mhz DMA)
-// It would rewind from end an 1 GB cartridge in around 2 minutes, and
-// fast forward it from start to end (or back) in 3 min 50 secs 
-
-// alternative for it would be 100, 200, 360, 200 that would mean (1GB cart.)
-// transfer rate of 1024 -> 1440 KB/s in 17 min -> 13 min, full rewind
-// in 3 min 50 secs, fast forward in  7 min
 
 // EthDevice specific commands / status codes
-// static buffer size
-#define ETHBUFSIZE  128
 
 // eth commands
 #define READCONF       2
@@ -336,19 +311,6 @@ void Device::setCondition(bool working)
 void Device::Input(const char * inputstr)
 {
     Panic("Input directed to a non-Terminal device in Device::Input()");
-}
-
-// This method allows to load/unload tapes inside a TapeDevice. For it, if
-// tFName == NULL or EMPTYSTR, method returns TRUE if a new tape may be
-// loaded, FALSE otherwise; else, if tFName != NULL it tries to load the
-// specified tape file, returning completion status. This method is not
-// operational for other devices (NULLDEV included) and produces a panic
-// message
-bool Device::TapeLoad(const char * tFName)
-{
-    Panic("Tape load request to a non-Tape device in Device::TapeLoad()");
-    // no real return
-    return(false);
 }
 
 bool Device::isBusy() const
@@ -890,7 +852,7 @@ DiskDevice::DiskDevice(SystemBus* bus, const MachineConfig* cfg,
     }
 
     // else file has been open with success: tests if it is a valid disk file
-    diskP = new DriveParams(diskFile, &diskOfs);
+    diskP = new DiskParams(diskFile, &diskOfs);
 
     if (diskOfs == 0) {
         // file is not a valid disk file
@@ -951,7 +913,7 @@ void DiskDevice::WriteDevReg(unsigned int regnum, Word data)
             reg[STATUS] = READY;
             break;
 
-        case SEEKCYL:
+        case DSEEKCYL:
             bus->IntAck(intL, devNum);
             cyl = (data >> BYTELEN) & IMMMASK;
             if (cyl < diskP->getCylNum()) {
@@ -967,12 +929,12 @@ void DiskDevice::WriteDevReg(unsigned int regnum, Word data)
             } else {
                 // cyl out of range
                 sprintf(statStr, "Cyl 0x%.4X out of range : waiting for ACK", cyl);
-                reg[STATUS] = SEEKERR;
+                reg[STATUS] = DSEEKERR;
                 bus->IntReq(intL, devNum);
             }
             break;
 
-        case READBLK:
+        case DREADBLK:
             bus->IntAck(intL, devNum);
             // computes target coordinates
             head = (data >> HWORDLEN) & BYTEMASK;
@@ -1011,12 +973,12 @@ void DiskDevice::WriteDevReg(unsigned int regnum, Word data)
             } else {
                 // head/sector out of range 
                 sprintf(statStr, "Head/sect 0x%.2X/0x%.2X out of range : waiting for ACK", head, sect);
-                reg[STATUS] = READERR;
+                reg[STATUS] = DREADERR;
                 bus->IntReq(intL, devNum);
             }   
             break;
 
-        case WRITEBLK:
+        case DWRITEBLK:
             bus->IntAck(intL, devNum);
             // computes target coordinates
             head = (data >> HWORDLEN) & BYTEMASK;
@@ -1059,7 +1021,7 @@ void DiskDevice::WriteDevReg(unsigned int regnum, Word data)
             } else {
                 // head/sector out of range 
                 sprintf(statStr, "Head/sect 0x%.2X/0x%.2X out of range : waiting for ACK", head, sect);
-                reg[STATUS] = WRITERR;
+                reg[STATUS] = DWRITERR;
                 bus->IntReq(intL, devNum);
             }
             break;
@@ -1107,7 +1069,7 @@ unsigned int DiskDevice::CompleteDevOp()
         cylBuf = headBuf = sectBuf = MAXWORDVAL;
         break;
 
-    case SEEKCYL:
+    case DSEEKCYL:
         if (isWorking) {
             currCyl = (reg[COMMAND] >> BYTELEN) & IMMMASK;
             sprintf(statStr, "Cyl 0x%.4X reached : waiting for ACK", currCyl);
@@ -1116,11 +1078,11 @@ unsigned int DiskDevice::CompleteDevOp()
             // error simulation: currCyl is between seek start & end  
             currCyl = (((reg[COMMAND] >> BYTELEN) & IMMMASK) + currCyl) / 2;
             sprintf(statStr, "Cyl 0x%.4X seek error : waiting for ACK", currCyl);
-            reg[STATUS] = SEEKERR;
+            reg[STATUS] = DSEEKERR;
         }
         break;
 
-    case READBLK:
+    case DREADBLK:
         // locates target coordinates
         head = (reg[COMMAND] >> HWORDLEN) & BYTEMASK;
         sect = (reg[COMMAND] >> BYTELEN) & BYTEMASK;
@@ -1135,7 +1097,7 @@ unsigned int DiskDevice::CompleteDevOp()
                 sectBuf = sect;
                 if (bus->DMATransfer(diskBuf, reg[DATA0], true)) {
                     // DMA transfer error
-                    reg[STATUS] = DMAERR;
+                    reg[STATUS] = DDMAERR;
                     sprintf(statStr, "DMA error reading C/H/S 0x%.4X/0x%.2X/0x%.2X : waiting for ACK",
                             currCyl, head, sect);
                 } else {
@@ -1155,11 +1117,11 @@ unsigned int DiskDevice::CompleteDevOp()
                     currCyl, head, sect);
             // buffer invalidation
             cylBuf = headBuf = sectBuf = MAXWORDVAL;
-            reg[STATUS] = READERR;
+            reg[STATUS] = DREADERR;
         }
         break;
 
-    case WRITEBLK:
+    case DWRITEBLK:
         // locates target coordinates
         head = (reg[COMMAND] >> HWORDLEN) & BYTEMASK;
         sect = (reg[COMMAND] >> BYTELEN) & BYTEMASK;
@@ -1181,7 +1143,7 @@ unsigned int DiskDevice::CompleteDevOp()
             cylBuf = headBuf = sectBuf = MAXWORDVAL;
             sprintf(statStr, "Error writing C/H/S 0x%.4X/0x%.2X/0x%.2X : waiting for ACK",
                     currCyl, head, sect);
-            reg[STATUS] = WRITERR;
+            reg[STATUS] = DWRITERR;
         }
         break;
 
@@ -1196,117 +1158,88 @@ unsigned int DiskDevice::CompleteDevOp()
 }
 
 
-// TapeDevice class allows to emulate removable cartridge tape drives. 
-// Individual tapes may be loaded and unloaded, rewound and read 
-// (see performance figures shown before). TapeDevice uses the same
-// interface as Device, redefining only a few methods' implementation: refer
-// to it for individual methods descriptions.
+// FlashDevice class allows to emulate a flash drive: each 512 byte block
+// is identified by one flash device coordinate;
+// (geometry and performance figures are loaded from flash device image file). 
+// It also contains a block buffer of one block to speed up operations.
+//
+// FlashDevice uses the same interface as Device, redefining only a few methods'
+// implementation: refer to it for individual methods descriptions.
+// 
 // It adds to Device data structure:
-// a pointer to the configuration object containing tape cartridge log
-// file name; a static buffer for device operation & status
-// description; a FILE structure for log file access; a Block object
-// for file handling.
+// a pointer to SetupInfo object containing flash device log file name;
+// a static buffer for device operation & status description;
+// a FILE structure for flash device image file access;
+// a Block object for file handling;
+// some items for performance computation.
 
-TapeDevice::TapeDevice(SystemBus* bus, const MachineConfig* config,
+FlashDevice::FlashDevice(SystemBus* bus, const MachineConfig* cfg,
                        unsigned int line, unsigned int devNo)
-    : Device(bus, line, devNo),
-      config(config)
+    : Device(bus, line, devNo)
+    , config(cfg)
 {
-    dType = TAPEDEV;
+    // adds to a Device object FlashDevice-specific fields
+    dType = FLASHDEV;
     isWorking = true;
-    tapeFName = NULL;
-    tapeBlk = new Block();
-    tapeBp = 0;
-    tapeLoaded = false;
     reg[STATUS] = READY;
-    reg[DATA1] = TAPEEOT;
-
     sprintf(statStr, "Idle");
+    flashBuf = new Block();
 
-    // return value is ignored: a tape will be loaded if its setup file
-    // name exists and file is of correct type
-    TapeLoad(config->getDeviceFile(line, devNo).c_str());
+    // tries to access flash device image file 
+    if ((flashFile = fopen(config->getDeviceFile(intL, devNum).c_str(), "r+")) == NULL) {
+        sprintf(strbuf, "Cannot open flash device %u file : %s", devNum, strerror(errno));
+        Panic(strbuf);
+    }
+
+    // else file has been open with success: tests if it is a valid flash device file
+    flashP = new FlashParams(flashFile, &flashOfs);
+    
+    if (flashOfs == 0) {
+        // file is not a valid flash device file
+        sprintf(strbuf, "Cannot open flash device %u file : invalid/corrupted file", devNum);
+        Panic(strbuf);
+    }
+
+    // DATA1 format == drive geometry: BLOCKS
+    reg[DATA1] = flashP->getBlocksNum();
+
+    blockBuf = MAXWORDVAL;
 }
 
-TapeDevice::~TapeDevice()
+FlashDevice::~FlashDevice()
 {
-    delete tapeBlk;
+    delete flashBuf;
+    delete flashP;
 
-    if (tapeLoaded) {
-        delete tapeFName;
-        
-        if (fclose(tapeFile) == EOF) {
-            sprintf(strbuf, "Cannot close tape file %u : %s", devNum, strerror(errno));
-            Panic(strbuf);
-        }
+    if (fclose(flashFile) == EOF) {
+        sprintf(strbuf, "Cannot close flash device file %u : %s", devNum, strerror(errno));
+        Panic(strbuf);
     }
 }
 
-// If tFName == NULL or EMPTYSTR, method returns TRUE if 
-// a new tape may be loaded,  FALSE otherwise; else, if tFName != NULL
-// it tries to load the specified tape file, returning completion status 
-bool TapeDevice::TapeLoad(const char* tFName)
+// Flash device register write: only COMMAND and DATA0 registers are
+// writable, and only when device is not busy.
+void FlashDevice::WriteDevReg(unsigned int regnum, Word data)
 {
-    Word tapeid = 0;
-
-    if (tFName == NULL || strlen(tFName) == 0) {
-        // only a request for tape loading availability
-        return !tapeLoaded || (reg[STATUS] == READY && reg[DATA1] == TAPESTART);
-    } else {
-        if (tapeLoaded && (reg[STATUS] != READY || reg[DATA1] != TAPESTART)) {
-            // a new tape cannot be loaded until the current tape is not 
-            // rewound: a safeguard to avoid tape ejection during I/O operations
-            return false;
-        } else {
-            if (tapeLoaded) {
-                // a tape is currently loaded
-                delete tapeFName;
-                if (fclose(tapeFile) == EOF) {
-                    sprintf(strbuf, "Cannot close tape file %u : %s", devNum, strerror(errno));
-                    Panic(strbuf);
-                }
-                // else all is OK
-            }
-            tapeFName = new char [strlen(tFName) + 1];
-            strcpy(tapeFName, tFName);
-            if ((tapeFile = fopen(tapeFName, "r")) == NULL ||
-                fread((void *) &tapeid, WORDLEN, 1, tapeFile) != 1 ||
-                tapeid != TAPEFILEID)
-            {
-                sprintf(strbuf, "Cannot open tape %u file : invalid/corrupted file", devNum);
-                Panic(strbuf);
-            }
-            // else file opening is OK: setting tape parameters
-            reg[DATA1] = TAPESTART;
-            tapeLoaded = true;
-            tapeBp = 0;
-            SignalStatusChanged(getDevSStr());
-            return true;
-        }
-    }
-}
-
-void TapeDevice::WriteDevReg(unsigned int regnum, Word data)
-{
-    // Only COMMAND and DATA0 registers are writable, and only when 
-    // device is not busy and a tape is loaded.
-    if (!tapeLoaded || reg[STATUS] == BUSY)
+    if (reg[STATUS] == BUSY)
         return;
+
+    Word timeOfs;
+    unsigned int block;
 
     switch (regnum) {
     case COMMAND:
-        // decode operation requested: for each, acknowledges a
-        // previous interrupt if pending, sets the device registers,
-        // and inserts an Event in SystemBus mantained queue
-
         reg[COMMAND] = data;
 
-        switch (data) {
+        // Decode operation requested: for each, acknowledges a
+        // previous interrupt if pending, sets the device registers,
+        // and inserts an Event in SystemBus mantained queue
+        switch (data & BYTEMASK) {
         case RESET:
-            // it rewinds the tape too
             bus->IntAck(intL, devNum);
-            complTime = scheduleIOEvent((TAPERESETTIME + (REWBLKTIME * tapeBp)) * config->getClockRate());
-            sprintf(statStr, "Rewinding the tape (last op: %s)", isSuccess(dType, reg[STATUS]));
+            timeOfs = (FLASHRESETTIME + flashP->getWTime()) * config->getClockRate();
+            complTime = scheduleIOEvent(timeOfs);
+            sprintf(statStr, "Resetting (last op: %s)", isSuccess(dType, reg[STATUS]));
             reg[STATUS] = BUSY;
             break;
 
@@ -1316,42 +1249,58 @@ void TapeDevice::WriteDevReg(unsigned int regnum, Word data)
             reg[STATUS] = READY;
             break;
 
-        case SKIPBLK:
+        case FREADBLK:
             bus->IntAck(intL, devNum);
-            if (reg[DATA1] != TAPEEOT) {
-                sprintf(statStr, "Skipping block %u (last op: %s)", tapeBp, isSuccess(dType, reg[STATUS]));
-                complTime = scheduleIOEvent(SKIPBLKTIME * config->getClockRate());
+            // computes target coordinates
+            block = (data >> BYTELEN) & MAXBLOCKS;
+            if (block < flashP->getBlocksNum()) {
+                sprintf(statStr, "Reading block 0x%.6X (last op: %s)",
+                        block, isSuccess(dType, reg[STATUS]));
+                if (block == blockBuf) {
+                    // block is already in flash device buffer
+                    timeOfs = DMATICKS;
+                } else {
+                    // invalidate current buffer
+                    blockBuf = MAXWORDVAL;
+
+                    // completion time is = block data read + DMA transfer time
+                    timeOfs = ((flashP->getWTime() * READRATIO) * config->getClockRate()) + DMATICKS; 
+                }
+                complTime = scheduleIOEvent(timeOfs);
                 reg[STATUS] = BUSY;
             } else {
-                sprintf(statStr, "Cannot skip beyond EOT : waiting for ACK");
-                reg[STATUS] = SKIPERR;
+                // block out of range 
+                sprintf(statStr, "Block 0x%.6X out of range : waiting for ACK", block);
+                reg[STATUS] = FREADERR;
                 bus->IntReq(intL, devNum);
-            }
+            }   
             break;
 
-        case READBLK:
+        case FWRITEBLK:
             bus->IntAck(intL, devNum);
-            if (reg[DATA1] != TAPEEOT) {
-                sprintf(statStr, "Reading block %u (last op: %s)", tapeBp, isSuccess(dType, reg[STATUS]));
-                complTime = scheduleIOEvent(READBLKTIME * config->getClockRate() + DMATICKS);
+            // computes target coordinates
+            block = (data >> BYTELEN) & MAXBLOCKS;
+            if (block < flashP->getBlocksNum()) {
+                sprintf(statStr, "Writing block 0x%.6X (last op: %s)",
+                        block, isSuccess(dType, reg[STATUS]));
+                // DMA transfer from memory
+                if (bus->DMATransfer(flashBuf, reg[DATA0], false)) {
+                    // DMA transfer error: invalidate current buffer
+                    blockBuf = MAXWORDVAL;
+                    timeOfs = DMATICKS;
+                } else {
+                    // flash device block in buffer from memory
+                    blockBuf = block;     
+                                                                        
+                    // completion time is = block data write + DMA transfer time
+                    timeOfs = ((flashP->getWTime()) * config->getClockRate()) + DMATICKS; 
+                }
+                complTime = scheduleIOEvent(timeOfs);
                 reg[STATUS] = BUSY;
             } else {
-                sprintf(statStr, "Cannot read beyond EOT : waiting for ACK");
-                reg[STATUS] = READERR;
-                bus->IntReq(intL, devNum);
-            }
-            break;
-
-        case BACKBLK:
-            bus->IntAck(intL, devNum);
-            // overkill test
-            if (reg[DATA1] != TAPESTART && tapeBp != 0) {
-                sprintf(statStr, "Rewinding to block %u (last op: %s)", tapeBp - 1, isSuccess(dType, reg[STATUS]));
-                complTime = scheduleIOEvent(REWBLKTIME * config->getClockRate());
-                reg[STATUS] = BUSY;
-            } else {
-                sprintf(statStr, "Cannot rewind beyond tape start : waiting for ACK");
-                reg[STATUS] = BACKERR;
+                // block out of range 
+                sprintf(statStr, "Block 0x%.6X out of range : waiting for ACK", block);
+                reg[STATUS] = FWRITERR;
                 bus->IntReq(intL, devNum);
             }
             break;
@@ -1364,10 +1313,10 @@ void TapeDevice::WriteDevReg(unsigned int regnum, Word data)
         }
 
         SignalStatusChanged(getDevSStr());
-        break;                                       
+        break;
 
     case DATA0:
-        // sets physical address for buffer in memory
+        // physical address for R/W buffer in memory
         reg[DATA0] = data;
         break;
 
@@ -1376,93 +1325,90 @@ void TapeDevice::WriteDevReg(unsigned int regnum, Word data)
     }
 }
 
-const char* TapeDevice::getDevSStr()
+const char* FlashDevice::getDevSStr()
 {
     return statStr;
 }
 
-unsigned int TapeDevice::CompleteDevOp()
+unsigned int FlashDevice::CompleteDevOp()
 {
+    // for file access
+    SWord blkOfs;
+    unsigned int block;
+
     // checks which operation must be completed: for each, sets device
     // register, performs requested operation and produces an interrupt
     // request
-    switch (reg[COMMAND]) {
+    switch (reg[COMMAND] & BYTEMASK) {
     case RESET:
         // a reset always works, even if isWorking == FALSE
-        sprintf(statStr, "Rewind completed : waiting for ACK");
+        // it invalidates the block buffer
+        sprintf(statStr, "Reset completed : waiting for ACK");
         reg[STATUS] = READY;
-        reg[DATA1] = TAPESTART;
-        tapeBp = 0;
+        blockBuf = MAXWORDVAL;
         break;
 
-    case SKIPBLK:
-        // a SKIPBLK is always successful (isWorking status does not matter)
-        if (tapeBlk->ReadBlock(tapeFile, (tapeBp * BLOCKSIZE * WORDLEN) + ((tapeBp + 1) * WORDLEN)) || \
-            fread((void *) &(reg[DATA1]), WORDLEN, 1, tapeFile) != 1 || reg[DATA1] > TAPEEOB)
-        {
-            sprintf(strbuf, "Error reading tape %u file : %s", devNum, strerror(errno));
-            Panic(strbuf);
-        }
-        // else operation is successful: 
-        reg[STATUS] = READY;
-        sprintf(statStr, "Block %u skipped : waiting for ACK", tapeBp);
-        tapeBp++;
-        break;
-
-    case READBLK:
-        if (tapeBlk->ReadBlock(tapeFile, (tapeBp * BLOCKSIZE * WORDLEN) + ((tapeBp + 1) * WORDLEN)) ||
-            fread((void *) &(reg[DATA1]), WORDLEN, 1, tapeFile) != 1 || reg[DATA1] > TAPEEOB)
-        {
-            sprintf(strbuf, "Error reading tape %u file : %s", devNum, strerror(errno));
-            Panic(strbuf);
-        }
-        // else read operation is successful:
+    case FREADBLK:
+        // locates target coordinates
+        block = (reg[COMMAND] >> BYTELEN) & MAXBLOCKS;
         if (isWorking) {
-            if (bus->DMATransfer(tapeBlk, reg[DATA0], true)) {
-                // DMA transfer error
-                reg[STATUS] = DMAERR;
-                sprintf(statStr, "DMA error reading block %u : waiting for ACK", tapeBp);
-            } else {
-                sprintf(statStr, "Block %u read : waiting for ACK", tapeBp);
-                reg[STATUS] = READY;
-            }
-        } else {
-            // no operation & error simulation
-            sprintf(statStr, "Error reading block %u : waiting for ACK", tapeBp);
-            reg[STATUS] = READERR;
-        }
-        // tape block counter is however incremented
-        tapeBp++;
-        break;
+            blkOfs = (flashOfs + (block * BLOCKSIZE)) * WORDLEN;
 
-    case BACKBLK:
-        // a BACKBLK is always successful (isWorking status does not matter)
-        tapeBp--;
-        if (tapeBp == 0)
-            reg[DATA1] = TAPESTART;
-        else
-            // read previous block for terminator value 
-            if (tapeBlk->ReadBlock(tapeFile, ((tapeBp - 1) * BLOCKSIZE * WORDLEN) + (tapeBp * WORDLEN)) ||
-                fread((void *) &(reg[DATA1]), WORDLEN, 1, tapeFile) != 1 || reg[DATA1] > TAPEEOB)
-            {
-                sprintf(strbuf, "Error reading tape %u file : %s", devNum, strerror(errno));
+            if (blockBuf != MAXWORDVAL || !flashBuf->ReadBlock(flashFile, blkOfs)) {
+                // Wanted block is already in buffer or has been read correctly
+                blockBuf = block;
+                if (bus->DMATransfer(flashBuf, reg[DATA0], true)) {
+                    // DMA transfer error
+                    reg[STATUS] = FDMAERR;
+                    sprintf(statStr, "DMA error reading block 0x%.6X : waiting for ACK", block);
+                } else {
+                    // all ok
+                    sprintf(statStr, "Block 0x%.6X read: waiting for ACK", block);
+                    reg[STATUS] = READY;
+                }
+            } else {
+                // ReadBlock() has failed for sure
+                sprintf(strbuf, "Unable to read flash device %u file : invalid/corrupted file", devNum);
                 Panic(strbuf);
             }
-        // else operation is successful:
-        reg[STATUS] = READY;
-        sprintf(statStr, "Rewound back to block %u : waiting for ACK", tapeBp);
+        } else {
+            // error simulation
+            sprintf(statStr, "Error reading block 0x%.6X : waiting for ACK", block);
+            // buffer invalidation
+            blockBuf = MAXWORDVAL;
+            reg[STATUS] = FREADERR;
+        }
+        break;
+
+    case FWRITEBLK:
+        // locates target coordinates
+        block = (reg[COMMAND] >> BYTELEN) & MAXBLOCKS;
+        if (isWorking) {
+            blkOfs = (flashOfs + (block * BLOCKSIZE)) * WORDLEN;
+
+            if (flashBuf->WriteBlock(flashFile, blkOfs)) {
+                // error writing block to flash device file
+                sprintf(strbuf, "Unable to write flash device %u file : invalid/corrupted file", devNum);
+                Panic(strbuf);
+            }
+            // else all is ok: buffer is still valid
+            sprintf(statStr, "Block 0x%.6X written : waiting for ACK", block);
+            reg[STATUS] = READY;
+        } else {
+            // error simulation & buffer invalidation 
+            blockBuf = MAXWORDVAL;
+            sprintf(statStr, "Error writing block 0x%.6X : waiting for ACK", block);
+            reg[STATUS] = FWRITERR;
+        }
         break;
 
     default:
-        Panic("Unknown operation in TapeDevice::CompleteDevOp()");
+        Panic("Unknown operation in FlashDevice::CompleteDevOp()");
         break;
     }
 
     SignalStatusChanged(getDevSStr());
     bus->IntReq(intL, devNum);
-
-    // here Reg[DATA1] too is changed, but there is only one return value
-    // however, if area is traced/suspected fully the result does not change
     return STATUS;
 }
 
@@ -1479,7 +1425,7 @@ HIDDEN const char * isSuccess(unsigned int devType, Word regVal)
     switch (devType) {
     case PRNTDEV:
     case DISKDEV:
-    case TAPEDEV:
+    case FLASHDEV:
     case ETHDEV:
         if (regVal == READY)
             result = opResult[true];
@@ -1585,7 +1531,7 @@ void EthDevice::WriteDevReg(unsigned int regnum, Word data)
             case WRITENET:
                 bus->IntAck(intL, devNum);
                 if (bus->DMAVarTransfer(writebuf, reg[DATA0], reg[DATA1], false)) {
-                    reg[STATUS] = DMAERR;
+                    reg[STATUS] = DDMAERR;
                     sprintf(statStr, "DMA error on netwrite: waiting for ACK");
                     err=1;
                 } else {
@@ -1693,13 +1639,13 @@ unsigned int EthDevice::CompleteDevOp()
             {
                 if ((reg[DATA1]=netint->readdata((char *) readbuf, PACKETSIZE)) < 0) {
                     sprintf(statStr, "Net reading error: waiting for ACK");
-                    reg[STATUS] = READERR;
+                    reg[STATUS] = DREADERR;
                 } else if (reg[DATA1] == 0) {
                     sprintf(statStr, "No pending packet for read: waiting for ACK");
                     reg[STATUS] = READY;
                 } else {
                     if (bus->DMAVarTransfer(readbuf, reg[DATA0], reg[DATA1], true)) {
-                        reg[STATUS] = DMAERR;
+                        reg[STATUS] = FDMAERR;
                         sprintf(statStr, "DMA error on netread: waiting for ACK");
                     } else {
                         sprintf(statStr, "Packet received: waiting for ACK");
@@ -1712,7 +1658,7 @@ unsigned int EthDevice::CompleteDevOp()
             {
                 // no operation & error simulation
                 sprintf(statStr, "Net reading error : waiting for ACK");
-                reg[STATUS] = READERR;
+                reg[STATUS] = DREADERR;
             }				
             break;
         case WRITENET:
@@ -1726,14 +1672,14 @@ unsigned int EthDevice::CompleteDevOp()
                 else 
                 {
                     sprintf(statStr, "Net writing error: waiting for ACK");
-                    reg[STATUS] = WRITERR;
+                    reg[STATUS] = DWRITERR;
                 }
             }
             else
             {
                 // no operation & error simulation
                 sprintf(statStr, "Net writing error : waiting for ACK");
-                reg[STATUS] = WRITERR;
+                reg[STATUS] = DWRITERR;
             }
             break;
         }

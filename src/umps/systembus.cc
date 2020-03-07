@@ -540,8 +540,8 @@ Device* SystemBus::makeDev(unsigned int intl, unsigned int dnum)
         dev = new DiskDevice(this, config, intl, dnum);
         break;
 		
-    case TAPEDEV:
-        dev = new TapeDevice(this, config, intl, dnum);
+    case FLASHDEV:
+        dev = new FlashDevice(this, config, intl, dnum);
         break;
 			
     default:
