@@ -137,7 +137,7 @@ void MachineConfigView::Update()
     coreFileLabel->setEnabled(config->isLoadCoreEnabled());
 
     stabLabel->setText(config->getROM(ROM_TYPE_STAB).c_str());
-    stabAsidLabel->setText(QString("0x%1").arg(config->getSymbolTableASID(), 0, 16));
+    stabAsidLabel->setText(QString("0x%1").arg(config->getSymbolTableASID(), 2, 16, QChar('0')));
 }
 
 QString MachineConfigView::checkedFileName(const QString& fileName)
