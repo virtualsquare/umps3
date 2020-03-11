@@ -119,6 +119,9 @@ void ProcessorWindow::closeEvent(QCloseEvent* event)
 
 void ProcessorWindow::createMenu()
 {
+    QMenu* machineMenu = menuBar()->addMenu("M&achine");
+    machineMenu->addAction(dbgSession->resetMachineAction);
+
     QMenu* debugMenu = menuBar()->addMenu("&Debug");
     debugMenu->addAction(dbgSession->debugContinueAction);
     debugMenu->addAction(dbgSession->debugStepAction);
