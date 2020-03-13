@@ -119,12 +119,13 @@ void CodeView::loadCode()
 
     Word pc = cpu->getPC();
     if (pc >= RAM_BASE) {
-        Word asid = cpu->getASID();
-        const Symbol* symbol = symbolTable->Probe(asid, pc, false);
-        if (symbol != NULL) {
-            startPC = symbol->getStart();
-            endPC = symbol->getEnd();
-            codeLoaded = true;
+        if (pc < config->getTLBFloorAddress() && config->getSymbolTableASID() == MAXASID) {
+            const Symbol* symbol = symbolTable->Probe(MAXASID, pc, false);
+            if (symbol != NULL) {
+                startPC = symbol->getStart();
+                endPC = symbol->getEnd();
+                codeLoaded = true;
+            }
         }
     } else if (pc >= KSEGOS_BOOT_BASE) {
         Word bootSize;
@@ -150,7 +151,7 @@ void CodeView::loadCode()
             machine->ReadMemory(addr, &instr);
             appendPlainText(disassemble(instr, addr));
         }
-        ensureCurrentInstuctionVisible();
+        ensureCurrentInstructionVisible();
     }
 }
 
@@ -210,12 +211,18 @@ QString CodeView::disasmJump(Word instr, Word pc) const
 
 void CodeView::onMachineStopped()
 {
+    const MachineConfig* config = Appl()->getConfig();
+    Word pc = cpu->getPC();
+
     if (!codeLoaded) {
         loadCode();
     } else {
-        if (startPC <= cpu->getPC() && cpu->getPC() <= endPC) {
+        if (pc >= config->getTLBFloorAddress()) {
+            clear();
+            codeLoaded = false;
+        } else if (startPC <= pc && pc <= endPC) {
             codeMargin->update();
-            ensureCurrentInstuctionVisible();
+            ensureCurrentInstructionVisible();
         } else {
             loadCode();
         }
@@ -306,7 +313,7 @@ void CodeView::paintMargin(QPaintEvent* event)
     }
 }
 
-void CodeView::ensureCurrentInstuctionVisible()
+void CodeView::ensureCurrentInstructionVisible()
 {
     QTextCursor cursor = textCursor();
     cursor.setPosition(0);

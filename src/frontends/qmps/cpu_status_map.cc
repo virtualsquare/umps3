@@ -4,7 +4,6 @@
  *
  * Copyright (C) 2010 Tomislav Jonjic
  * Copyright (C) 2020 Mattia Biondi
-
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -137,7 +136,9 @@ void CpuStatusMap::formatActiveCpuLocation(Processor* cpu)
 {
     SymbolTable* stab = dbgSession->getSymbolTable();
 
-    Word asid = cpu->getASID();
+    const MachineConfig* config = Appl()->getConfig();
+    Word pc = cpu->getPC();
+    Word asid = (pc >= config->getTLBFloorAddress()) ? cpu->getASID() : MAXASID;
     SWord offset;
     const char* symbol = GetSymbolicAddress(stab, asid, cpu->getPC(), true, &offset);
     if (symbol)

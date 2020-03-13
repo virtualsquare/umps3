@@ -124,6 +124,12 @@ QWidget* MachineConfigDialog::createGeneralTab()
     }
     if (ramtop) tlbFloorAddressList->setCurrentIndex(currentIndex-1);
     layout->addWidget(tlbFloorAddressList, 4, 3);
+    connect(tlbFloorAddressList, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
+    
+    layout->addWidget(tlbFloorAddrWarningLabel = new QLabel, 4, 4);
+    QPalette pWarningTlb = tlbFloorAddrWarningLabel->palette();
+    pWarningTlb.setColor(tlbFloorAddrWarningLabel->foregroundRole(), Qt::red);
+    tlbFloorAddrWarningLabel->setPalette(pWarningTlb);
 
     layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
     ramSizeSpinner = new QSpinBox();
@@ -192,6 +198,12 @@ QWidget* MachineConfigDialog::createGeneralTab()
     stabAsidEdit->setMaximumWidth(100);
     stabAsidEdit->setAsid(config->getSymbolTableASID());
     layout->addWidget(stabAsidEdit, 17, 3);
+    connect(stabAsidEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
+    
+    layout->addWidget(asidWarningLabel = new QLabel, 17, 4);
+    QPalette pWarningAsid = asidWarningLabel->palette();
+    pWarningAsid.setColor(asidWarningLabel->foregroundRole(), Qt::red);
+    asidWarningLabel->setPalette(pWarningAsid);
 
     layout->setColumnMinimumWidth(0, 10);
     layout->setColumnMinimumWidth(2, 10);
@@ -326,6 +338,23 @@ void MachineConfigDialog::saveConfigChanges()
     config->setSymbolTableASID(stabAsidEdit->getAsid());
 }
 
+void MachineConfigDialog::validate()
+{
+    int index = tlbFloorAddressList->currentIndex();
+    Word asid = stabAsidEdit->getAsid();
+    
+    if (index == 0) {
+        tlbFloorAddrWarningLabel->setText("Warning: advanced user only");
+    } else {
+        tlbFloorAddrWarningLabel->setText("");
+    }
+    
+    if (asid < MAXASID) {
+        asidWarningLabel->setText("Warning: advanced user only (default = 0x40)");
+    } else {
+        asidWarningLabel->setText("");
+    }
+}
 
 DeviceFileChooser::DeviceFileChooser(const QString& deviceClassName,
                                      const QString& deviceName,

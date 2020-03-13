@@ -63,7 +63,7 @@ private:
     static const int TAB_STOP_CHARS = 8;
 
     void paintMargin(QPaintEvent* event);
-    void ensureCurrentInstuctionVisible();
+    void ensureCurrentInstructionVisible();
 
     void onBreakpointInserted();
     void onBreakpointChanged(size_t);
