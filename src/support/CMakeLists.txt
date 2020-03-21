@@ -1,0 +1,5 @@
+add_subdirectory(bios)
+add_subdirectory(crt)
+add_subdirectory(ldscripts)
+add_subdirectory(legacy)
+add_subdirectory(libumps)
