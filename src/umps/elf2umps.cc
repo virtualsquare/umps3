@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     if (elf_version(EV_CURRENT) == EV_NONE)
         fatalError("ELF library out of date");
 
-    uint32_t fileId;
+    uint32_t fileId = 0;
     bool createMap = false;
 
     // Parse args, lamely
@@ -350,9 +350,9 @@ static void elf2aout(bool isCore)
 
     // Obtain segment info
     bool foundDataSeg = false;
-    uint8_t* dataBuf;
+    uint8_t* dataBuf = NULL;;
     bool foundTextSeg = false;
-    uint8_t* textBuf;
+    uint8_t* textBuf = NULL;;
 
     for (size_t i = 0; i < phtSize; i++) {
         if (pht[i].p_type != PT_LOAD)

@@ -123,7 +123,7 @@ HIDDEN void showHelp(const char * prgName)
     fprintf(stderr, "\tdatas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, diskDfl[DATASECT]); 
     fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
     fprintf(stderr, "\n%s -f <flashfile%s> [blocks [wt]]\n", prgName, MPSFILETYPE);
-    fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6lX]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
+    fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
 	fprintf(stderr, "\twt = avg. write time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXWTIME, flashDfl[WTIME]);
 	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(default = %s%s)\n\n", flashDflFName, MPSFILETYPE);
 }
@@ -371,7 +371,7 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 	FILE * rfile = NULL;
 	int ret = EXIT_SUCCESS;
 	
-	unsigned int i, j, n = 0;
+	unsigned int i, n = 0;
 	Word blk[BLOCKSIZE];
 	Word flashid = FLASHFILEID;
 	
@@ -396,8 +396,8 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 			while (!feof(rfile))
 			{
 				// clear block
-				for (j = 0; j < BLOCKSIZE; j++)
-					blk[j] = 0UL;
+				for (i = 0; i < BLOCKSIZE; i++)
+					blk[i] = 0UL;
 					
 				if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0) {
 					n++;

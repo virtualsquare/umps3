@@ -200,8 +200,8 @@ Processor::Processor(const MachineConfig* config, Word cpuId, Machine* machine, 
       bus(bus),
       status(PS_HALTED),
       tlbSize(config->getTLBSize()),
-      tlbFloorAddress(config->getTLBFloorAddress()),
-      tlb(new TLBEntry[tlbSize])
+      tlb(new TLBEntry[tlbSize]),
+      tlbFloorAddress(config->getTLBFloorAddress())
 {}
 
 Processor::~Processor() {}
@@ -231,7 +231,7 @@ void Processor::Reset(Word pc, Word sp)
     // no loads pending at start
     loadPending = LOAD_TARGET_NONE;
     loadReg = 0;
-    loadVal = MAXWORDVAL;
+    loadVal = MAXSWORDVAL;
 
     // clear general purpose registers
     for (i = 0; i < CPUREGNUM; i++)
@@ -772,9 +772,7 @@ void Processor::completeLoad()
 // for address conversion is returned thru paddr pointer.
 // AccType details memory access type (READ/WRITE/EXECUTE)
 bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
-{
-    const MachineConfig* config;
-    	
+{    	
     // SignalProcVAccess() is always done so it is possible 
     // to track accesses which produce exceptions
     machine->HandleVMAccess(ENTRYHI_GET_ASID(cpreg[ENTRYHI]), vaddr, accType, this);
@@ -1294,7 +1292,7 @@ bool Processor::execRegInstr(Word * res, Word instr, bool * isBD)
             else
             {
                 // divisor is zero
-                gpr[LO] = MAXWORDVAL;
+                gpr[LO] = MAXSWORDVAL;
                 gpr[HI] = 0;
             }
             break;
@@ -1308,11 +1306,10 @@ bool Processor::execRegInstr(Word * res, Word instr, bool * isBD)
             else
             {
                 // divisor is zero
-                gpr[LO] = MAXWORDVAL;
+                gpr[LO] = MAXSWORDVAL;
                 gpr[HI] = 0;
             }
             break;
-				
         case SFN_JALR:
             // solution "by the book"
             succPC = gpr[RS(instr)];

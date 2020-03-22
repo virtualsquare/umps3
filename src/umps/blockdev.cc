@@ -77,7 +77,7 @@ bool Block::WriteBlock(FILE * blkFile, SWord offset)
 		else
 			// all OK
 			fflush(blkFile);
-			return(false);
+	return(false);
 }
 
 

@@ -225,7 +225,7 @@ HIDDEN int hdrDump(const char * prgName, const char * fileName)
 				{
 					// print header
 					for (i = 1; i < AOUTENTNUM; i++)
-						printf("%-35.35s: 0x%.8lX\n", aoutName[i], aoutHdr[i]);
+						printf("%-35.35s: 0x%.8X\n", aoutName[i], aoutHdr[i]);
 					printf("\n");
 				}
 			}
@@ -317,7 +317,7 @@ HIDDEN int asmPrint(const char * prg, const char * fname, FILE * inF, Word asmSt
 				nops = 0;
 
 			if (nops < NOPSMIN)	
-				printf("0x%.8lX : %s\n", asmStart, StrInstr(instr));
+				printf("0x%.8X : %s\n", asmStart, StrInstr(instr));
 			else
 				if (nops == NOPSMIN)
 					// tries to skip a NOPs block
@@ -376,7 +376,14 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 			else
 				if (tag == BIOSFILEID)
 					// skip size header too
-					fread((void *) &size, WORDLEN, 1, inFile);
+					if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
+                        if (ferror(inFile))
+                        {
+                            fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
+                            ret = EXIT_FAILURE;
+                        }
+                        // else all is ok
+                    
 			 
 			while (!ferror(inFile) && !feof(inFile))
 				// scans file
@@ -396,7 +403,7 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 					{
 						printf ("0x%.8X : ", idx); 
 						for (i = 0; i < words; i++)
-							printf("0x%.8lX  ", buf[i]);
+							printf("0x%.8X  ", buf[i]);
 						printf("\n");
 					}
 					else
@@ -406,12 +413,6 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 					idx += (words * WORDLEN);
 				}
 			printf("\n");
-			if (ferror(inFile))
-			{
-				fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
-				ret = EXIT_FAILURE;
-			}
-			// else all is ok
 		}
 		fclose (inFile);		
 	}			
@@ -458,7 +459,13 @@ HIDDEN int bDump(const char * prgName, const char * fileName)
 			else
 				if (tag == BIOSFILEID)
 					// skip size header too
-					fread((void *) &size, WORDLEN, 1, inFile);
+					if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
+                        if (ferror(inFile))
+                        {
+                            fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
+                            ret = EXIT_FAILURE;
+                        }
+                        // else all is ok
 			
 			while (!ferror(inFile) && !feof(inFile))
 				if ((chars = fread((void *) buf, sizeof(unsigned char), CBUFSIZE, inFile)) > 0)
@@ -487,12 +494,6 @@ HIDDEN int bDump(const char * prgName, const char * fileName)
 					idx += chars;
 				}
 			printf("\n");
-			if (ferror(inFile))
-			{
-				fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
-				ret = EXIT_FAILURE;
-			}
-			// else all is ok
 		}
 		fclose (inFile);		
 	}			

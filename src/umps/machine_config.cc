@@ -64,7 +64,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
         return NULL;
     }
 
-    std::auto_ptr<JsonObject> root;
+    std::unique_ptr<JsonObject> root;
 
     try {
         JsonParser parser;
@@ -79,7 +79,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
         return NULL;
     }
 
-    std::auto_ptr<MachineConfig> config(new MachineConfig(fileName));
+    std::unique_ptr<MachineConfig> config(new MachineConfig(fileName));
 
     try {
         if (root->HasMember("num-processors"))
@@ -138,7 +138,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
 
 MachineConfig* MachineConfig::Create(const std::string& fileName)
 {
-    std::auto_ptr<MachineConfig> config(new MachineConfig(fileName));
+    std::unique_ptr<MachineConfig> config(new MachineConfig(fileName));
 
     // The constructor initializes all the basic fields to sane
     // initial values; in addition, we enable a terminal device for
