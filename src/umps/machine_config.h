@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +29,9 @@
 #include "base/lang.h"
 #include "base/basic_types.h"
 #include "umps/arch.h"
+#include "umps/const.h"
 #include "umps/types.h"
+#include "umps/utility.h"
 
 enum ROMType {
     ROM_TYPE_BOOT,
@@ -55,6 +58,9 @@ public:
     static const Word MIN_TLB = 4;
     static const Word MAX_TLB = 64;
     static const Word DEFAULT_TLB_SIZE = 16;
+    
+    static constexpr Word TLB_FLOOR_ADDRESS [4] = { 0x20000000, 0x40000000, 0x80000000, MAXWORDVAL }; 
+    static const Word DEFAULT_TLB_FLOOR_ADDRESS = 0x40000000;
 
     static const Word MIN_ASID = 0;
     static const Word MAX_ASID = 64;
@@ -82,6 +88,9 @@ public:
 
     void setTLBSize(Word size);
     Word getTLBSize() const { return tlbSize; }
+    
+    void setTLBFloorAddress(Word addr);
+    Word getTLBFloorAddress() const { return tlbFloorAddress; }
 
     void setROM(ROMType type, const std::string& fileName);
     const std::string& getROM(ROMType type) const;
@@ -111,6 +120,7 @@ private:
     unsigned int cpus;
     unsigned int clockRate;
     Word tlbSize;
+    Word tlbFloorAddress;
 
     std::string romFiles[N_ROM_TYPES];
     Word symbolTableASID;

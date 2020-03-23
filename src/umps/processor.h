@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,12 +87,11 @@ public:
     // physical ones), and all index checking must be performed from
     // caller.
 
-    void getCurrStatus(Word * asid, Word * pc, Word * instr, bool * inLD, bool * inBD, bool * inVM);
+    void getCurrStatus(Word * asid, Word * pc, Word * instr, bool * isLD, bool * isBD);
 
     Word getASID() const;
     Word getPC() const { return currPC; }
     Word getInstruction() const { return currInstr; }
-    bool getVM() const;
 
     bool InUserMode() const;
     bool InKernelMode() const;
@@ -199,6 +199,8 @@ private:
 
     size_t tlbSize;
     scoped_array<TLBEntry> tlb;
+    
+    Word tlbFloorAddress;
 
     // private methods
     void setStatus(ProcessorStatus newStatus);
@@ -221,8 +223,8 @@ private:
 
     void randomRegTick(void);
 
-    void pushKUIEVMStack(void);
-    void popKUIEVMStack(void);
+    void pushKUIEStack(void);
+    void popKUIEStack(void);
 
     void setTLBRegs(Word vaddr);
     bool checkForInt();

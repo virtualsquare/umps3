@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +45,7 @@ const char* const DeviceTreeModel::iconMap[N_EXT_IL] = {
 static const char* const devTypeStr[N_EXT_IL + 1] = {
     "NULLDEV ",
     "DISK    ",
-    "TAPE    ",
+    "FLASH   ",
     "NETWORK ",
     "PRINTER ",
     "TERMINAL"
@@ -160,7 +161,7 @@ QVariant DeviceTreeModel::data(const QModelIndex& index, int role) const
             if (role == Qt::DisplayRole) {
                 static const char* const dtName[N_EXT_IL] = {
                     "Int. Line 3 (Disks)",
-                    "Int. Line 4 (Tapes)",
+                    "Int. Line 4 (Flash devices)",
                     "Int. Line 5 (Ethernet)",
                     "Int. Line 6 (Printers)",
                     "Int. Line 7 (Terminals)"

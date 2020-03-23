@@ -2,6 +2,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010, 2011 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,6 +35,7 @@
 #define WORD_SIZE 4
 #define WS        WORD_SIZE
 
+#define BIOS_DATA_BASE  0x0FFFF000
 #define MMIO_BASE 0x10000000
 #define RAM_BASE  0x20000000
 
@@ -67,7 +69,7 @@
 #define IL_CPUTIMER         1
 #define IL_TIMER            2
 #define IL_DISK             3
-#define IL_TAPE             4
+#define IL_FLASH            4
 #define IL_ETHERNET         5
 #define IL_PRINTER          6
 #define IL_TERMINAL         7
@@ -95,18 +97,25 @@
 #define BUS_REG_TIMER           0x10000020
 #define BUS_REG_TIME_SCALE      0x10000024
 
+/* TLB floor address */
+#define TLB_FLOOR_ADDR			    0x10000028
+
+/* TLB-refill and general exceptions handlers */
+#define KERNEL_UTLB_ADDR		    0x1000002C
+#define KERNEL_EXCPT_ADDR		    0x10000030
+
 /* Installed devices bitmap */
-#define IDEV_BITMAP_BASE        0x10000028
+#define IDEV_BITMAP_BASE        0x10000034
 #define IDEV_BITMAP_END         (IDEV_BITMAP_BASE + N_EXT_IL * WS)
 #define IDEV_BITMAP_ADDR(line)  (IDEV_BITMAP_BASE + ((line) - DEV_IL_START) * WS)
 
 /* Interrupting devices bitmap */
-#define CDEV_BITMAP_BASE        0x1000003C
+#define CDEV_BITMAP_BASE        0x10000048
 #define CDEV_BITMAP_END         (CDEV_BITMAP_BASE + N_EXT_IL * WS)
 #define CDEV_BITMAP_ADDR(line)  (CDEV_BITMAP_BASE + ((line) - DEV_IL_START) * WS)
 
 /* Device register area */
-#define DEV_REG_START           0x10000050
+#define DEV_REG_START           0x1000005C
 #define DEV_REG_ADDR(line, dev) (DEV_REG_START + ((line) - DEV_IL_START) * N_DEV_PER_IL * DEV_REG_SIZE + (dev) * DEV_REG_SIZE)
 
 /* End of memory mapped external device registers area */

@@ -43,6 +43,14 @@ public:
     virtual ~InvalidCoreFileError() throw() {}
 };
 
+class ReadingError : public Error {
+public:
+    explicit ReadingError() throw()
+        : Error("Reading error") {}
+
+    virtual ~ReadingError() throw() {}
+};
+
 class CoreFileOverflow : public Error {
 public:
     explicit CoreFileOverflow() throw()

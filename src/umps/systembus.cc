@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,11 +105,14 @@ SystemBus::SystemBus(const MachineConfig* conf, Machine* machine)
     timer = MAXWORDVAL;
     eventQ = new EventQueue();
 
+    tlbFloorAddr = config->getTLBFloorAddress();
+    
     const char *coreFile = NULL;
     if (config->isLoadCoreEnabled())
         coreFile = config->getROM(ROM_TYPE_CORE).c_str();
     ram = new RamSpace(config->getRamSize() * FRAMESIZE, coreFile);
 
+    biosdata = new RamSpace(BIOSDATASIZE, NULL);
     bios = new BiosSpace(config->getROM(ROM_TYPE_BIOS).c_str());
     boot = new BiosSpace(config->getROM(ROM_TYPE_BOOT).c_str());
 
@@ -131,6 +135,7 @@ SystemBus::~SystemBus()
     delete eventQ;
 
     delete ram;
+    delete biosdata;
     delete bios;
     delete boot;
 
@@ -199,6 +204,16 @@ void SystemBus::setToDLO(Word lo)
 void SystemBus::setTimer(Word time)
 {
     timer = time;
+}
+
+void SystemBus::setUTLBHandler(Word addr)
+{
+    utlbHandler = addr;
+}
+
+void SystemBus::setExcptHandler(Word addr)
+{
+    excptHandler = addr;
 }
 
 // This method reads a data word from memory at address addr, returning it
@@ -406,6 +421,8 @@ bool SystemBus::busRead(Word addr, Word* datap, Processor* cpu)
 {
     if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size()))
         *datap = ram->MemRead(CONVERT(addr, RAMBASE));
+    else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size()))
+        *datap = biosdata->MemRead(CONVERT(addr, BIOSDATABASE));
     else if (INBOUNDS(addr, BIOSBASE, BIOSBASE + bios->Size()))
         *datap = bios->MemRead(CONVERT(addr,BIOSBASE));
     else if (INBOUNDS(addr, BOOTBASE, BOOTBASE + boot->Size()))
@@ -428,7 +445,7 @@ Word SystemBus::busRegRead(Word addr, Processor* cpu)
 {
     Word data;
 
-    if (DEV_REG_START <= addr && addr < DEV_REG_END) {
+    if (INBOUNDS(addr, DEV_REG_START, DEV_REG_END)) {
         // We're in the device register space
         DeviceAreaAddress da(addr);
         Device* device = devTable[da.line()][da.device()];
@@ -478,6 +495,15 @@ Word SystemBus::busRegRead(Word addr, Processor* cpu)
         case BUS_REG_BOOT_SIZE:
             data = boot->Size();
             break;
+        case TLB_FLOOR_ADDR:
+            data = config->getTLBFloorAddress();
+            break;
+        case KERNEL_UTLB_ADDR:
+            data = utlbHandler;
+            break;
+        case KERNEL_EXCPT_ADDR:
+            data = excptHandler;
+            break;
         default:
             // unmapped bus device register area:
             // read give 0, write has no effects
@@ -514,8 +540,8 @@ Device* SystemBus::makeDev(unsigned int intl, unsigned int dnum)
         dev = new DiskDevice(this, config, intl, dnum);
         break;
 		
-    case TAPEDEV:
-        dev = new TapeDevice(this, config, intl, dnum);
+    case FLASHDEV:
+        dev = new FlashDevice(this, config, intl, dnum);
         break;
 			
     default:
@@ -533,6 +559,8 @@ bool SystemBus::busWrite(Word addr, Word data, Processor* cpu)
 {
     if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size())) {
         ram->MemWrite(CONVERT(addr, RAMBASE), data);
+    } else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size())) {
+        biosdata->MemWrite(CONVERT(addr, BIOSDATABASE), data);
     } else if (INBOUNDS(addr, MMIO_BASE, MMIO_END)) {
         if (DEV_REG_START <= addr && addr < DEV_REG_END) {
             DeviceAreaAddress dva(addr);
@@ -546,13 +574,23 @@ bool SystemBus::busWrite(Word addr, Word data, Processor* cpu)
             mpController->Write(addr, data, NULL);
         } else {
             // data write is in bus registers area
-            if (addr == BUS_REG_TIMER) {
-                // update the interval timer and reset its interrupt line
-                timer = data;
-                pic->EndIRQ(IL_TIMER);
+            switch (addr) {
+                case BUS_REG_TIMER:
+                    // update the interval timer and reset its interrupt line
+                    timer = data;
+                    pic->EndIRQ(IL_TIMER);
+                    break;
+                case KERNEL_UTLB_ADDR:
+                    utlbHandler = data;
+                    break;
+                case KERNEL_EXCPT_ADDR:
+                    excptHandler = data;
+                    break;
+                default:
+                    // data write is on a read only bus register, and
+                    // has no harmful effects
+                    break;
             }
-            // else data write is on a read only bus register, and
-            // has no harmful effects
         }
     } else {
         // Address out of valid write bounds

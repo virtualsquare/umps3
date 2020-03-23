@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +31,7 @@
 enum DeviceType {
     DT_NULL = 0,
     DT_DISK,
-    DT_TAPE,
+    DT_FLASH,
     DT_ETH,
     DT_PRINTER,
     DT_TERMINAL,
@@ -40,12 +41,13 @@ enum DeviceType {
 #define PRNTBUFSIZE 128
 #define TERMBUFSIZE 128
 #define DISKBUFSIZE 128
-#define TAPEBUFSIZE 128
+#define FLASHBUFSIZE 128
 #define ETHBUFSIZE 128
  
 class SystemBus;
 class Block;
-class DriveParams;
+class DiskParams;
+class FlashParams;
 class netinterface;
 class MachineConfig;
 
@@ -95,14 +97,6 @@ public:
     // TerminalDevice receiver buffer: not operational for all other
     // devices (NULLDEV included) and produces a panic message
     virtual void Input(const char* inputstr);
-
-    // This method allows to load/unload tapes inside a TapeDevice. For
-    // it, if tFName == NULL or EMPTYSTR, method returns TRUE if a new
-    // tape may be loaded, FALSE otherwise; else, if tFName != NULL it
-    // tries to load the specified tape file, returning completion
-    // status. This method is not operational for other devices (NULLDEV
-    // included) and produces a panic message
-    virtual bool TapeLoad(const char * tFName);
 
     // This method returns the current value for device register field
     // indexed by regnum
@@ -247,8 +241,8 @@ private:
 /**************************************************************************/
 
 
-// DiskDevice class allows to emulate a disk drive: each 512 byte sector it
-// contains is identified by (cyl, head, sect) set of disk coordinates;
+// DiskDevice class allows to emulate a disk drive: each 512 byte sector
+// is identified by (cyl, head, sect) set of disk coordinates;
 // (geometry and performance figures are loaded from disk image file). 
 // Operations on sectors (R/W) require previous seek on the desired cylinder.
 // It also contains a sector buffer of one sector to speed up operations.
@@ -257,7 +251,7 @@ private:
 // implementation: refer to it for individual methods descriptions.
 //
 // It adds to Device data structure:
-// a pointer to SetupInfo object containing printer log file name;
+// a pointer to SetupInfo object containing disk log file name;
 // a static buffer for device operation & status description;
 // a FILE structure for disk image file access;
 // a set of disk parameters (read from disk image file header);
@@ -289,7 +283,7 @@ private:
     SWord diskOfs;
 		
     // disk performance parameters
-    DriveParams * diskP;
+    DiskParams * diskP;
 		
     // sector underhead time in ticks
     Word sectTicks;
@@ -301,46 +295,48 @@ private:
 
 /**************************************************************************/
 
-
-// TapeDevice class allows to emulate removable cartridge tape drives. 
-// Individual tapes may be loaded and unloaded, rewound and read 
-// (see performance figures shown before). TapeDevice uses the same
-// interface as Device, redefining only a few methods' implementation: refer
-// to it for individual methods descriptions.
+// FlashDevice class allows to emulate a flash drive: each 512 byte block
+// is identified by one flash device coordinate;
+// (geometry and performance figures are loaded from flash device image file). 
+// It also contains a block buffer of one block to speed up operations.
+//
+// FlashDevice uses the same interface as Device, redefining only a few methods'
+// implementation: refer to it for individual methods descriptions.
+// 
 // It adds to Device data structure:
-// a pointer to SetupInfo object containing tape cartridge log file name;
+// a pointer to SetupInfo object containing flash device log file name;
 // a static buffer for device operation & status description;
-// a FILE structure for log file access;
-// a Block object for file handling.
+// a FILE structure for flash device image file access;
+// a Block object for file handling;
+// some items for performance computation.
 
-class TapeDevice : public Device {
+class FlashDevice : public Device {
 public:
-    TapeDevice(SystemBus* bus, const MachineConfig* cfg, unsigned int line, unsigned int devNo);
-    virtual ~TapeDevice();
+    FlashDevice(SystemBus* bus, const MachineConfig* cfg, unsigned int line, unsigned int devNo);
+    virtual ~FlashDevice();
     virtual void WriteDevReg(unsigned int regnum, Word data);
     virtual unsigned int CompleteDevOp();
     virtual const char * getDevSStr();
-    virtual bool TapeLoad(const char * tFName);
 
 private:
     const MachineConfig* const config;
 
-    // to access tape image file
-    FILE * tapeFile;
-    char * tapeFName;
-
-    // to read tape blocks and know current position (starts with block 0)
-    Block * tapeBlk;
-    unsigned int tapeBp;
-
-    // loaded cartridge flag
-    bool tapeLoaded;
-
+    // to handle it
+    FILE * flashFile;
+		
     // static buffer
-    char statStr[TAPEBUFSIZE];
+    char statStr[FLASHBUFSIZE];
+		
+    // block buffer and coordinates on flash device (block)
+    Block * flashBuf;
+    unsigned int blockBuf;
+		
+    // start of flash device image inside file (after header)
+    SWord flashOfs;
+		
+    // flash device performance parameters
+    FlashParams * flashP;
 };
-
-
 
 
 /**************************************************************************/

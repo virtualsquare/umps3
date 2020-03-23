@@ -127,7 +127,7 @@ private:
     // machine reconfigurations, resets, etc.
     unsigned int stopMask;
 
-    unsigned int speed;
+    int speed;
     static const unsigned int kIterCycles[kNumSpeedLevels];
     static const unsigned int kIterInterval[kNumSpeedLevels];
 

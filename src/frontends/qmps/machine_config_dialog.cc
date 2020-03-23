@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010, 2011 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,10 +42,14 @@
 #include <QFileDialog>
 
 #include "umps/arch.h"
+#include "umps/const.h"
 #include "qmps/application.h"
 #include "qmps/address_line_edit.h"
 #include "qmps/mac_id_edit.h"
 #include "qmps/machine_config_dialog_priv.h"
+#include "qmps/ui_utils.h"
+
+constexpr Word MachineConfig::TLB_FLOOR_ADDRESS[];
 
 MachineConfigDialog::MachineConfigDialog(MachineConfig* config, QWidget* parent)
     : QDialog(parent),
@@ -101,74 +106,104 @@ QWidget* MachineConfigDialog::createGeneralTab()
         currentIndex++;
     }
     layout->addWidget(tlbSizeList, 3, 3);
+    
+    layout->addWidget(new QLabel("TLB Floor Address:"), 4, 1);
+    tlbFloorAddressList = new QComboBox;
+    currentIndex = 0;
+    bool ramtop = true;
+    for (unsigned int val : MachineConfig::TLB_FLOOR_ADDRESS) {
+        if (val == MAXWORDVAL) 
+            tlbFloorAddressList->addItem("VM OFF");
+        else 
+            tlbFloorAddressList->addItem(FormatAddress(val));
+        if (config->getTLBFloorAddress() == val) {
+            tlbFloorAddressList->setCurrentIndex(currentIndex);
+            ramtop = false;
+        }
+        currentIndex++;
+    }
+    if (ramtop) tlbFloorAddressList->setCurrentIndex(currentIndex-1);
+    layout->addWidget(tlbFloorAddressList, 4, 3);
+    connect(tlbFloorAddressList, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
+    
+    layout->addWidget(tlbFloorAddrWarningLabel = new QLabel, 4, 4);
+    QPalette pWarningTlb = tlbFloorAddrWarningLabel->palette();
+    pWarningTlb.setColor(tlbFloorAddrWarningLabel->foregroundRole(), Qt::red);
+    tlbFloorAddrWarningLabel->setPalette(pWarningTlb);
 
-    layout->addWidget(new QLabel("RAM Size (Frames):"), 4, 1);
+    layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
     ramSizeSpinner = new QSpinBox();
     ramSizeSpinner->setMinimum(MachineConfig::MIN_RAM);
     ramSizeSpinner->setMaximum(MachineConfig::MAX_RAM);
     ramSizeSpinner->setValue(config->getRamSize());
-    layout->addWidget(ramSizeSpinner, 4, 3);
+    layout->addWidget(ramSizeSpinner, 5, 3);
 
     QSignalMapper* fileChooserMapper = new QSignalMapper(this);
     connect(fileChooserMapper, SIGNAL(mapped(int)), this, SLOT(getROMFileName(int)));
     QPushButton* fileChooserButton;
 
-    layout->addWidget(new QLabel("<b>BIOS</b>"), 6, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>BIOS</b>"), 7, 0, 1, 3);
 
-    layout->addWidget(new QLabel("Bootstrap ROM:"), 7, 1);
+    layout->addWidget(new QLabel("Bootstrap ROM:"), 8, 1);
     romFileInfo[ROM_TYPE_BOOT].description = "Bootstrap ROM";
     romFileInfo[ROM_TYPE_BOOT].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_BOOT].lineEdit, 7, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_BOOT].lineEdit, 8, 3, 1, 2);
     romFileInfo[ROM_TYPE_BOOT].lineEdit->setText(config->getROM(ROM_TYPE_BOOT).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_BOOT);
-    layout->addWidget(fileChooserButton, 7, 5);
+    layout->addWidget(fileChooserButton, 8, 5);
 
-    layout->addWidget(new QLabel("Execution ROM:"), 8, 1);
+    layout->addWidget(new QLabel("Execution ROM:"), 9, 1);
     romFileInfo[ROM_TYPE_BIOS].description = "Execution ROM";
     romFileInfo[ROM_TYPE_BIOS].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_BIOS].lineEdit, 8, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_BIOS].lineEdit, 9, 3, 1, 2);
     romFileInfo[ROM_TYPE_BIOS].lineEdit->setText(config->getROM(ROM_TYPE_BIOS).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_BIOS);
-    layout->addWidget(fileChooserButton, 8, 5);
+    layout->addWidget(fileChooserButton, 9, 5);
 
-    layout->addWidget(new QLabel("<b>Boot</b>"), 10, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>Boot</b>"), 11, 0, 1, 3);
 
     coreBootCheckBox = new QCheckBox("Load core file");
     coreBootCheckBox->setChecked(config->isLoadCoreEnabled());
-    layout->addWidget(coreBootCheckBox, 11, 1, 1, 3);
+    layout->addWidget(coreBootCheckBox, 12, 1, 1, 3);
 
-    layout->addWidget(new QLabel("Core file:"), 12, 1);
+    layout->addWidget(new QLabel("Core file:"), 13, 1);
     romFileInfo[ROM_TYPE_CORE].description = "Core";
     romFileInfo[ROM_TYPE_CORE].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_CORE].lineEdit, 12, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_CORE].lineEdit, 13, 3, 1, 2);
     romFileInfo[ROM_TYPE_CORE].lineEdit->setText(config->getROM(ROM_TYPE_CORE).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_CORE);
-    layout->addWidget(fileChooserButton, 12, 5);
+    layout->addWidget(fileChooserButton, 13, 5);
 
-    layout->addWidget(new QLabel("<b>Debugging Support</b>"), 14, 0, 1, 3);
+    layout->addWidget(new QLabel("<b>Debugging Support</b>"), 15, 0, 1, 3);
 
-    layout->addWidget(new QLabel("Symbol Table:"), 15, 1);
+    layout->addWidget(new QLabel("Symbol Table:"), 16, 1);
 
     romFileInfo[ROM_TYPE_STAB].description = "Symbol Table";
     romFileInfo[ROM_TYPE_STAB].lineEdit = new QLineEdit;
-    layout->addWidget(romFileInfo[ROM_TYPE_STAB].lineEdit, 15, 3, 1, 2);
+    layout->addWidget(romFileInfo[ROM_TYPE_STAB].lineEdit, 16, 3, 1, 2);
     romFileInfo[ROM_TYPE_STAB].lineEdit->setText(config->getROM(ROM_TYPE_STAB).c_str());
     fileChooserButton = new QPushButton("Browse...");
     connect(fileChooserButton, SIGNAL(clicked()), fileChooserMapper, SLOT(map()));
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_STAB);
-    layout->addWidget(fileChooserButton, 15, 5);
+    layout->addWidget(fileChooserButton, 16, 5);
 
-    layout->addWidget(new QLabel("Symbol Table ASID:"), 16, 1);
+    layout->addWidget(new QLabel("Symbol Table ASID:"), 17, 1);
     stabAsidEdit = new AsidLineEdit;
     stabAsidEdit->setMaximumWidth(100);
     stabAsidEdit->setAsid(config->getSymbolTableASID());
-    layout->addWidget(stabAsidEdit, 16, 3);
+    layout->addWidget(stabAsidEdit, 17, 3);
+    connect(stabAsidEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
+    
+    layout->addWidget(asidWarningLabel = new QLabel, 17, 4);
+    QPalette pWarningAsid = asidWarningLabel->palette();
+    pWarningAsid.setColor(asidWarningLabel->foregroundRole(), Qt::red);
+    asidWarningLabel->setPalette(pWarningAsid);
 
     layout->setColumnMinimumWidth(0, 10);
     layout->setColumnMinimumWidth(2, 10);
@@ -220,10 +255,10 @@ QWidget* MachineConfigDialog::createDeviceTab()
                         "Disks", "Disk",
                         true);
 
-    registerDeviceClass("Tapes\n Interrupt Line 4",
+    registerDeviceClass("Flash Devices\n Interrupt Line 4",
                         ":/icons/tape-32.png",
-                        EXT_IL_INDEX(IL_TAPE),
-                        "Tapes", "Tape");
+                        EXT_IL_INDEX(IL_FLASH),
+                        "Flash Devices", "Flash");
 
     registerDeviceClass("Network\n Interrupt Line 5",
                         ":/icons/network-32.png",
@@ -288,6 +323,7 @@ void MachineConfigDialog::saveConfigChanges()
     config->setClockRate(clockRateSpinner->value());
     config->setTLBSize(MachineConfig::MIN_TLB << tlbSizeList->currentIndex());
     config->setRamSize(ramSizeSpinner->value());
+    config->setTLBFloorAddress(MachineConfig::TLB_FLOOR_ADDRESS[tlbFloorAddressList->currentIndex()]);
 
     config->setROM(ROM_TYPE_BOOT,
                    QFile::encodeName(romFileInfo[ROM_TYPE_BOOT].lineEdit->text()).constData());
@@ -302,6 +338,23 @@ void MachineConfigDialog::saveConfigChanges()
     config->setSymbolTableASID(stabAsidEdit->getAsid());
 }
 
+void MachineConfigDialog::validate()
+{
+    int index = tlbFloorAddressList->currentIndex();
+    Word asid = stabAsidEdit->getAsid();
+    
+    if (index == 0) {
+        tlbFloorAddrWarningLabel->setText("Warning: advanced user only");
+    } else {
+        tlbFloorAddrWarningLabel->setText("");
+    }
+    
+    if (asid < MAXASID) {
+        asidWarningLabel->setText("Warning: advanced user only (default = 0x40)");
+    } else {
+        asidWarningLabel->setText("");
+    }
+}
 
 DeviceFileChooser::DeviceFileChooser(const QString& deviceClassName,
                                      const QString& deviceName,

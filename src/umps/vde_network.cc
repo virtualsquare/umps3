@@ -181,7 +181,7 @@ unsigned int netinterface::writedata(char *buf, int len)
 
 unsigned int netinterface::polling()
 {
-	int len, fd;
+	int len;
 	//socklen_t datainsize;
 	//struct sockaddr_un datain;
 	do {

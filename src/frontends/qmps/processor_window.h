@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -63,7 +64,6 @@ private:
     QLabel* pcLabel;
     QLabel* instructionLabel;
 
-    QLabel* vmIndicator;
     QLabel* bdIndicator;
     QLabel* ldIndicator;
 

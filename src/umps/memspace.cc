@@ -59,7 +59,12 @@ RamSpace::RamSpace(Word size_, const char* fName)
             throw InvalidCoreFileError(fName, "Invalid core file");
         }
 
-        fread((void *) ram.get(), WORDLEN, size, cFile);
+        if (fread((void *) ram.get(), WORDLEN, size, cFile) != size)
+            if (ferror(cFile)) {
+                fclose(cFile);
+                throw ReadingError();
+            }
+
         if (!feof(cFile)) {
             fclose(cFile);
             throw CoreFileOverflow();

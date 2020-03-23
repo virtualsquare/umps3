@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -199,7 +200,8 @@ Processor::Processor(const MachineConfig* config, Word cpuId, Machine* machine, 
       bus(bus),
       status(PS_HALTED),
       tlbSize(config->getTLBSize()),
-      tlb(new TLBEntry[tlbSize])
+      tlb(new TLBEntry[tlbSize]),
+      tlbFloorAddress(config->getTLBFloorAddress())
 {}
 
 Processor::~Processor() {}
@@ -229,7 +231,7 @@ void Processor::Reset(Word pc, Word sp)
     // no loads pending at start
     loadPending = LOAD_TARGET_NONE;
     loadReg = 0;
-    loadVal = MAXWORDVAL;
+    loadVal = MAXSWORDVAL;
 
     // clear general purpose registers
     for (i = 0; i < CPUREGNUM; i++)
@@ -394,24 +396,18 @@ void Processor::DeassertIRQ(unsigned int il)
 // This method allows to get critical information on Processor current
 // internal status. Parameters are self-explanatory: they are extracted from
 // proper places inside Processor itself
-void Processor::getCurrStatus(Word * asid, Word * pc, Word * instr, bool * isLD, bool * isBD, bool * isVM)
+void Processor::getCurrStatus(Word * asid, Word * pc, Word * instr, bool * isLD, bool * isBD)
 {
     *asid = (ASID(cpreg[ENTRYHI])) >> ASIDOFFS;
     *pc = currPC;
     *instr = currInstr;
     *isLD = (loadPending != LOAD_TARGET_NONE);
     *isBD = isBranchD; 
-    *isVM = BitVal(cpreg[STATUS], VMCBITPOS);
 }
 
 Word Processor::getASID() const
 {
     return ASID(cpreg[ENTRYHI]) >> ASIDOFFS;
-}
-
-bool Processor::getVM() const
-{
-    return BitVal(cpreg[STATUS], VMCBITPOS);
 }
 
 bool Processor::InUserMode() const
@@ -575,9 +571,9 @@ void Processor::randomRegTick()
         cpreg[RANDOM] =  ((tlbSize - 1UL) << RNDIDXOFFS);
 }
 
-// This method pushes the KU/IE and VM bit stacks in CP0 STATUS register to start
+// This method pushes the KU/IE bit stacks in CP0 STATUS register to start
 // exception handling
-void Processor::pushKUIEVMStack()
+void Processor::pushKUIEStack()
 {
     unsigned int bitp;
 	
@@ -587,36 +583,21 @@ void Processor::pushKUIEVMStack()
             cpreg[STATUS] = SetBit(cpreg[STATUS], bitp);
         else
             cpreg[STATUS] = ResetBit(cpreg[STATUS], bitp);
-
-    // push the VM stack
-    for (bitp = VMOBITPOS; bitp > VMCBITPOS; bitp--)
-        if (BitVal(cpreg[STATUS], bitp - 1))
-            cpreg[STATUS] = SetBit(cpreg[STATUS], bitp);
-        else
-            cpreg[STATUS] = ResetBit(cpreg[STATUS], bitp);
 			
-    // sets to 0 current KU IE VM bits
+    // sets to 0 current KU IE bits
     cpreg[STATUS] = ResetBit(cpreg[STATUS], KUCBITPOS);
     cpreg[STATUS] = ResetBit(cpreg[STATUS], IECBITPOS);
-    cpreg[STATUS] = ResetBit(cpreg[STATUS], VMCBITPOS);
 }
 
 
-// This method pops the KU/IE and VM bit stacks in CP0 STATUS register to end
+// This method pops the KU/IE bit stacks in CP0 STATUS register to end
 // exception handling. It is invoked on RFE instruction execution
-void Processor::popKUIEVMStack()
+void Processor::popKUIEStack()
 {
     unsigned int bitp;
 	
     for (bitp = IECBITPOS; bitp < IEOBITPOS; bitp++) {
         if (BitVal(cpreg[STATUS], bitp + 2))
-            cpreg[STATUS] = SetBit(cpreg[STATUS], bitp);
-        else
-            cpreg[STATUS] = ResetBit(cpreg[STATUS], bitp);
-    }
-
-    for (bitp = VMCBITPOS; bitp < VMOBITPOS; bitp++) {
-        if (BitVal(cpreg[STATUS], bitp + 1))
             cpreg[STATUS] = SetBit(cpreg[STATUS], bitp);
         else
             cpreg[STATUS] = ResetBit(cpreg[STATUS], bitp);
@@ -689,7 +670,7 @@ void Processor::handleExc()
         excVector = KSEG0BASE;
     }
 
-    pushKUIEVMStack();
+    pushKUIEStack();
 
     if (excCause == UTLBLEXCEPTION || excCause == UTLBSEXCEPTION)
         excVector += TLBREFOFFS;
@@ -791,101 +772,72 @@ void Processor::completeLoad()
 // for address conversion is returned thru paddr pointer.
 // AccType details memory access type (READ/WRITE/EXECUTE)
 bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
-{
-    if (BitVal(cpreg[STATUS], VMCBITPOS)) {
-        // VM is on
-	
-        // SignalProcVAccess() is always done so it is possible 
-        // to track accesses which produce exceptions
-        machine->HandleVMAccess(ENTRYHI_GET_ASID(cpreg[ENTRYHI]), vaddr, accType, this);
+{    	
+    // SignalProcVAccess() is always done so it is possible 
+    // to track accesses which produce exceptions
+    machine->HandleVMAccess(ENTRYHI_GET_ASID(cpreg[ENTRYHI]), vaddr, accType, this);
 
-        // address validity and bounds check
-        if (BADADDR(vaddr) || (InUserMode() && (vaddr < KUSEG2BASE))) {
-            // bad offset or kernel segment access from user mode
-            *paddr = MAXWORDVAL;
-		
-            // the bad virtual address is put into BADVADDR reg
-            cpreg[BADVADDR] = vaddr;
-		
-            if (accType == WRITE)
-                SignalExc(ADESEXCEPTION);
-            else
-                SignalExc(ADELEXCEPTION);
+    // address validity and bounds check
+    if (BADADDR(vaddr) || (InUserMode() && (INBOUNDS(vaddr, KSEG0BASE, KUSEG2BASE)))) {
+        // bad offset or kernel segment access from user mode
+        *paddr = MAXWORDVAL;
 
-            return true;
-        } else if (vaddr >= KSEG0BASE && vaddr < KSEG0TOP) {
-            // no bad offset; if vaddr < KUSEG2BASE the processor is surely 
-            // in kernelMode
-            // valid access to KSEG0 area
-            *paddr = vaddr;
-            return false;
-        }
+        // the bad virtual address is put into BADVADDR reg
+        cpreg[BADVADDR] = vaddr;
 
-        // The access is in user mode to user space, or in kernel mode
-        // to KSEGOS or KSEG2/3 spaces.
-	
-        unsigned int index;
-        if (probeTLB(&index, cpreg[ENTRYHI], vaddr)) {
-            if (tlb[index].IsV()) {
-                if (accType != WRITE || tlb[index].IsD()) {
-                    // All OK
-                    *paddr = PHADDR(vaddr, tlb[index].getLO());
-                    return false;
-                } else {
-                    // write operation on frame with D bit set to 0
-                    *paddr = MAXWORDVAL;
-                    setTLBRegs(vaddr);
-                    SignalExc(MODEXCEPTION);
-                    return true;
-                }
-            } else  {
-                // invalid access to frame with V bit set to 0
+        if (accType == WRITE)
+            SignalExc(ADESEXCEPTION);
+        else
+            SignalExc(ADELEXCEPTION);
+
+        return true;
+    } else if (INBOUNDS(vaddr, KSEG0BASE, tlbFloorAddress)) {
+        // no bad offset; if vaddr < KUSEG2BASE the processor is surely 
+        // in kernelMode
+        // valid access to KSEG0 area
+        *paddr = vaddr;
+        return false;
+    }
+
+    // The access is in user mode to user space, or in kernel mode
+    // to KSEGOS or KSEG2/3 spaces.
+
+    unsigned int index;
+    if (probeTLB(&index, cpreg[ENTRYHI], vaddr)) {
+        if (tlb[index].IsV()) {
+            if (accType != WRITE || tlb[index].IsD()) {
+                // All OK
+                *paddr = PHADDR(vaddr, tlb[index].getLO());
+                return false;
+            } else {
+                // write operation on frame with D bit set to 0
                 *paddr = MAXWORDVAL;
                 setTLBRegs(vaddr);
-                if (accType == WRITE)
-                    SignalExc(TLBSEXCEPTION);
-                else 
-                    SignalExc(TLBLEXCEPTION);
-
+                SignalExc(MODEXCEPTION);
                 return true;
-            }		
-        } else {
-            // bad or missing VPN match: Refill event required
+            }
+        } else  {
+            // invalid access to frame with V bit set to 0
             *paddr = MAXWORDVAL;
             setTLBRegs(vaddr);
             if (accType == WRITE)
-                SignalExc(UTLBSEXCEPTION);
+                SignalExc(TLBSEXCEPTION);
             else 
-                SignalExc(UTLBLEXCEPTION);
+                SignalExc(TLBLEXCEPTION);
 
             return true;
-        }	
+        }		
     } else {
-        // VM is off	
-		
-        // SignalProcVAccess() is always done so it is possible 
-        // to track accesses which produce exceptions
-        machine->HandleVMAccess(MAXASID, vaddr, accType, this);
+        // bad or missing VPN match: Refill event required
+        *paddr = MAXWORDVAL;
+        setTLBRegs(vaddr);
+        if (accType == WRITE)
+            SignalExc(UTLBSEXCEPTION);
+        else 
+            SignalExc(UTLBLEXCEPTION);
 
-        // address validity and bounds check
-        if (BADADDR(vaddr) || (InUserMode() && (vaddr < KSEG0TOP))) {
-            // bad offset or kernel segment access from user mode
-            *paddr = MAXWORDVAL;
-
-            // the bad address is put into BADVADDR reg
-            cpreg[BADVADDR] = vaddr;
-
-            if (accType == WRITE)
-                SignalExc(ADESEXCEPTION);
-            else
-                SignalExc(ADELEXCEPTION);
-
-            return true;
-        } else {
-            *paddr = vaddr;
-            return false;
-        }
-    }
+        return true;
+    }	 
 }
 
 // This method sets the CP0 special registers on exceptions forced by TLB
@@ -966,7 +918,7 @@ bool Processor::execInstr(Word instr)
                     // all instructions follow MIPS guidelines
                     switch(FUNCT(instr)) {
                     case RFE:
-                        popKUIEVMStack();
+                        popKUIEStack();
                         break;
 
                     case TLBP: 
@@ -1340,7 +1292,7 @@ bool Processor::execRegInstr(Word * res, Word instr, bool * isBD)
             else
             {
                 // divisor is zero
-                gpr[LO] = MAXWORDVAL;
+                gpr[LO] = MAXSWORDVAL;
                 gpr[HI] = 0;
             }
             break;
@@ -1354,11 +1306,10 @@ bool Processor::execRegInstr(Word * res, Word instr, bool * isBD)
             else
             {
                 // divisor is zero
-                gpr[LO] = MAXWORDVAL;
+                gpr[LO] = MAXSWORDVAL;
                 gpr[HI] = 0;
             }
             break;
-				
         case SFN_JALR:
             // solution "by the book"
             succPC = gpr[RS(instr)];

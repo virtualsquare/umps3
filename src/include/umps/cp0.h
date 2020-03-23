@@ -40,13 +40,6 @@
 #define STATUS_BEV       0x00400000
 #define STATUS_BEV_BIT   22
 
-#define STATUS_VMc       0x01000000
-#define STATUS_VMc_BIT   24
-#define STATUS_VMp       0x02000000
-#define STATUS_VMp_BIT   25
-#define STATUS_VMo       0x04000000
-#define STATUS_VMo_BIT   26
-
 #define STATUS_TE        0x08000000
 #define STATUS_TE_BIT    27
 

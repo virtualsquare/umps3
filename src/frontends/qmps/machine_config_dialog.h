@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,6 +33,7 @@ class QSpinBox;
 class QComboBox;
 class QLineEdit;
 class QCheckBox;
+class QLabel;
 class AsidLineEdit;
 
 class MachineConfigDialog : public QDialog {
@@ -55,9 +57,12 @@ private:
     QSpinBox* cpuSpinner;
     QSpinBox* clockRateSpinner;
     QComboBox* tlbSizeList;
+    QComboBox* tlbFloorAddressList;
     QSpinBox* ramSizeSpinner;
     QCheckBox* coreBootCheckBox;
     AsidLineEdit* stabAsidEdit;
+    QLabel* asidWarningLabel;
+    QLabel* tlbFloorAddrWarningLabel;
 
     struct {
         const char* description;
@@ -73,6 +78,8 @@ private Q_SLOTS:
     void onDeviceClassChanged();
 
     void saveConfigChanges();
+    
+    void validate();
 };
 
 #endif // QMPS_MACHINE_CONFIG_DIALOG_H

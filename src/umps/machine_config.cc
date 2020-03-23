@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -49,7 +50,7 @@ static T bumpProperty(T minValue, T value, T maxValue)
 
 const char* const MachineConfig::deviceKeyPrefix[N_EXT_IL] = {
     "disk",
-    "tape",
+    "flash",
     "eth",
     "printer",
     "terminal"
@@ -63,7 +64,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
         return NULL;
     }
 
-    std::auto_ptr<JsonObject> root;
+    std::unique_ptr<JsonObject> root;
 
     try {
         JsonParser parser;
@@ -78,7 +79,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
         return NULL;
     }
 
-    std::auto_ptr<MachineConfig> config(new MachineConfig(fileName));
+    std::unique_ptr<MachineConfig> config(new MachineConfig(fileName));
 
     try {
         if (root->HasMember("num-processors"))
@@ -87,6 +88,8 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
             config->setClockRate(root->Get("clock-rate")->AsNumber());
         if (root->HasMember("tlb-size"))
             config->setTLBSize(root->Get("tlb-size")->AsNumber());
+        if (root->HasMember("tlb-floor-address"))
+            config->setTLBFloorAddress(stoul((root->Get("tlb-floor-address")->AsString()).erase(0, 2), 0, 16));
         if (root->HasMember("num-ram-frames"))
             config->setRamSize(root->Get("num-ram-frames")->AsNumber());
 
@@ -135,7 +138,7 @@ MachineConfig* MachineConfig::LoadFromFile(const std::string& fileName, std::str
 
 MachineConfig* MachineConfig::Create(const std::string& fileName)
 {
-    std::auto_ptr<MachineConfig> config(new MachineConfig(fileName));
+    std::unique_ptr<MachineConfig> config(new MachineConfig(fileName));
 
     // The constructor initializes all the basic fields to sane
     // initial values; in addition, we enable a terminal device for
@@ -155,6 +158,7 @@ void MachineConfig::Save()
     root->Set("num-processors", (int) getNumProcessors());
     root->Set("clock-rate", (int) getClockRate());
     root->Set("tlb-size", (int) getTLBSize());
+    root->Set("tlb-floor-address", IntToHexString(getTLBFloorAddress()));
     root->Set("num-ram-frames", (int) getRamSize());
 
     JsonObject* bootOpt = new JsonObject;
@@ -242,6 +246,11 @@ void MachineConfig::setTLBSize(Word size)
     tlbSize = bumpProperty(MIN_TLB, size, MAX_TLB);
 }
 
+void MachineConfig::setTLBFloorAddress(Word addr)
+{
+    tlbFloorAddress = addr;
+}
+
 void MachineConfig::setROM(ROMType type, const std::string& fileName)
 {
     romFiles[type] = fileName;
@@ -262,7 +271,7 @@ unsigned int MachineConfig::getDeviceType(unsigned int il, unsigned int devNo) c
     assert(il < N_EXT_IL && devNo < N_DEV_PER_IL);
 
     static unsigned int types[] = {
-        DISKDEV, TAPEDEV, ETHDEV, PRNTDEV, TERMDEV
+        DISKDEV, FLASHDEV, ETHDEV, PRNTDEV, TERMDEV
     };
 
     if (getDeviceEnabled(il, devNo) && !getDeviceFile(il, devNo).empty())
@@ -318,6 +327,7 @@ void MachineConfig::resetToFactorySettings()
     setNumProcessors(DEFAULT_NUM_CPUS);
     setClockRate(DEFAULT_CLOCK_RATE);
     setTLBSize(DEFAULT_TLB_SIZE);
+    setTLBFloorAddress(DEFAULT_TLB_FLOOR_ADDRESS);
     setRamSize(DEFAUlT_RAM_SIZE);
 
     std::string dataDir = PACKAGE_DATA_DIR;

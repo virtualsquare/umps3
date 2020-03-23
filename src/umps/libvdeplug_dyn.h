@@ -95,7 +95,7 @@ typedef VDECONN * (* VDE_OPEN_REAL_T)(const char *vde_switch,char *descr,int int
 typedef size_t (* VDE_RECV_T)(VDECONN *conn,void *buf,size_t len,int flags);
 typedef size_t (* VDE_SEND_T)(VDECONN *conn,const void *buf,size_t len,int flags);
 typedef int (* VDE_INT_FUN)(VDECONN *conn);
-#define libvdeplug_dynopen(x) ({ \
+#define libvdeplug_dynopen(x) do { \
 	(x).dl_handle=dlopen("libvdeplug.so",RTLD_NOW); \
 	if ((x).dl_handle) { \
 		(x).vde_open_real=(VDE_OPEN_REAL_T) dlsym((x).dl_handle,"vde_open_real"); \
@@ -109,8 +109,8 @@ typedef int (* VDE_INT_FUN)(VDECONN *conn);
 		(x).vde_send= NULL; \
 		(x).vde_recv= NULL; \
 		(x).vde_datafd= (x).vde_ctlfd= (x).vde_close= NULL; \
-		}\
-		})
+		} \
+		} while (0);
 
 #define libvdeplug_dynclose(x) ({ \
 		dlclose((x).dl_handle); \

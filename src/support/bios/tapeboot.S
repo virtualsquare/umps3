@@ -4,6 +4,7 @@
  *
  * Copyright (C) 2004 Mauro Morsiani
  * Copyright (C) 2011 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,13 +32,13 @@
 
 /* Device register ptrs */
 #define TERM0COMMAND      DEV_REG_ADDR(IL_TERMINAL, 0) + 0xC
-#define TAPE0BASE         DEV_REG_ADDR(IL_TAPE, 0)
+#define TAPE0BASE         DEV_REG_ADDR(IL_FLASH, 0)
 
 /* Panic vector */
 #define BIOSPANIC 0x00000108
 
 /* New Status value */
-#define STATUSMASK 0xFDBFFFF3
+#define STATUSMASK 0xFFBFFFF3
 
 /* New/old area structure */
 #define BIOSVECTPAGE 0x20000000
@@ -113,8 +114,8 @@ tapeboot:
 LTapeBootStart:	
 	# mapping all exception vectors to BIOS code
 	# this is done resetting bit 22 in STATUS CP0 register
-	# we also assure that kernel will start in kernel mode, with
-	# interrupts and VM disabled: this is done zeroing bits 3, 2 and 25
+	# we also assure that kernel will start in kernel mode with
+	# interrupts disabled: this is done zeroing bits 3 and 2.
 	mfc0	$a0, $CP0_Status
 	li	$a1, STATUSMASK   
 	and	$a0, $a0, $a1

@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +24,9 @@
  *
  * This is a stand-alone program which produces "empty" disk image files
  * with specified performance figures and geometry, or assembles existing
- * data files into a single tape image file.  Disk image files are used to
- * emulate disk devices; tape image files are used to emulate cartridges to
- * be loaded in tape drive devices.
+ * data files into a single flash device image file.  Disk image files are
+ * used to emulate disk devices; flash device image files are used to emulate
+ * flash drive devices.
  *
  ****************************************************************************/
 
@@ -45,9 +46,10 @@
 
 // default disk image file name
 HIDDEN char diskDflFName[] = "disk0";
+HIDDEN char flashDflFName[] = "flash0";
 
 // default disk header parameters (see h/blockdev.h)
-HIDDEN unsigned int driveDfl[DRIVEPNUM] =	{	DFLCYL,
+HIDDEN unsigned int diskDfl[DISKPNUM] =		{	DFLCYL,
 												DFLHEAD, 
 												DFLSECT,
 												DFLROTTIME, 
@@ -55,15 +57,22 @@ HIDDEN unsigned int driveDfl[DRIVEPNUM] =	{	DFLCYL,
 												DFLDATAS
 											};
 
+// default flash device header parameters (see h/blockdev.h)
+HIDDEN unsigned int flashDfl[FLASHPNUM] =	{	DFLBLOCKS,
+												DFLWTIME,
+											};							
+
 //
 // Program functions
 //
 
 HIDDEN void showHelp(const char * prgName);
 HIDDEN int mkDisk(int argc, char * argv[]);
-HIDDEN int mkTape(int argc, char * argv[]);
-HIDDEN bool decodeDriveP(int idx, unsigned int * par, const char * str);
+HIDDEN int mkFlash(int argc, char * argv[]);
+HIDDEN bool decodeDiskP(int idx, unsigned int * par, const char * str);
+HIDDEN bool decodeFlashP(int idx, unsigned int * par, const char * str);
 HIDDEN int writeDisk(const char * prg, const char * fname);
+HIDDEN int writeFlash(const char * prg, const char * fname, const char * file);
 HIDDEN void testForCore(FILE * rfile);
 
 // StrToWord is duplicated here from utility.cc to avoid full utility.o linking
@@ -86,8 +95,8 @@ int main(int argc, char* argv[])
         showHelp(argv[0]);
     else if (SAMESTRING("-d", argv[1]))
         ret = mkDisk(argc, argv);
-    else if (SAMESTRING("-t", argv[1]))
-        ret = mkTape(argc, argv);
+    else if (SAMESTRING("-f", argv[1]))
+		ret = mkFlash(argc, argv);
     else {
         fprintf(stderr, "%s : Unknown argument(s)\n", argv[0]);
         showHelp(argv[0]);
@@ -104,17 +113,19 @@ int main(int argc, char* argv[])
 // This function prints a warning/help message on standard error
 HIDDEN void showHelp(const char * prgName)
 {
-    fprintf(stderr, "%s syntax : %s {-d | -t} [parameters..]\n\n", prgName, prgName);
-    fprintf(stderr, "%s -d <diskfile%s> [cyl [head [sect [rpm [seekt [datas]]]]]]\n\n",prgName, MPSFILETYPE);
-    fprintf(stderr, "where:\n\ncyl = no. of cylinders\t\t[1..%u]\t(default = %u)\n", MAXCYL, driveDfl[CYLNUM]);
-    fprintf(stderr, "head = no. of heads\t\t[1..%u]\t(default = %u)\n", MAXHEAD, driveDfl[HEADNUM]);
-    fprintf(stderr, "sect = no. of sectors\t\t[1..%u]\t(default = %u)\n", MAXSECT, driveDfl[SECTNUM]); 
-    fprintf(stderr, "\nrpm = disk rotations per min.\t\t[%u..%u]\t(default = %.0f)\n", MINRPM, MAXRPM, 6E7F / driveDfl[ROTTIME]);
-    fprintf(stderr, "seekt = avg. cyl2cyl time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXSEEKTIME, driveDfl[SEEKTIME]);
-    fprintf(stderr, "datas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, driveDfl[DATASECT]); 
-    fprintf(stderr, "\n<diskfile> = disk image file name\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
-    fprintf(stderr, "\n\n%s -t <tapefile%s> <file> [file]...\n\n", prgName, MPSFILETYPE);
-    fprintf(stderr, "where:\n\n<tapefile%s> = tape image file name\n\n", MPSFILETYPE);
+    fprintf(stderr, "%s syntax : %s {-d | -f} [parameters..]\n\n", prgName, prgName);
+    fprintf(stderr, "%s -d <diskfile%s> [cyl [head [sect [rpm [seekt [datas]]]]]]\n",prgName, MPSFILETYPE);
+    fprintf(stderr, "where:\n\tcyl = no. of cylinders\t\t\t[1..%u]\t(default = %u)\n", MAXCYL, diskDfl[CYLNUM]);
+    fprintf(stderr, "\thead = no. of heads\t\t\t[1..%u]\t(default = %u)\n", MAXHEAD, diskDfl[HEADNUM]);
+    fprintf(stderr, "\tsect = no. of sectors\t\t\t[1..%u]\t(default = %u)\n", MAXSECT, diskDfl[SECTNUM]); 
+    fprintf(stderr, "\trpm = disk rotations per min.\t\t[%u..%u]\t(default = %.0f)\n", MINRPM, MAXRPM, 6E7F / diskDfl[ROTTIME]);
+    fprintf(stderr, "\tseekt = avg. cyl2cyl time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXSEEKTIME, diskDfl[SEEKTIME]);
+    fprintf(stderr, "\tdatas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, diskDfl[DATASECT]); 
+    fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
+    fprintf(stderr, "\n%s -f <flashfile%s> [blocks [wt]]\n", prgName, MPSFILETYPE);
+    fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
+	fprintf(stderr, "\twt = avg. write time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXWTIME, flashDfl[WTIME]);
+	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(default = %s%s)\n\n", flashDflFName, MPSFILETYPE);
 }
 
 
@@ -124,7 +135,6 @@ HIDDEN void showHelp(const char * prgName)
 // Returns an EXIT_SUCCESS/FAILURE code 
 HIDDEN int mkDisk(int argc, char * argv[])
 {
-	char * diskFile;
 	int i;
 	bool error = false;
 	int ret = EXIT_SUCCESS;
@@ -138,15 +148,14 @@ HIDDEN int mkDisk(int argc, char * argv[])
 	else
 	{ 
 		// start argument decoding
-		diskFile = argv[2];
 		if (argc == 3)
 			// all by default: build file image
 			ret = writeDisk(argv[0], argv[2]);
 		else
 		{
-			// scan args and places them in driveDfl[]
+			// scan args and places them in diskDfl[]
 			for (i = 0; i < argc - 3 && !error; i++)
-				error = decodeDriveP(i, &(driveDfl[i]), argv[i + 3]);	
+				error = decodeDiskP(i, &(diskDfl[i]), argv[i + 3]);	
 			if (!error)
 				// build file images
 				ret = writeDisk(argv[0], argv[2]);
@@ -161,96 +170,54 @@ HIDDEN int mkDisk(int argc, char * argv[])
 }
 
 
-// This function builds a tape image file from a list of data files passed
-// as command line arguments. Each data file is split into BLOCKSIZE blocks
-// with a end-of-block-marker at the end; each file ends with an end-of-file
-// marker and tape ends itself with an end-of tape marker. 
-// Returns an EXIT_SUCCESS/FAILURE code
-HIDDEN int mkTape(int argc, char * argv[])
-{	
-	FILE * tfile = NULL;
-	FILE * rfile = NULL;
-	Word blk[BLOCKSIZE]; 
-	Word tapeid = TAPEFILEID;
-	Word eof = TAPEEOF;
-	Word eot = TAPEEOT;
-	Word eob = TAPEEOB;
-		
-	int i, j;
+// This function builds a flash device image file from a data file passed as
+// command line argument, putting geometry and performance figures (by default
+// or passed as command line arguments) in file header. The data file is split
+// into BLOCKSIZE blocks.
+// Returns an EXIT_SUCCESS/FAILURE code 
+HIDDEN int mkFlash(int argc, char * argv[])
+{
+	int i;
+	bool error = false;
 	int ret = EXIT_SUCCESS;
 	
-	if (argc < 4 || strstr(argv[2], MPSFILETYPE) == NULL)
+	if (argc < 4 || argc > 6 || strstr(argv[2], MPSFILETYPE) == NULL)
 	{
-		// too few args
-		fprintf(stderr, "%s : file name(s) wrong/missing\n", argv[0]);
+		// too many or too few args
+		fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]); 
 		ret = EXIT_FAILURE;
 	}
 	else
-	{
-		// tries to open output file
-		if ((tfile = fopen(argv[2], "w")) == NULL || \
-			fwrite((void *) &tapeid, WORDLEN, 1, tfile) != 1)
-			ret = EXIT_FAILURE;
+	{ 
+		// start argument decoding
+		if (argc == 4)
+			// all by default: build file image
+			ret = writeFlash(argv[0], argv[2], argv[3]);
 		else
 		{
-			// loops thru arguments trying to process each data file
-			for (i = 3; i < argc && ret != EXIT_FAILURE; i++)
-				if((rfile = fopen(argv[i], "r")) == NULL)
-					ret = EXIT_FAILURE;
-				else
-				{
-					// file exists and is readable: process it
-					
-					// .core files should be stripped of magic file tag for
-					// .alignment reasons
-					testForCore(rfile);
-					
-					// splits file into blocks inside the tape image
-					while (!feof(rfile))
-					{
-						// clear block
-						for (j = 0; j < BLOCKSIZE; j++)
-							blk[j] = 0UL;
-							
-						if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0)
-							// copy block to output file
-							fwrite((void *) blk, WORDLEN, BLOCKSIZE, tfile);
-						else
-							// EOF: rewind output file to write EOF/EOT marker
-							fseek(tfile, -WORDLEN, SEEK_CUR);
-							
-						if (!feof(rfile))
-							// marks end-of-block
-							fwrite((void *) &eob, WORDLEN, 1, tfile);
-						else
-							if (i < (argc - 1))
-								// more files to be processed: marks end-of-file
-								fwrite((void *) &eof, WORDLEN, 1, tfile); 
-							else
-								// marks end-of-tape
-								fwrite((void *) &eot, WORDLEN, 1, tfile);
-					}
-					fclose(rfile);
-				}
-			
-			// tries to close tape image file	
-			if (fclose(tfile) != 0)
+			// scan args and places them in flashDfl[]
+			for (i = 0; i < argc - 4 && !error; i++)
+				error = decodeFlashP(i, &(flashDfl[i]), argv[i + 4]);
+			if (!error)
+				// build file images
+				ret = writeFlash(argv[0], argv[2], argv[3]);
+			else
+			{
+				fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]); 
 				ret = EXIT_FAILURE;
+			}
 		}
-	
-		if (ret == EXIT_FAILURE)
-			fprintf(stderr, "%s : error writing tape file image %s : %s\n", argv[0], argv[2], strerror(errno));
 	}
 	return(ret);
 }
 
 
-// This function decodes drive parameters contained in string str by
+// This function decodes disk parameters contained in string str by
 // argument position idx on the command line.
 // The decoded parameter returns thru par pointer, while decoding success
 // is signaled returning TRUE if an error occurred, and FALSE otherwise
 
-HIDDEN bool decodeDriveP(int idx, unsigned int * par, const char * str)
+HIDDEN bool decodeDiskP(int idx, unsigned int * par, const char * str)
 {
 	Word temp;
 	bool error = false;
@@ -314,6 +281,47 @@ HIDDEN bool decodeDriveP(int idx, unsigned int * par, const char * str)
 }
 
 
+// This function decodes flash device parameters contained in string str by
+// argument position idx on the command line.
+// The decoded parameter returns thru par pointer, while decoding success
+// is signaled returning TRUE if an error occurred, and FALSE otherwise
+
+HIDDEN bool decodeFlashP(int idx, unsigned int * par, const char * str)
+{
+	Word temp;
+	bool error = false;
+	
+	if (!StrToWord(str, &temp))
+		// error decoding parameter
+		error = true;
+	else 
+		switch (idx)
+		{
+			// argument decoded by position on command line
+			// min and max values are checked if needed
+			
+			case BLOCKSNUM:
+				if (INBOUNDS(temp, 1, MAXBLOCKS + 1))
+					*par = (unsigned int) temp;
+				else 
+					error = true;
+				break;
+			
+			case WTIME:
+				if (INBOUNDS(temp, 1, MAXWTIME + 1))
+					*par = (unsigned int) temp;
+				else 
+					error = true;
+				break;
+			
+			default:
+				// unknown parameter
+			error = true;
+		}
+	return(error);			
+}
+
+
 // This function creates the disk image file on the disk, prepending it with 
 // a header containing geometry and performance figures.
 // A number of 512-byte empty blocks is created, depending on disk geometry.
@@ -324,7 +332,7 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 	int ret = EXIT_SUCCESS;
 	
 	unsigned int i;
-	unsigned int dfsize = driveDfl[CYLNUM] * driveDfl[HEADNUM] * driveDfl[SECTNUM];
+	unsigned int dfsize = diskDfl[CYLNUM] * diskDfl[HEADNUM] * diskDfl[SECTNUM];
 	Word blk[BLOCKSIZE];
 	Word diskid = DISKFILEID;
 	
@@ -335,7 +343,7 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 	// tries to open image file and write header	
 	if ((dfile = fopen(fname, "w")) == NULL || \
 		fwrite((void *) &diskid, WORDLEN, 1, dfile) != 1 || \
-		fwrite((void *) driveDfl, sizeof(unsigned int), DRIVEPNUM, dfile)  != DRIVEPNUM)
+		fwrite((void *) diskDfl, sizeof(unsigned int), DISKPNUM, dfile) != DISKPNUM)
 		ret = EXIT_FAILURE;
 	else
 	{
@@ -349,6 +357,63 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 	
 	if (ret == EXIT_FAILURE)
 		fprintf(stderr, "%s : error writing disk file image %s : %s\n", prg, fname, strerror(errno));
+
+	return(ret);
+}
+
+
+// This function creates the flash device image file on the disk, prepending it with 
+// a header containing geometry and performance figures.
+// Returns an EXIT_SUCCESS/FAILURE code
+HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
+{
+	FILE * ffile = NULL;
+	FILE * rfile = NULL;
+	int ret = EXIT_SUCCESS;
+	
+	unsigned int i, n = 0;
+	Word blk[BLOCKSIZE];
+	Word flashid = FLASHFILEID;
+	
+	// tries to open image file and write header	
+	if ((ffile = fopen(fname, "w")) == NULL || \
+		fwrite((void *) &flashid, WORDLEN, 1, ffile) != 1 || \
+		fwrite((void *) flashDfl, sizeof(unsigned int), FLASHPNUM, ffile) != FLASHPNUM)
+		ret = EXIT_FAILURE;
+	else
+	{
+		// tries to process data file
+		if((rfile = fopen(file, "r")) == NULL)
+			ret = EXIT_FAILURE;
+		else {
+			// file exists and is readable: process it
+
+			// .core files should be stripped of magic file tag for
+			// .alignment reasons
+			testForCore(rfile);
+			
+			// splits file into blocks inside the flash device image
+			while (!feof(rfile))
+			{
+				// clear block
+				for (i = 0; i < BLOCKSIZE; i++)
+					blk[i] = 0UL;
+					
+				if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0) {
+					n++;
+					// copy block to output file
+					fwrite((void *) blk, WORDLEN, BLOCKSIZE, ffile);
+				}
+			}
+			fclose(rfile);
+		}
+		// tries to close flash device image file	
+		if (fclose(ffile) != 0)
+			ret = EXIT_FAILURE;
+	}
+	
+	if (ret == EXIT_FAILURE)
+		fprintf(stderr, "%s : error writing flash device file image %s : %s\n", prg, fname, strerror(errno));
 
 	return(ret);
 }
