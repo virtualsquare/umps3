@@ -9,23 +9,31 @@ set(BIOS_CFLAGS -mips1 -mabi=32 -mno-abicalls -fno-pic -ffreestanding -mfp32)
 set(BIOS_CPPFLAGS -I${PROJECT_SOURCE_DIR}/src/include)
 
 foreach(TYPE ${ROM_TYPES})
-        add_custom_target(${TYPE}.eb.rom.umps ALL
+        add_custom_target(${TYPE}.eb ALL
                 COMMAND ${XCGCC} -c -EB ${BIOS_CPPFLAGS} ${BIOS_CFLAGS} -o
-                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.eb
-                        ${CMAKE_CURRENT_SOURCE_DIR}/${TYPE}.S
-                COMMAND ${CMAKE_BINARY_DIR}/src/umps/umps2-elf2umps -v -b
-                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.eb
-                COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.eb)
-        add_dependencies(${TYPE}.eb.rom.umps umps2-elf2umps)
+                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.eb ${TYPE}.S
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                        
+        add_custom_target(${TYPE}.el ALL
+                COMMAND ${XCGCC} -c -EL ${BIOS_CPPFLAGS} ${BIOS_CFLAGS} -o
+                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.el ${TYPE}.S
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+        add_custom_target(${TYPE}.eb.rom.umps ALL
+                COMMAND umps2-elf2umps -v -b ${TYPE}.eb
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        add_dependencies(${TYPE}.eb.rom.umps ${TYPE}.eb umps2-elf2umps)
 
         add_custom_target(${TYPE}.el.rom.umps ALL
-                COMMAND ${XCGCC} -c -EL ${BIOS_CPPFLAGS} ${BIOS_CFLAGS} -o
-                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.el
-                        ${CMAKE_CURRENT_SOURCE_DIR}/${TYPE}.S
-                COMMAND ${CMAKE_BINARY_DIR}/src/umps/umps2-elf2umps -v -b
-                        ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.el
-                COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.el)
-        add_dependencies(${TYPE}.el.rom.umps umps2-elf2umps)
+                COMMAND umps2-elf2umps -v -b ${TYPE}.el
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        add_dependencies(${TYPE}.el.rom.umps ${TYPE}.el umps2-elf2umps)
+        
+        set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
+                ${TYPE}.eb
+                ${TYPE}.el
+                ${TYPE}.eb.rom.umps
+                ${TYPE}.el.rom.umps)
 endforeach()
 
 if(${WORDS_BIGENDIAN})
