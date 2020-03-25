@@ -61,7 +61,7 @@ TerminalWindow::TerminalWindow(unsigned int devNo, QWidget* parent)
         restoreGeometry(savedGeometry.toByteArray());
     } else {
         QFontMetrics fm = terminalView->fontMetrics();
-        resize(fm.width(QLatin1Char('x')) * kDefaultCols, fm.lineSpacing() * kDefaultRows);
+        resize(fm.horizontalAdvance("x") * kDefaultCols, fm.lineSpacing() * kDefaultRows);
     }
 
     connect(debugSession, SIGNAL(MachineReset()), this, SLOT(onMachineReset()));

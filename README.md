@@ -4,7 +4,7 @@ uMPS is a complete virtual machine simulator based around the MIPS R2/3000 micro
 
 ## Prerequisites
 
-- Qt 4.6.x or later
+- Qt5
 - libelf
 - Boost (headers) 1.34+
 - libsigc++ 2.0

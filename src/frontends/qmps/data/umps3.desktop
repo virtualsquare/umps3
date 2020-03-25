@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=uMPS2
+Name=uMPS3
 Comment=An educational computer system emulator
-Exec=umps2
-Icon=umps2
+Exec=umps3
+Icon=umps3
 Terminal=false
 Categories=Education;Emulator

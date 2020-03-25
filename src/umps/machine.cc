@@ -65,14 +65,14 @@ Machine::Machine(const MachineConfig* config,
 
 Machine::~Machine()
 {
-    foreach (Processor* p, cpus)
+    for (Processor* p : cpus)
         delete p;
 }
 
 void Machine::step(unsigned int steps, unsigned int* stepped, bool* stopped)
 {
     stopRequested = pauseRequested = false;
-    foreach (Processor* cpu, cpus)
+    for (Processor* cpu : cpus)
         pd[cpu->Id()].stopCause = 0;
 
     unsigned int i;
@@ -99,7 +99,7 @@ uint32_t Machine::idleCycles() const
     if ((c = bus->IdleCycles()) == 0)
         return 0;
 
-    foreach (Processor* cpu, cpus) {
+    for (Processor* cpu : cpus) {
         c = std::min(c, cpu->IdleCycles());
         if (c == 0)
             return 0;
@@ -111,7 +111,7 @@ uint32_t Machine::idleCycles() const
 void Machine::skip(uint32_t cycles)
 {
     bus->Skip(cycles);
-    foreach (Processor* cpu, cpus) {
+    for (Processor* cpu : cpus) {
         if (!cpu->isHalted())
             cpu->Skip(cycles);
     }

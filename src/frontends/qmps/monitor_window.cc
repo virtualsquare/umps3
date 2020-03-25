@@ -3,6 +3,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2010 Tomislav Jonjic
+ * Copyright (C) 2020 Mattia Biondi
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,25 +26,7 @@
 #include <sigc++/sigc++.h>
 #include <boost/assign.hpp>
 
-#include <QSignalMapper>
-#include <QWidget>
-#include <QMenu>
-#include <QTabWidget>
-#include <QMenuBar>
-#include <QToolBar>
-#include <QStatusBar>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QScrollArea>
-#include <QSplitter>
-#include <QSlider>
-#include <QTableView>
-#include <QPixmap>
-#include <QToolButton>
-#include <QMessageBox>
-#include <QFileDialog>
-#include <QFileInfo>
+#include <QtWidgets>
 
 #include "umps/machine.h"
 #include "umps/device.h"
@@ -98,16 +81,10 @@ MonitorWindow::MonitorWindow()
         resize(kDefaultWidth, kDefaultHeight);
 
     connect(Appl(), SIGNAL(MachineConfigChanged()), this, SLOT(onMachineConfigChanged()));
-
-    connect(dbgSession, SIGNAL(MachineStarted()),
-            this, SLOT(onMachineStarted()));
-    connect(dbgSession, SIGNAL(MachineReset()),
-            this, SLOT(onMachineStarted()));
-
-    connect(dbgSession, SIGNAL(MachineHalted()),
-            this, SLOT(onMachineHalted()));
-    connect(dbgSession, SIGNAL(StatusChanged()),
-            this, SLOT(updateStoppointActionsSensitivity()));
+    connect(dbgSession, SIGNAL(MachineStarted()), this, SLOT(onMachineStarted()));
+    connect(dbgSession, SIGNAL(MachineReset()), this, SLOT(onMachineStarted()));
+    connect(dbgSession, SIGNAL(MachineHalted()), this, SLOT(onMachineHalted()));
+    connect(dbgSession, SIGNAL(StatusChanged()), this, SLOT(updateStoppointActionsSensitivity()));
 
     createActions();
     updateRecentConfigList();
@@ -152,13 +129,13 @@ void MonitorWindow::closeEvent(QCloseEvent* event)
 
 void MonitorWindow::createActions()
 {
-    newConfigAction = new QAction("New Configuration", this);
+    newConfigAction = new QAction("&New configuration", this);
     newConfigAction->setIcon(QIcon(":/icons/config_create-22.png"));
     newConfigAction->setShortcut(QKeySequence("Ctrl+N"));
     newConfigAction->setStatusTip("Create a new machine configuration");
     connect(newConfigAction, SIGNAL(triggered()), this, SLOT(onCreateConfig()));
 
-    loadConfigAction = new QAction("Open Configuration...", this);
+    loadConfigAction = new QAction("&Open configuration...", this);
     loadConfigAction->setShortcut(QKeySequence("Ctrl+O"));
     loadConfigAction->setIcon(QIcon(":/icons/config_open-22.png"));
     loadConfigAction->setStatusTip("Open a machine configuration");
@@ -179,8 +156,9 @@ void MonitorWindow::createActions()
     viewStopMaskAction->setCheckable(true);
     viewStopMaskAction->setChecked(Appl()->settings.value("MonitorWindow/ShowStopMask", true).toBool());
 
-    editConfigAction = new QAction("Edit Configuration...", this);
+    editConfigAction = new QAction("&Edit configuration...", this);
     editConfigAction->setIcon(QIcon(":/icons/machine_settings-22.png"));
+    editConfigAction->setStatusTip("Edit current machine configuration");
     connect(editConfigAction, SIGNAL(triggered()), this, SLOT(editConfig()));
     editConfigAction->setEnabled(Appl()->getConfig() != NULL);
 
@@ -269,7 +247,8 @@ void MonitorWindow::createMenu()
     QMenu* simulatorMenu = menuBar()->addMenu("&Simulator");
     simulatorMenu->addAction(newConfigAction);
     simulatorMenu->addAction(loadConfigAction);
-    recentConfigSeparatorAction = simulatorMenu->addSeparator();
+    simulatorMenu->addAction(editConfigAction);
+    simulatorMenu->addSeparator();
     for (unsigned int i = 0; i < Application::kMaxRecentConfigs; i++)
         simulatorMenu->addAction(loadRecentConfigActions[i]);
     simulatorMenu->addSeparator();
@@ -283,8 +262,6 @@ void MonitorWindow::createMenu()
     machineMenu->addAction(dbgSession->startMachineAction);
     machineMenu->addAction(dbgSession->haltMachineAction);
     machineMenu->addAction(dbgSession->resetMachineAction);
-    machineMenu->addSeparator();
-    machineMenu->addAction(editConfigAction);
 
     QMenu* debugMenu = menuBar()->addMenu("&Debug");
     debugMenu->addAction(dbgSession->debugContinueAction);
@@ -332,11 +309,10 @@ void MonitorWindow::initializeToolBar()
 {
     toolBar->addAction(newConfigAction);
     toolBar->addAction(loadConfigAction);
-    toolBar->addSeparator();
-    toolBar->addAction(dbgSession->startMachineAction);
-    toolBar->addAction(dbgSession->haltMachineAction);
-    toolBar->addAction(dbgSession->resetMachineAction);
     toolBar->addAction(editConfigAction);
+    toolBar->addSeparator();
+    toolBar->addAction(dbgSession->toggleMachineAction);
+    toolBar->addAction(dbgSession->resetMachineAction);
     toolBar->addSeparator();
     toolBar->addAction(dbgSession->debugContinueAction);
     toolBar->addAction(dbgSession->debugStepAction);
@@ -565,7 +541,7 @@ void MonitorWindow::onLoadConfig()
     if (!discardMachineConfirmed())
         return;
 
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Machine Configuration");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open machine configuration");
     if (!fileName.isEmpty())
         Appl()->LoadConfig(fileName);
 }
@@ -585,7 +561,7 @@ void MonitorWindow::editConfig()
         try {
             Appl()->getConfig()->Save();
         } catch (FileError& e) {
-            QMessageBox::critical(this, QString("%1: Error").arg(Appl()->applicationName()), e.what());
+            QMessageBox::critical(this, QString("%1: error").arg(Appl()->applicationName()), e.what());
             return;
         }
         configView->Update();
@@ -686,12 +662,12 @@ void MonitorWindow::showAboutInfo()
     QString text = QString(
         "<h2>&micro;MPS %1</h2>"
         "<em>An educational computer system emulator</em>"
-        "<h3><a href='http://mps.sf.net/'>http://mps.sf.net/</a></h3>"
-        "Copyright &copy; 1998-2011 &micro;MPS authors"
+        "<h3><a href='https://github.com/mattiabiondi/umps'>https://github.com/mattiabiondi/umps</a></h3>"
+        "Copyright &copy; 1998-2020 &micro;MPS authors"
         "<hr />"
         "<h3 style='margin-top: 0;'>Credits</h3>"
         "<p style='margin: 0 0 0 10px;'>"
-        " Created by: Mauro Morsiani, Tomislav Jonjic"
+        " Created by: Mauro Morsiani, Tomislav Jonjic, Mattia Biondi"
         " <br />"
         " Contributions: Renzo Davoli (network/VDE support)"
         " <br />"
@@ -829,7 +805,6 @@ void MonitorWindow::onAddTracepoint()
                              "it overlaps with an already inserted range");
 }
 
-
 StatusDisplay::StatusDisplay(QWidget* parent)
     : QWidget(parent)
 {
@@ -838,7 +813,7 @@ StatusDisplay::StatusDisplay(QWidget* parent)
 
     layout->addWidget(new QLabel("Status:"));
     statusLabel = new QLabel;
-    statusLabel->setFixedWidth(statusLabel->fontMetrics().width("Powered off_"));
+    statusLabel->setFixedWidth(statusLabel->fontMetrics().horizontalAdvance("Powered off_"));
     layout->addWidget(statusLabel);
 
     layout->addSpacing(kFieldSpacing);
@@ -846,7 +821,7 @@ StatusDisplay::StatusDisplay(QWidget* parent)
     layout->addWidget(new QLabel("ToD:"));
     todLabel = new QLabel;
     todLabel->setFont(Appl()->getMonospaceFont());
-    todLabel->setFixedWidth(todLabel->fontMetrics().width("00000000:00000000"));
+    todLabel->setFixedWidth(todLabel->fontMetrics().horizontalAdvance("00000000:00000000"));
     layout->addWidget(todLabel);
 
     statusLabel->setText("-");

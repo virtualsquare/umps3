@@ -64,7 +64,7 @@ void DeviceTreeView::setModel(QAbstractItemModel* model)
     }
 
     // Why oh why is this not the default for tree views?
-    header()->setMovable(false);
+    header()->setSectionsMovable(false);
 }
 
 void DeviceTreeView::sectionResized(int logicalIndex, int oldSize, int newSize)

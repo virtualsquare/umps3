@@ -141,6 +141,8 @@ void ProcessorWindow::createToolBar()
 {
     toolBar = addToolBar("ToolBar");
     toolBar->setObjectName("ToolBar");
+    toolBar->addAction(dbgSession->resetMachineAction);
+    toolBar->addSeparator();
     toolBar->addAction(dbgSession->debugContinueAction);
     toolBar->addAction(dbgSession->debugStepAction);
     toolBar->addAction(dbgSession->debugStopAction);
@@ -188,10 +190,10 @@ void ProcessorWindow::createDockableWidgets()
     tlbView->setSelectionMode(QAbstractItemView::SingleSelection);
     tlbView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tlbView->horizontalHeader()->setStretchLastSection(true);
-    tlbView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    tlbView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     tlbView->horizontalHeader()->setHighlightSections(false);
     tlbView->verticalHeader()->setHighlightSections(false);
-    tlbView->verticalHeader()->setResizeMode(QHeaderView::Fixed);
+    tlbView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     tlbView->setAlternatingRowColors(true);
     tlbView->setItemDelegate(new RIDelegateHex(this));
     tlbView->resizeRowsToContents();
@@ -215,12 +217,12 @@ void ProcessorWindow::updateStatusInfo()
     if (!cpu->isHalted()) {
         Word prevPC, prevInstr;
         cpu->getPrevStatus(&prevPC, &prevInstr);
-        prevPCLabel->setText(str.sprintf("0x%.8X: %s", prevPC, StrInstr(prevInstr)));
+        prevPCLabel->setText(str.asprintf("0x%.8X: %s", prevPC, StrInstr(prevInstr)));
 
         Word asid, pc, instr;
         bool isLD, isBD;
         cpu->getCurrStatus(&asid, &pc, &instr, &isLD, &isBD);
-        pcLabel->setText(str.sprintf("0x%.8X: %s", pc, StrInstr(instr)));
+        pcLabel->setText(str.asprintf("0x%.8X: %s", pc, StrInstr(instr)));
 
         bdIndicator->setEnabled(isBD);
         ldIndicator->setEnabled(isLD);

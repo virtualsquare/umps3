@@ -53,7 +53,7 @@ HexView::HexView(Word start, Word end, QWidget* parent)
     setViewportMargins(margin->sizeHint().width(), 0, 0, 0);
     connect(this, SIGNAL(updateRequest(QRect, int)), this, SLOT(updateMargin(QRect, int)));
 
-    setCursorWidth(fontMetrics().width(QLatin1Char('o')));
+    setCursorWidth(fontMetrics().horizontalAdvance("o"));
     setLineWrapMode(NoWrap);
     setOverwriteMode(true);
     setTabChangesFocus(true);
@@ -365,7 +365,7 @@ HexViewMargin::HexViewMargin(HexView* view)
 
 QSize HexViewMargin::sizeHint() const
 {
-    return QSize(kLeftPadding + fontMetrics().width("0xdead.beef") + kRightPadding, 0);
+    return QSize(kLeftPadding + fontMetrics().horizontalAdvance("0xdead.beef") + kRightPadding, 0);
 }
 
 void HexViewMargin::paintEvent(QPaintEvent* event)

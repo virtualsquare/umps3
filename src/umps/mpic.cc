@@ -197,7 +197,7 @@ void InterruptController::deliverIPI(unsigned int origin, Word outbox)
     for (unsigned int i = 0; i < config->getNumProcessors(); i++) {
         if (recipients & (1U << i)) {
             bool hasSlot = true;
-            foreach (const IpiMessage& ipi, cpuData[i].ipiInbox) {
+            for (const IpiMessage& ipi : cpuData[i].ipiInbox) {
                 if (ipi.origin == origin) {
                     hasSlot = false;
                     break;

@@ -47,14 +47,14 @@ AddSuspectDialog::AddSuspectDialog(QWidget* parent)
     layout->addWidget(new QLabel("ASID:"), 0, 0);
     asidEditor = new AsidLineEdit;
     layout->addWidget(asidEditor, 0, 1);
-    asidEditor->setMinimumWidth(asidEditor->fontMetrics().width("0x00__"));
-    asidEditor->setMaximumWidth(asidEditor->fontMetrics().width("0x00__"));
+    asidEditor->setMinimumWidth(asidEditor->fontMetrics().horizontalAdvance("0x00__"));
+    asidEditor->setMaximumWidth(asidEditor->fontMetrics().horizontalAdvance("0x00__"));
 
     layout->setColumnMinimumWidth(2, 12);
 
     layout->addWidget(new QLabel("Start:"), 0, 3);
     startAddressEdit = new AddressLineEdit;
-    startAddressEdit->setMinimumWidth(startAddressEdit->fontMetrics().width("0xdead.beef__"));
+    startAddressEdit->setMinimumWidth(startAddressEdit->fontMetrics().horizontalAdvance("0xdead.beef__"));
     layout->addWidget(startAddressEdit, 0, 4);
     connect(startAddressEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 
@@ -62,7 +62,7 @@ AddSuspectDialog::AddSuspectDialog(QWidget* parent)
 
     layout->addWidget(new QLabel("End:"), 0, 6);
     endAddressEdit = new AddressLineEdit;
-    endAddressEdit->setMinimumWidth(endAddressEdit->fontMetrics().width("0xdead.beef__"));
+    endAddressEdit->setMinimumWidth(endAddressEdit->fontMetrics().horizontalAdvance("0xdead.beef__"));
     layout->addWidget(endAddressEdit, 0, 7);
     connect(endAddressEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 

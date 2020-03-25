@@ -1,4 +1,4 @@
-set(UMPS_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/umps2/umps)
+set(UMPS_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/umps3/umps)
 
 add_custom_target(libumps.e ALL
         COMMAND ${CMAKE_COMMAND} -E copy

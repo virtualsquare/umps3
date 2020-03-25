@@ -80,7 +80,7 @@ private:
         CpuData()
         {
             ipMask = 0;
-            foreach (Word& data, idb)
+            for (Word& data : idb)
                 data = 0;
             taskPriority = CPUCTL_TPR_PRIORITY_MASK;
         }

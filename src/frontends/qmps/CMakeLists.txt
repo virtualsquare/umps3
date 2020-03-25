@@ -2,12 +2,10 @@ add_subdirectory(data)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt4 REQUIRED)
 
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
-add_executable(umps2
+add_executable(umps3
         qmps.qrc
         main.cc
         application.h
@@ -85,28 +83,30 @@ add_executable(umps2
         flat_push_button.h
         flat_push_button.cc)
 
-target_include_directories(umps2
+target_include_directories(umps3
         PRIVATE
         ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/src/frontends
         ${PROJECT_SOURCE_DIR}/src/include)
 
+target_link_libraries(umps3 PRIVATE Qt5::Widgets)
+
 set(QT_DEFINES -DQT_NO_DEBUG -DQT_NO_KEYWORDS -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED)
-target_compile_options(umps2 PRIVATE ${QT_DEFINES} ${SIGCPP_CFLAGS})
+target_compile_options(umps3 PRIVATE ${QT_DEFINES} ${SIGCPP_CFLAGS})
 
-add_dependencies(umps2 base umps)
+add_dependencies(umps3 base umps)
 
-target_compile_definitions(umps2 PRIVATE -DPACKAGE_VERSION="${PACKAGE_VERSION}")
+target_compile_definitions(umps3 PRIVATE -DPACKAGE_VERSION="${PACKAGE_VERSION}")
 
-target_link_libraries(umps2
+target_link_libraries(umps3
         PRIVATE
         base
         umps
-        ${QT_LIBRARIES}
+        Qt5::Widgets
         ${SIGCPP_LIBRARIES}
         ${LIBDL})
 
-install(TARGETS umps2
+install(TARGETS umps3
         RUNTIME
         DESTINATION ${CMAKE_INSTALL_BINDIR})

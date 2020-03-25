@@ -49,24 +49,24 @@ target_compile_options(umps PRIVATE ${SIGCPP_CFLAGS})
 target_compile_definitions(umps PRIVATE -DPACKAGE_DATA_DIR="${UMPS_DATA_DIR}")
 target_link_libraries(umps PRIVATE base)
 
-add_executable(umps2-elf2umps elf2umps.cc)
-target_include_directories(umps2-elf2umps PRIVATE
+add_executable(umps3-elf2umps elf2umps.cc)
+target_include_directories(umps3-elf2umps PRIVATE
         ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/src/include)
-target_link_libraries(umps2-elf2umps ${LIBELF})
+target_link_libraries(umps3-elf2umps ${LIBELF})
 
-add_executable(umps2-mkdev mkdev.cc)
-target_include_directories(umps2-mkdev PRIVATE
+add_executable(umps3-mkdev mkdev.cc)
+target_include_directories(umps3-mkdev PRIVATE
         ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/src)
 
-add_executable(umps2-objdump disassemble.cc objdump.cc)
-target_include_directories(umps2-objdump PRIVATE
+add_executable(umps3-objdump disassemble.cc objdump.cc)
+target_include_directories(umps3-objdump PRIVATE
         ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}/src
         ${PROJECT_SOURCE_DIR}/src/include)
 
-install(TARGETS umps2-elf2umps umps2-mkdev umps2-objdump
+install(TARGETS umps3-elf2umps umps3-mkdev umps3-objdump
         RUNTIME
         DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -69,7 +69,7 @@ TraceBrowser::TraceBrowser(QAction* insertTraceAct, QAction* removeTraceAct,
 
     layout->addWidget(new QLabel("Display:"), 0, 1);
     delegateTypeCombo = new QComboBox;
-    foreach (const ViewDelegateType& dt, delegateFactory)
+    for (const ViewDelegateType& dt : delegateFactory)
         delegateTypeCombo->addItem(dt.name);
     layout->addWidget(delegateTypeCombo, 0, 2);
     connect(delegateTypeCombo, SIGNAL(currentIndexChanged(int)),

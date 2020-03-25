@@ -40,7 +40,7 @@ TerminalView::TerminalView(TerminalDevice* terminal, QWidget* parent)
 
     QFont font = Appl()->getMonospaceFont();
     setFont(font);
-    setCursorWidth(fontMetrics().width(QLatin1Char('o')));
+    setCursorWidth(fontMetrics().horizontalAdvance("o"));
 
     // Disable features that look silly in a basic terminal widget
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -75,7 +75,7 @@ void TerminalView::keyPressEvent(QKeyEvent* e)
         input.chop(1);
         QPlainTextEdit::keyPressEvent(e);
     } else if (!e->text().isEmpty() && Qt::Key_Space <= key && key <= Qt::Key_nobreakspace) {
-        input.append(e->text().toAscii());
+        input.append(e->text().toLatin1());
         QPlainTextEdit::keyPressEvent(e);
     }
 }

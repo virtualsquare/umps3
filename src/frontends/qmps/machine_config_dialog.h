@@ -61,7 +61,6 @@ private:
     QSpinBox* ramSizeSpinner;
     QCheckBox* coreBootCheckBox;
     AsidLineEdit* stabAsidEdit;
-    QLabel* asidWarningLabel;
     QLabel* tlbFloorAddrWarningLabel;
 
     struct {

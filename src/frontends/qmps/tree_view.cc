@@ -58,7 +58,7 @@ void TreeView::setModel(QAbstractItemModel* model)
 
     // Not really sure if this should be here, but otoh cannot think
     // of a _single case_ where it would be undesired.
-    header()->setMovable(false);
+    header()->setSectionsMovable(false);
 
     bool resizeCols = true;
     for (int i = 0; i < model->columnCount(); ++i) {
@@ -70,13 +70,13 @@ void TreeView::setModel(QAbstractItemModel* model)
     }
 
     if (resizeCols) {
-        foreach (int col, resizedToContents)
+        for (int col : resizedToContents)
             resizeColumnToContents(col);
     }
 
     if (persistItemState) {
         QVariant var = Appl()->settings.value(itemStateKey);
-        foreach (const QString& s, var.toStringList()) {
+        for (const QString& s : var.toStringList()) {
             bool ok;
             int row = s.toInt(&ok);
             if (!ok)

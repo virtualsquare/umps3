@@ -46,7 +46,7 @@ Stoppoint* StoppointSet::Find(Word asid, Word addr)
 
 bool StoppointSet::CanInsert(const AddressRange& range) const
 {
-    foreach (Stoppoint::Ptr p, points)
+    for (Stoppoint::Ptr p : points)
         if (p->getRange().Overlaps(range))
             return false;
     return true;
@@ -144,7 +144,7 @@ std::string StoppointSet::ToString(bool sorted) const
             result.append(it->second->ToString());
         }
     } else {
-        foreach (const Stoppoint::Ptr p, points) {
+        for (const Stoppoint::Ptr p : points) {
             if (!first)
                 result.append(",\n ");
             first = false;
@@ -158,7 +158,7 @@ std::string StoppointSet::ToString(bool sorted) const
 unsigned int StoppointSet::nextId() const
 {
     unsigned int id = 0;
-    foreach (Stoppoint::Ptr p, points)
+    for (Stoppoint::Ptr p : points)
         id = std::max(id, p->getId() + 1);
     return id;
 }

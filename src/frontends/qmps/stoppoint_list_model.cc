@@ -42,7 +42,7 @@ BaseStoppointListModel::BaseStoppointListModel(StoppointSet* set, QObject* paren
     // exists and is valid.
     assert(symbolTable != NULL);
 
-    foreach (Stoppoint::Ptr sp, *stoppoints) {
+    for (Stoppoint::Ptr sp : *stoppoints) {
         formattedRangeCache.push_back(formatAddressRange(sp->getRange()));
     }
 }

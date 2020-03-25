@@ -48,7 +48,7 @@ AddTracepointDialog::AddTracepointDialog(QWidget* parent)
 
     layout->addWidget(new QLabel("Start:"), gridRow, 0);
     startAddressEdit = new AddressLineEdit;
-    startAddressEdit->setMinimumWidth(startAddressEdit->fontMetrics().width("0xdead.beef__"));
+    startAddressEdit->setMinimumWidth(startAddressEdit->fontMetrics().horizontalAdvance("0xdead.beef__"));
     layout->addWidget(startAddressEdit, gridRow, 1);
     connect(startAddressEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 
@@ -56,7 +56,7 @@ AddTracepointDialog::AddTracepointDialog(QWidget* parent)
 
     layout->addWidget(new QLabel("End:"), gridRow, 3);
     endAddressEdit = new AddressLineEdit;
-    endAddressEdit->setMinimumWidth(endAddressEdit->fontMetrics().width("0xdead.beef__"));
+    endAddressEdit->setMinimumWidth(endAddressEdit->fontMetrics().horizontalAdvance("0xdead.beef__"));
     layout->addWidget(endAddressEdit, gridRow, 4);
     connect(endAddressEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 

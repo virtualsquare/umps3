@@ -53,9 +53,9 @@ RegisterSetSnapshot::RegisterSetSnapshot(Word cpuId, QObject* parent)
 
     topLevelFont.setBold(true);
 
-    foreach (Word& v, gprCache)
+    for (Word& v : gprCache)
         v = 0;
-    foreach (Word& v, cp0Cache)
+    for (Word& v : cp0Cache)
         v = 0;
 
     reset();
@@ -82,7 +82,7 @@ QModelIndex RegisterSetSnapshot::index(int row, int column, const QModelIndex& p
             break;
         }
     } else if (row < kNumRegisterTypes) {
-        return createIndex(row, column, (quint32) 0);
+        return createIndex(row, column, (quintptr) 0);
     }
 
     // Fallback case - clearly something bogus
@@ -97,7 +97,7 @@ QModelIndex RegisterSetSnapshot::parent(const QModelIndex& index) const
     if (index.internalId() == 0)
         return QModelIndex();
     else
-        return createIndex(index.internalId() - 1, 0, (quint32) 0);
+        return createIndex(index.internalId() - 1, 0, (quintptr) 0);
 }
 
 int RegisterSetSnapshot::rowCount(const QModelIndex& parent) const
@@ -305,7 +305,7 @@ void RegisterSetSnapshot::updateCache()
     }
 
     int row = 0;
-    foreach (SpecialRegisterInfo& sr, sprCache) {
+    for (SpecialRegisterInfo& sr : sprCache) {
         Word value = sr.getter();
         if (value != sr.value) {
             sr.value = value;

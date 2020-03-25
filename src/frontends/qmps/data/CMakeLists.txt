@@ -1,4 +1,4 @@
 add_subdirectory(icons)
 
-install(FILES umps2.desktop
+install(FILES umps3.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)

@@ -31,7 +31,7 @@
 
 Application::Application(int& argc, char** argv)
     : QApplication(argc, argv),
-      settings("umps2", "umps"),
+      settings("umps3", "umps"),
       config(NULL)
 {
     setApplicationName("uMPS");

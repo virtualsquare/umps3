@@ -72,6 +72,8 @@ MachineConfigDialog::MachineConfigDialog(MachineConfig* config, QWidget* parent)
     layout->addWidget(buttonBox);
 
     setLayout(layout);
+
+    validate();
 }
 
 QWidget* MachineConfigDialog::createGeneralTab()
@@ -128,7 +130,7 @@ QWidget* MachineConfigDialog::createGeneralTab()
     
     layout->addWidget(tlbFloorAddrWarningLabel = new QLabel, 4, 4);
     QPalette pWarningTlb = tlbFloorAddrWarningLabel->palette();
-    pWarningTlb.setColor(tlbFloorAddrWarningLabel->foregroundRole(), Qt::red);
+    pWarningTlb.setColor(tlbFloorAddrWarningLabel->foregroundRole(), Qt::darkYellow);
     tlbFloorAddrWarningLabel->setPalette(pWarningTlb);
 
     layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
@@ -193,17 +195,11 @@ QWidget* MachineConfigDialog::createGeneralTab()
     fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_STAB);
     layout->addWidget(fileChooserButton, 16, 5);
 
-    layout->addWidget(new QLabel("Symbol Table ASID:"), 17, 1);
+    layout->addWidget(new QLabel("Symbol Table ASID:<br />(default = 0x40)"), 17, 1);
     stabAsidEdit = new AsidLineEdit;
     stabAsidEdit->setMaximumWidth(100);
     stabAsidEdit->setAsid(config->getSymbolTableASID());
     layout->addWidget(stabAsidEdit, 17, 3);
-    connect(stabAsidEdit, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
-    
-    layout->addWidget(asidWarningLabel = new QLabel, 17, 4);
-    QPalette pWarningAsid = asidWarningLabel->palette();
-    pWarningAsid.setColor(asidWarningLabel->foregroundRole(), Qt::red);
-    asidWarningLabel->setPalette(pWarningAsid);
 
     layout->setColumnMinimumWidth(0, 10);
     layout->setColumnMinimumWidth(2, 10);
@@ -240,7 +236,7 @@ QWidget* MachineConfigDialog::createDeviceTab()
     devClassView->setIconSize(QSize(32, 32));
     devClassView->setSelectionMode(QAbstractItemView::SingleSelection);
     devClassView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    devClassView->setMaximumWidth(180);
+    devClassView->setMaximumWidth(210);
 
     tabLayout->addWidget(devClassView);
 
@@ -341,18 +337,11 @@ void MachineConfigDialog::saveConfigChanges()
 void MachineConfigDialog::validate()
 {
     int index = tlbFloorAddressList->currentIndex();
-    Word asid = stabAsidEdit->getAsid();
-    
+
     if (index == 0) {
-        tlbFloorAddrWarningLabel->setText("Warning: advanced user only");
+        tlbFloorAddrWarningLabel->setText("Warning:<br/>experimental");
     } else {
         tlbFloorAddrWarningLabel->setText("");
-    }
-    
-    if (asid < MAXASID) {
-        asidWarningLabel->setText("Warning: advanced user only (default = 0x40)");
-    } else {
-        asidWarningLabel->setText("");
     }
 }
 

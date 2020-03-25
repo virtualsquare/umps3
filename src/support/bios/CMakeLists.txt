@@ -20,15 +20,15 @@ foreach(TYPE ${ROM_TYPES})
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
         add_custom_target(${TYPE}.eb.rom.umps ALL
-                COMMAND umps2-elf2umps -v -b ${TYPE}.eb
+                COMMAND umps3-elf2umps -v -b ${TYPE}.eb
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-        add_dependencies(${TYPE}.eb.rom.umps ${TYPE}.eb umps2-elf2umps)
+        add_dependencies(${TYPE}.eb.rom.umps ${TYPE}.eb umps3-elf2umps)
 
         add_custom_target(${TYPE}.el.rom.umps ALL
-                COMMAND umps2-elf2umps -v -b ${TYPE}.el
+                COMMAND umps3-elf2umps -v -b ${TYPE}.el
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-        add_dependencies(${TYPE}.el.rom.umps ${TYPE}.el umps2-elf2umps)
-        
+        add_dependencies(${TYPE}.el.rom.umps ${TYPE}.el umps3-elf2umps)
+
         set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
                 ${TYPE}.eb
                 ${TYPE}.el

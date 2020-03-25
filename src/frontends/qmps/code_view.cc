@@ -64,7 +64,7 @@ CodeView::CodeView(Word cpuId)
     codeMargin->setFont(font);
     codeMargin->setCursor(Qt::PointingHandCursor);
 
-    setTabStopWidth(fontMetrics().width(QLatin1Char('x')) * TAB_STOP_CHARS);
+    setTabStopDistance(fontMetrics().horizontalAdvance("x") * TAB_STOP_CHARS);
 
     // Compute viewport margins
     setViewportMargins(codeMargin->sizeHint().width(), 0, 0, 0);
@@ -277,7 +277,7 @@ void CodeView::paintMargin(QPaintEvent* event)
                                       endPC,
                                       std::back_inserter(localBreakpoints));
 
-    foreach (Stoppoint* breakpoint, localBreakpoints) {
+    for (Stoppoint* breakpoint : localBreakpoints) {
         unsigned int bpOffset = (breakpoint->getRange().getStart() - startPC) >> 2;
         QTextBlock b = document()->findBlockByNumber(bpOffset);
         int y0 = (int) blockBoundingGeometry(b).translated(contentOffset()).y();
@@ -331,7 +331,7 @@ CodeViewMargin::CodeViewMargin(CodeView* view)
 QSize CodeViewMargin::sizeHint() const
 {
     QString sampleAddr = FormatAddress(0xdeadbeef);
-    return QSize(fontMetrics().width(QLatin1Char('o')) * sampleAddr.size() + kMarkerSize, 0);
+    return QSize(fontMetrics().horizontalAdvance("o") * sampleAddr.size() + kMarkerSize, 0);
 }
 
 void CodeViewMargin::paintEvent(QPaintEvent* event)

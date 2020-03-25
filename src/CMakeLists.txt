@@ -1,4 +1,4 @@
-set(UMPS_DATA_DIR ${CMAKE_INSTALL_DATADIR}/umps2)
+set(UMPS_DATA_DIR ${CMAKE_INSTALL_DATADIR}/umps3)
 
 add_subdirectory(base)
 add_subdirectory(frontends)

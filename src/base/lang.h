@@ -33,14 +33,6 @@ using boost::scoped_ptr;
 using boost::scoped_array;
 using boost::enable_shared_from_this;
 
-// A foreach construct for C++, just like in all the cool languages
-// out there! This is just too tempting not to use. And when C++0x
-// becomes ubiquitous (_if_ it does) we can easily switch to the
-// standard version.
-#include <boost/foreach.hpp>
-
-#define foreach BOOST_FOREACH
-
 // Make the nature of "reference"-type classes excplicit to readers
 // and compilers by using the macro below somewhere in a private
 // section of a class definition.

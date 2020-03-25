@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(PACKAGE_VERSION 2.0.1)
-project(umps2
+set(PACKAGE_VERSION 3.0.0)
+project(umps
         VERSION ${PACKAGE_VERSION}
         DESCRIPTION "General-purpose computer system simulator \
                 based on MIPS R2/3000 microprocessor"
         HOMEPAGE_URL "https://github.com/mattiabiondi/umps")
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-D_FORTIFY_SOURCE=2 -O2 -Wall -pedantic)
 

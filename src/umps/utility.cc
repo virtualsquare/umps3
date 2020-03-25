@@ -34,6 +34,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <sstream> 
 #include <stdlib.h>
 #include <ctype.h>
 #include <algorithm>

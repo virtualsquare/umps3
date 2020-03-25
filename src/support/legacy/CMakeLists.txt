@@ -1,4 +1,4 @@
-set(UMPS_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/umps2)
+set(UMPS_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/umps3)
 
 set(LEGACY_LDSCRIPTS_EB elf32btsmip.h.umpsaout.x elf32btsmip.h.umpscore.x)
 set(LEGACY_LDSCRIPTS_EL elf32ltsmip.h.umpsaout.x elf32ltsmip.h.umpscore.x)

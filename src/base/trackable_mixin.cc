@@ -25,7 +25,7 @@
 
 TrackableMixin::~TrackableMixin()
 {
-    foreach (sigc::connection& c, connections)
+    for (sigc::connection& c : connections)
         c.disconnect();
 }
 

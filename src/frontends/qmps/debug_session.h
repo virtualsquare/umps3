@@ -44,8 +44,6 @@ class QTimer;
 class DebugSession : public QObject {
     Q_OBJECT
 
-    Q_PROPERTY(int speed READ getSpeed WRITE setSpeed NOTIFY SpeedChanged)
-
 public:
     static const int kNumSpeedLevels = 5;
     static const int kMaxSpeed = kNumSpeedLevels - 1;
@@ -82,6 +80,7 @@ public:
     // Global actions
     QAction* startMachineAction;
     QAction* haltMachineAction;
+    QAction* toggleMachineAction;
     QAction* resetMachineAction;
 
     QAction* debugContinueAction;
@@ -153,6 +152,7 @@ private Q_SLOTS:
 
     void startMachine();
     void onHaltMachine();
+    void toggleMachine();
     void onResetMachine();
     void onContinue();
     void onStep();

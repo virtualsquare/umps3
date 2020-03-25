@@ -106,15 +106,18 @@ void DebugSession::createActions()
 {
     startMachineAction = new QAction("Power On", this);
     startMachineAction->setShortcut(QKeySequence("F5"));
-    startMachineAction->setIcon(QIcon(":/icons/machine_start-22.png"));
     connect(startMachineAction, SIGNAL(triggered()), this, SLOT(startMachine()));
     startMachineAction->setEnabled(false);
 
     haltMachineAction = new QAction("Power Off", this);
     haltMachineAction->setShortcut(QKeySequence("Shift+F5"));
-    haltMachineAction->setIcon(QIcon(":/icons/machine_halt-22.png"));
     connect(haltMachineAction, SIGNAL(triggered()), this, SLOT(onHaltMachine()));
     haltMachineAction->setEnabled(false);
+
+    toggleMachineAction = new QAction("Power On/Off", this);
+    toggleMachineAction->setIcon(QIcon(":/icons/machine_halt-22.png"));
+    connect(toggleMachineAction, SIGNAL(triggered()), this, SLOT(toggleMachine()));
+    toggleMachineAction->setEnabled(false);
 
     resetMachineAction = new QAction("Reset", this);
     resetMachineAction->setShortcut(QKeySequence("F6"));
@@ -146,6 +149,7 @@ void DebugSession::updateActionSensitivity()
 
     startMachineAction->setEnabled(Appl()->getConfig() != NULL && !started);
     haltMachineAction->setEnabled(started);
+    toggleMachineAction->setEnabled(Appl()->getConfig() != NULL);
     resetMachineAction->setEnabled(started);
 
     debugContinueAction->setEnabled(stopped);
@@ -170,7 +174,7 @@ void DebugSession::initializeMachine()
     if (!config->Validate(&errors)) {
         QString el;
         el += "<ul>";
-        foreach (const std::string& s, errors)
+        for (const std::string& s : errors)
             el += QString("<li>%1</li>").arg(s.c_str());
         el += "</ul>";
         QMessageBox::critical(
@@ -194,7 +198,7 @@ void DebugSession::initializeMachine()
             QString("%1: Error").arg(Appl()->applicationName()),
             QString("<b>Could not initialize machine:</b> "
                     "the file `%1' does not appear to be a valid <i>Core</i> file; "
-                    "make sure you are creating the file with the <code>umps2-elf2umps</code> utility")
+                    "make sure you are creating the file with the <code>umps3-elf2umps</code> utility")
             .arg(e.fileName.c_str()));
         return;
     } catch (const CoreFileOverflow& e) {
@@ -255,7 +259,10 @@ void DebugSession::initializeMachine()
 void DebugSession::onMachineConfigChanged()
 {
     if (Appl()->getConfig() != NULL)
+    {
         startMachineAction->setEnabled(true);
+        toggleMachineAction->setEnabled(true);
+    }
 
     breakpoints.Clear();
     suspects.Clear();
@@ -275,6 +282,14 @@ void DebugSession::onHaltMachine()
 {
     assert(status != MS_HALTED);
     halt();
+}
+
+void DebugSession::toggleMachine()
+{
+    if (startMachineAction->isEnabled())
+        startMachine();
+    else
+        onHaltMachine();
 }
 
 void DebugSession::onResetMachine()
@@ -425,7 +440,7 @@ void DebugSession::relocateStoppoints(const SymbolTable* newTable, StoppointSet&
 {
     StoppointSet rset;
 
-    foreach (Stoppoint::Ptr sp, set) {
+    for (Stoppoint::Ptr sp : set) {
         const AddressRange& origin = sp->getRange();
         const Symbol* symbol = symbolTable->Probe(origin.getASID(), origin.getStart(), true);
         if (symbol != NULL) {
