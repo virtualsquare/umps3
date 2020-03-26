@@ -74,7 +74,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 if(${Qt5_VERSION_MINOR} LESS 11)
 	   execute_process(COMMAND git apply ${CMAKE_SOURCE_DIR}/patch/Qt5.9.patch
-                       WORKIND_DIRECTORY ${CMAKE_SOURCE_DIR})
+                       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
 
 add_subdirectory(src)
