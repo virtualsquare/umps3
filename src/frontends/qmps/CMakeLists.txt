@@ -3,8 +3,6 @@ add_subdirectory(data)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-
 add_executable(umps3
         qmps.qrc
         main.cc
@@ -97,7 +95,7 @@ target_compile_options(umps3 PRIVATE ${QT_DEFINES} ${SIGCPP_CFLAGS})
 
 add_dependencies(umps3 base umps)
 
-target_compile_definitions(umps3 PRIVATE -DPACKAGE_VERSION="${PACKAGE_VERSION}")
+target_compile_definitions(umps3 PRIVATE -DPACKAGE_VERSION="${PROJECT_VERSION}")
 
 target_link_libraries(umps3
         PRIVATE

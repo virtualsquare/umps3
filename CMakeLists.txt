@@ -1,11 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.5)
 
-set(PACKAGE_VERSION 3.0.0)
 project(umps
-        VERSION ${PACKAGE_VERSION}
-        DESCRIPTION "General-purpose computer system simulator \
-                based on MIPS R2/3000 microprocessor"
-        LANGUAGES C CXX)
+        VERSION 3.0.0)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -73,8 +69,8 @@ find_package(Boost 1.34 REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 if(${Qt5_VERSION_MINOR} LESS 11)
-	   execute_process(COMMAND git apply ${CMAKE_SOURCE_DIR}/patch/Qt5.9.patch
-                       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        execute_process(COMMAND git apply ${CMAKE_SOURCE_DIR}/patch/Qt5.patch
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif()
 
 add_subdirectory(src)
