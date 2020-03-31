@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -33,42 +32,42 @@ class TerminalDevice;
 class QCheckBox;
 
 class TerminalStatusWidget : public QWidget,
-                             public sigc::trackable
+	public sigc::trackable
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    TerminalStatusWidget(TerminalDevice* terminal, QWidget* parent = 0);
+TerminalStatusWidget(TerminalDevice* terminal, QWidget* parent = 0);
 
 private:
-    // We _have_ to set the minimumSize() property on dynamic labels
-    // in resizable containers; the constant is here mainly as a
-    // remainder for that :-)
-    static const int kStatusLabelsMinimumWidth = 16;
+// We _have_ to set the minimumSize() property on dynamic labels
+// in resizable containers; the constant is here mainly as a
+// remainder for that :-)
+static const int kStatusLabelsMinimumWidth = 16;
 
-    void updateStatus();
-    void onConditionChanged(bool isWorking);
+void updateStatus();
+void onConditionChanged(bool isWorking);
 
-    TerminalDevice* const terminal;
+TerminalDevice* const terminal;
 
-    bool expanded;
-    QWidget* statusAreaWidget;
+bool expanded;
+QWidget* statusAreaWidget;
 
-    QLabel* rxStatusLabel;
-    QLabel* rxCompletionTime;
-    QLabel* txStatusLabel;
-    QLabel* txCompletionTime;
+QLabel* rxStatusLabel;
+QLabel* rxCompletionTime;
+QLabel* txStatusLabel;
+QLabel* txCompletionTime;
 
-    QIcon expandedIcon;
-    QIcon collapsedIcon;
+QIcon expandedIcon;
+QIcon collapsedIcon;
 
-    QPushButton* expanderButton;
+QPushButton* expanderButton;
 
-    QCheckBox* hwFailureCheckBox;
+QCheckBox* hwFailureCheckBox;
 
 private Q_SLOTS:
-    void onHardwareFailureButtonClicked(bool checked);
-    void onExpanderButtonClicked();
+void onHardwareFailureButtonClicked(bool checked);
+void onExpanderButtonClicked();
 };
 
 #endif // QMPS_TERMINAL_WINDOW_PRIV_H

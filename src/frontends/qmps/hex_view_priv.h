@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -27,22 +26,22 @@
 class HexView;
 
 class HexViewMargin : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    static const int kLeftPadding = 3;
-    static const int kRightPadding = 5;
+static const int kLeftPadding = 3;
+static const int kRightPadding = 5;
 
-    HexViewMargin(HexView* hexView);
+HexViewMargin(HexView* hexView);
 
-    virtual QSize sizeHint() const;
+virtual QSize sizeHint() const;
 
 protected:
-    void paintEvent(QPaintEvent* event);
-    void wheelEvent(QWheelEvent* event);
+void paintEvent(QPaintEvent* event);
+void wheelEvent(QWheelEvent* event);
 
 private:
-    HexView* const hexView;
+HexView* const hexView;
 };
 
 #endif // QMPS_HEX_VIEW_PRIV_H

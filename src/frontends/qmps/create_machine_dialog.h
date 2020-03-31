@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,23 +27,23 @@ class QLineEdit;
 class QPushButton;
 
 class CreateMachineDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    CreateMachineDialog(QWidget* parent = 0);
+CreateMachineDialog(QWidget* parent = 0);
 
-    QString getFileName() const;
+QString getFileName() const;
 
 private:
-    bool hasValidInput() const;
+bool hasValidInput() const;
 
-    QLineEdit* dirEdit;
-    QLineEdit* nameEdit;
-    QPushButton* createButton;
+QLineEdit* dirEdit;
+QLineEdit* nameEdit;
+QPushButton* createButton;
 
 private Q_SLOTS:
-    void validate();
-    void browseDir();
+void validate();
+void browseDir();
 };
 
 #endif // QMPS_CREATE_MACHINE_DIALOG_H

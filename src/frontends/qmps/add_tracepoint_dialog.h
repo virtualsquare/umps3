@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -34,32 +33,32 @@ class QLabel;
 class QPushButton;
 
 class AddTracepointDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    static const Word kMaxTracedRangeSize = 1025;
+static const Word kMaxTracedRangeSize = 1025;
 
-    AddTracepointDialog(QWidget* parent = 0);
+AddTracepointDialog(QWidget* parent = 0);
 
-    Word getStartAddress() const;
-    Word getEndAddress() const;
+Word getStartAddress() const;
+Word getEndAddress() const;
 
 private:
-    static const int kInitialWidth = 430;
-    static const int kInitialHeight = 340;
+static const int kInitialWidth = 430;
+static const int kInitialHeight = 340;
 
-    AddressLineEdit* startAddressEdit;
-    AddressLineEdit* endAddressEdit;
+AddressLineEdit* startAddressEdit;
+AddressLineEdit* endAddressEdit;
 
-    const SymbolTable* const stab;
-    SortFilterSymbolTableModel* proxyModel;
+const SymbolTable* const stab;
+SortFilterSymbolTableModel* proxyModel;
 
-    QLabel* inputErrorLabel;
-    QPushButton* okButton;
+QLabel* inputErrorLabel;
+QPushButton* okButton;
 
 private Q_SLOTS:
-    void validate();
-    void onSelectionChanged(const QItemSelection& selected);
+void validate();
+void onSelectionChanged(const QItemSelection& selected);
 };
 
 #endif // QMPS_ADD_TRACEPOINT_DIALOG_H

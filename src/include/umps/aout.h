@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -20,7 +19,7 @@
  */
 
 /*
- * This header file contains constant & macro definitions for .aout/.core 
+ * This header file contains constant & macro definitions for .aout/.core
  * file types.
  */
 

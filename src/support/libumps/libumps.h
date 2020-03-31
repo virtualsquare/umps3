@@ -1,4 +1,22 @@
 /*
+ * uMPS - A general purpose computer system simulator
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/*
  * External declarations for uMPS library module.
  */
 
@@ -16,7 +34,7 @@
 
 /* Functions valid in user mode
  */
- 
+
 
 /* This function cause a system call trap
  */
@@ -26,7 +44,7 @@ extern unsigned int SYSCALL(unsigned int number, unsigned int arg1, unsigned int
 
 /* All these functions access CP0 registers.
  * Access to CP0 registers is always possible in kernel mode, or in user
- * mode with CPU 0 bit _set_ in STATUS register 
+ * mode with CPU 0 bit _set_ in STATUS register
  */
 
 extern unsigned int getINDEX(void);
@@ -67,7 +85,7 @@ extern unsigned int setCAUSE(unsigned int cause);
 extern unsigned int setTIMER(unsigned int timer);
 
 
-/* these functions produce a program trap if executed in user mode 
+/* these functions produce a program trap if executed in user mode
  * without CPU0 bit _set_
  */
 
@@ -92,9 +110,9 @@ extern void WAIT(void);
 /* This function load a processor state from memory: there is no valid
  * return value.  New process may use status, EntryHI, pc and CAUSE as actual
  * arguments if call is carefully built, since $4, $5, and $6 (a0, a1, a2)
- * registers are not loaded from memory, but are passed as they are to 
+ * registers are not loaded from memory, but are passed as they are to
  * new process, while $7 (a3) is loaded with CAUSE value from processor
- * state in memory. 
+ * state in memory.
  * Keep in mind that $2 (v0) register is used by routine itself and it is
  * not loaded from memory image nor have a meaningful starting value for the
  * new process this routine starts.
@@ -104,51 +122,51 @@ extern void WAIT(void);
  * load the critical CAUSE, STATUS, EntryHI and PC registers in one atomic
  * operation: so, this call is interruptible (in a clean way) or cause a
  * trap (for example, a memory access error if pointer is not correctly
- * set).  
+ * set).
  * If called from user state, it will trap ONLY at BIOS call, loading the
  * general registers with new/random values (if no other errors intervene);
- * this will corrupt the calling process state, but it does not harm system 
+ * this will corrupt the calling process state, but it does not harm system
  * security a bit (I thought I said you to use it only in kernel mode...)
  */
- 
+
 extern unsigned int FORK(unsigned int entryhi, unsigned int status, unsigned int pc, STATE_PTR statep);
- 
- 
+
+
 /* This function may be called from kernel or from user mode with CPU 0
  * STATUS bit _on_: otherwise, it will cause a trap
  */
- 
-/* This function stores processor state to memory. It intentionally leaves 
- * the PC field set to 0; putting a meaningful value there is programmer's 
- * task. 
+
+/* This function stores processor state to memory. It intentionally leaves
+ * the PC field set to 0; putting a meaningful value there is programmer's
+ * task.
  * Return value is PC value for the instruction immediately following
  * the call.
  * This too is NOT an atomic operation: the processor state is saved
  * register by register to memory. So, this call is interruptible (in a
  * clean way) or cause a trap (for example, an memory access error if
- * pointer is not correctly set).  
+ * pointer is not correctly set).
  * If called from user state, it will trap ONLY if CPU 0 bit of STATUS CP0
  * register is NOT set, and only when access to CP0 register (STATUS, ENTRYHI,
  * CAUSE) is requested (if no other errors intervene).
  * However, trying it does not harm system security a bit.
  */
- 
+
 extern unsigned int STST(STATE_PTR statep);
 
 
 /* This function may be used to restart an interrupted/blocked process,
- * reloading it from a physical address passed as argument.  
- * It is available only in kernel mode, thru a BIOS routine 
+ * reloading it from a physical address passed as argument.
+ * It is available only in kernel mode, thru a BIOS routine
  * (otherwise it causes a trap).
  * It updates processor status _completely_, in one atomic operation.
  * It has no meaningful return value: $2 (v0) register is used for
  * BIOS call, but it is reloaded too.
- * Remember that it is programmer's task to increment OLD area PC where 
- * needed  (e.g. syscall handling) 
+ * Remember that it is programmer's task to increment OLD area PC where
+ * needed  (e.g. syscall handling)
  */
- 
+
 extern unsigned int LDST(STATE_PTR statep);
- 
+
 
 /* This function stops the system printing a warning message on terminal 0
  */

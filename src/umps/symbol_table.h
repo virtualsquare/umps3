@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -36,49 +35,57 @@
 
 class Symbol {
 public:
-    enum Type {
-        TYPE_FUNCTION,
-        TYPE_OBJECT
-    };
+	enum Type {
+		TYPE_FUNCTION,
+		TYPE_OBJECT
+	};
 
-    // This method builds a Symbol object, given its description as produced by
-    // elf2mps utility; no format check, since it's fixed
-    Symbol(const char* sName, const char* sInfo);
-    ~Symbol();
+// This method builds a Symbol object, given its description as produced by
+// elf2mps utility; no format check, since it's fixed
+	Symbol(const char* sName, const char* sInfo);
+	~Symbol();
 
-    // This method defines a lexicographic order on Symbols, based on
-    // start address; returns TRUE if "this" object is less than Symb,
-    // and FALSE otherwise
-    bool LessThan(const Symbol* other);
+// This method defines a lexicographic order on Symbols, based on
+// start address; returns TRUE if "this" object is less than Symb,
+// and FALSE otherwise
+	bool LessThan(const Symbol* other);
 
-    // Given pos virtual address, this method returns -1 if pos is
-    // out lower bound, 0 if in, 1 if out upper bound
-    int Contains(Word pos) const;
+// Given pos virtual address, this method returns -1 if pos is
+// out lower bound, 0 if in, 1 if out upper bound
+	int Contains(Word pos) const;
 
-    const char* getName() const { return sNamep; }
+	const char* getName() const {
+		return sNamep;
+	}
 
-    Word getStart() const { return sStart; }
-    Word getEnd() const { return sStart + sSize - WS; }
+	Word getStart() const {
+		return sStart;
+	}
+	Word getEnd() const {
+		return sStart + sSize - WS;
+	}
 
-    Type getType() const { return sType; }
+	Type getType() const {
+		return sType;
+	}
 
-    SWord Offset(Word pos) const;
+	SWord Offset(Word pos) const;
 
-    // this method allows to set symbol size (backpatch for gcc bug)
-    // [FIXME: What? Which GCC bug?]
-    void setSize(Word size);
+// this method allows to set symbol size (backpatch for gcc bug)
+// [FIXME: What? Which GCC bug?]
+	void setSize(Word size);
 
 private:
-    // Symbol name string
-    char* sNamep;
+// Symbol name string
+	char* sNamep;
 
-    // Symbol starting address
-    Word sStart;
+// Symbol starting address
+	Word sStart;
 
-    // Symbol size
-    Word sSize;
+// Symbol size
+	Word sSize;
 
-    Type sType;
+	Type sType;
 };
 
 // SymbolTable class defines an object containing a complete symbol table. It
@@ -93,48 +100,50 @@ private:
 
 class SymbolTable {
 public:
-    // This method builds a symbol table from .stab file fName produced by
-    // elf2mps utility
-    SymbolTable(Word asid, const char * fName);
+// This method builds a symbol table from .stab file fName produced by
+// elf2mps utility
+	SymbolTable(Word asid, const char * fName);
 
-    ~SymbolTable();
+	~SymbolTable();
 
-    Word getASID() const { return asid; }
+	Word getASID() const {
+		return asid;
+	}
 
-    unsigned int Size() const;
+	unsigned int Size() const;
 
-    // This method probes the table, given a complete address (asid +
-    // pos): it probes both tables if fullSearch is TRUE, and only
-    // function table otherwise.  It returns symbol name and offset
-    // inside it, or NULL if no match is found
-    const char* Probe(Word asid, Word pos, bool fullSearch, SWord* offsetp) const;
-    const Symbol* Probe(Word asid, Word addr, bool fullSearch) const;
+// This method probes the table, given a complete address (asid +
+// pos): it probes both tables if fullSearch is TRUE, and only
+// function table otherwise.  It returns symbol name and offset
+// inside it, or NULL if no match is found
+	const char* Probe(Word asid, Word pos, bool fullSearch, SWord* offsetp) const;
+	const Symbol* Probe(Word asid, Word addr, bool fullSearch) const;
 
-    const Symbol* Get(unsigned int index) const;
-    std::list<const Symbol*> Lookup(const char* name) const;
-    std::list<const Symbol*> Lookup(const char* name, Symbol::Type type) const;
+	const Symbol* Get(unsigned int index) const;
+	std::list<const Symbol*> Lookup(const char* name) const;
+	std::list<const Symbol*> Lookup(const char* name, Symbol::Type type) const;
 
 private:
-    static void sortTable(Symbol** table, size_t size);
+	static void sortTable(Symbol** table, size_t size);
 
-    // This method scans the specified table looking for a Symbol range
-    // containing it; returns NOTFOUND if not found, 0..size -1 if found
-    // (index into table)
-    int search(Symbol** table, unsigned int size, Word pos) const;
+// This method scans the specified table looking for a Symbol range
+// containing it; returns NOTFOUND if not found, 0..size -1 if found
+// (index into table)
+	int search(Symbol** table, unsigned int size, Word pos) const;
 
-    // Symbol table ASID
-    const Word asid;
+// Symbol table ASID
+	const Word asid;
 
-    // Number of function/object symbols
-    unsigned int ftSize;
-    unsigned int otSize;
+// Number of function/object symbols
+	unsigned int ftSize;
+	unsigned int otSize;
 
-    // Symbol tables: one for functions, other for memory object symbols
-    Symbol** fTable;
-    Symbol** oTable;
+// Symbol tables: one for functions, other for memory object symbols
+	Symbol** fTable;
+	Symbol** oTable;
 
-    typedef std::map< std::string, std::list<const Symbol*> > SymbolMap;
-    SymbolMap map;
+	typedef std::map< std::string, std::list<const Symbol*>> SymbolMap;
+	SymbolMap map;
 };
 
 #endif // UMPS_SYMBOL_TABLE_H

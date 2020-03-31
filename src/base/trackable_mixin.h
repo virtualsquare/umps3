@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -27,12 +26,12 @@
 
 class TrackableMixin {
 public:
-    ~TrackableMixin();
+~TrackableMixin();
 
-    void RegisterSigc(sigc::connection c);
+void RegisterSigc(sigc::connection c);
 
 private:
-    std::list<sigc::connection> connections;
+std::list<sigc::connection> connections;
 };
 
 #endif // BASE_TRACKABLE_MIXIN_H

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -62,134 +61,134 @@ const char* const TLBModel::detailsTemplate = "     \
 ";
 
 TLBModel::TLBModel(Word cpuId, QObject* parent)
-    : QAbstractTableModel(parent),
-      cpuId(cpuId)
+	: QAbstractTableModel(parent),
+	cpuId(cpuId)
 {
-    connect(debugSession, SIGNAL(MachineReset()), this, SLOT(onMachineReset()));
-    onMachineReset();
+	connect(debugSession, SIGNAL(MachineReset()), this, SLOT(onMachineReset()));
+	onMachineReset();
 }
 
 Qt::ItemFlags TLBModel::flags(const QModelIndex& index) const
 {
-    if (!index.isValid())
-        return 0;
+	if (!index.isValid())
+		return 0;
 
-    return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
+	return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
 int TLBModel::rowCount(const QModelIndex& parent) const
 {
-    if (!parent.isValid())
-        return Appl()->getConfig()->getTLBSize();
-    else 
-        return 0;
+	if (!parent.isValid())
+		return Appl()->getConfig()->getTLBSize();
+	else
+		return 0;
 }
 
 int TLBModel::columnCount(const QModelIndex& parent) const
 {
-    if (!parent.isValid())
-        return N_COLUMNS;
-    else
-        return 0;
+	if (!parent.isValid())
+		return N_COLUMNS;
+	else
+		return 0;
 }
 
 QVariant TLBModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role != Qt::DisplayRole)
-        return QVariant();
+	if (role != Qt::DisplayRole)
+		return QVariant();
 
-    if (orientation == Qt::Horizontal) {
-        switch (section) {
-        case COLUMN_PTE_HI:
-            return "EntryHi";
-        case COLUMN_PTE_LO:
-            return "EntryLo";
-        default:
-            return QVariant();
-        }
-    }
+	if (orientation == Qt::Horizontal) {
+		switch (section) {
+		case COLUMN_PTE_HI:
+			return "EntryHi";
+		case COLUMN_PTE_LO:
+			return "EntryLo";
+		default:
+			return QVariant();
+		}
+	}
 
-    if (orientation == Qt::Vertical)
-        return section;
+	if (orientation == Qt::Vertical)
+		return section;
 
-    return QVariant();
+	return QVariant();
 }
 
 QVariant TLBModel::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
+	if (!index.isValid())
+		return QVariant();
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole) {
-        switch (index.column()) {
-        case COLUMN_PTE_HI:
-            return cpu->getTLBHi(index.row());
-        case COLUMN_PTE_LO:
-            return cpu->getTLBLo(index.row());
-        default:
-            return QVariant();
-        }
-    }
+	if (role == Qt::DisplayRole || role == Qt::EditRole) {
+		switch (index.column()) {
+		case COLUMN_PTE_HI:
+			return cpu->getTLBHi(index.row());
+		case COLUMN_PTE_LO:
+			return cpu->getTLBLo(index.row());
+		default:
+			return QVariant();
+		}
+	}
 
-    if (role == Qt::ToolTipRole)
-        return tlbEntryDetails(index.row());
+	if (role == Qt::ToolTipRole)
+		return tlbEntryDetails(index.row());
 
-    if (role == Qt::FontRole)
-        return Appl()->getMonospaceFont();
+	if (role == Qt::FontRole)
+		return Appl()->getMonospaceFont();
 
-    return QVariant();
+	return QVariant();
 }
 
 bool TLBModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    if (!(index.isValid() && role == Qt::EditRole && value.canConvert<Word>()))
-        return false;
+	if (!(index.isValid() && role == Qt::EditRole && value.canConvert<Word>()))
+		return false;
 
-    switch (index.column()) {
-    case COLUMN_PTE_HI:
-        cpu->setTLBHi(index.row(), value.value<Word>());
-        break;
-    case COLUMN_PTE_LO:
-        cpu->setTLBLo(index.row(), value.value<Word>());
-        break;
-    default:
-        AssertNotReached();
-    }
+	switch (index.column()) {
+	case COLUMN_PTE_HI:
+		cpu->setTLBHi(index.row(), value.value<Word>());
+		break;
+	case COLUMN_PTE_LO:
+		cpu->setTLBLo(index.row(), value.value<Word>());
+		break;
+	default:
+		AssertNotReached();
+	}
 
-    return true;
+	return true;
 }
 
 void TLBModel::onMachineReset()
 {
-    beginResetModel();
-    cpu = debugSession->getMachine()->getProcessor(cpuId);
-    cpu->SignalTLBChanged.connect(sigc::mem_fun(this, &TLBModel::onTLBChanged));
-    endResetModel();
+	beginResetModel();
+	cpu = debugSession->getMachine()->getProcessor(cpuId);
+	cpu->SignalTLBChanged.connect(sigc::mem_fun(this, &TLBModel::onTLBChanged));
+	endResetModel();
 }
 
 void TLBModel::onTLBChanged(unsigned int tlbIndex)
 {
-    Q_EMIT dataChanged(index(tlbIndex, COLUMN_PTE_HI), index(tlbIndex, COLUMN_PTE_LO));
+	Q_EMIT dataChanged(index(tlbIndex, COLUMN_PTE_HI), index(tlbIndex, COLUMN_PTE_LO));
 }
 
 QString TLBModel::tlbEntryDetails(unsigned int index) const
 {
-    Word hi = cpu->getTLBHi(index);
-    Word lo = cpu->getTLBLo(index);
+	Word hi = cpu->getTLBHi(index);
+	Word lo = cpu->getTLBLo(index);
 
-    QString buf(detailsTemplate);
-    buf.replace("%EntryNo%", QString::number(index));
+	QString buf(detailsTemplate);
+	buf.replace("%EntryNo%", QString::number(index));
 
-    buf.replace("%EntryHi.VPN%",
-                QString("%1").arg(VPN(hi) >> 12, 5, 16, QLatin1Char('0')));
-    buf.replace("%EntryHi.ASID%",
-                QString::number(ASID(hi) >> 6, 16));
+	buf.replace("%EntryHi.VPN%",
+	            QString("%1").arg(VPN(hi) >> 12, 5, 16, QLatin1Char('0')));
+	buf.replace("%EntryHi.ASID%",
+	            QString::number(ASID(hi) >> 6, 16));
 
-    buf.replace("%EntryLo.PFN%",
-                QString("%1").arg(VPN(lo) >> 12, 5, 16, QLatin1Char('0')));
-    buf.replace("%EntryLo.D%", QString::number(BitVal(lo, DBITPOS)));
-    buf.replace("%EntryLo.V%", QString::number(BitVal(lo, VBITPOS)));
-    buf.replace("%EntryLo.G%", QString::number(BitVal(lo, GBITPOS)));
+	buf.replace("%EntryLo.PFN%",
+	            QString("%1").arg(VPN(lo) >> 12, 5, 16, QLatin1Char('0')));
+	buf.replace("%EntryLo.D%", QString::number(BitVal(lo, DBITPOS)));
+	buf.replace("%EntryLo.V%", QString::number(BitVal(lo, VBITPOS)));
+	buf.replace("%EntryLo.G%", QString::number(BitVal(lo, GBITPOS)));
 
-    return buf;
+	return buf;
 }

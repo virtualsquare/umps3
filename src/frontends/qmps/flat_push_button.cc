@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -24,31 +23,31 @@
 #include "base/lang.h"
 
 FlatPushButton::FlatPushButton(QWidget* parent)
-    : QPushButton(parent)
+	: QPushButton(parent)
 {
-    setFlat(true);
+	setFlat(true);
 }
 
 FlatPushButton::FlatPushButton(const QString& text, QWidget* parent)
-    : QPushButton(text, parent)
+	: QPushButton(text, parent)
 {
-    setFlat(true);
+	setFlat(true);
 }
 
 FlatPushButton::FlatPushButton(const QIcon& icon, const QString& text, QWidget* parent)
-    : QPushButton(icon, text, parent)
+	: QPushButton(icon, text, parent)
 {
-    setFlat(true);
+	setFlat(true);
 }
 
 void FlatPushButton::enterEvent(QEvent* event)
 {
-    UNUSED_ARG(event);
-    setFlat(false);
+	UNUSED_ARG(event);
+	setFlat(false);
 }
 
 void FlatPushButton::leaveEvent(QEvent* event)
 {
-    UNUSED_ARG(event);
-    setFlat(true);
+	UNUSED_ARG(event);
+	setFlat(true);
 }

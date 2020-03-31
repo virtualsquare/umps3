@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,31 +27,31 @@
 class QLabel;
 
 class MachineConfigView : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    MachineConfigView(QWidget* parent = 0);
+MachineConfigView(QWidget* parent = 0);
 
 public Q_SLOTS:
-    void Update();
+void Update();
 
 private:
-    static QString checkedFileName(const QString& fileName);
+static QString checkedFileName(const QString& fileName);
 
-    QLabel* numCpusLabel;
-    QLabel* clockRateLabel;
-    QLabel* tlbSizeLabel;
-    QLabel* tlbFloorAddressLabel;
-    QLabel* ramSizeLabel;
+QLabel* numCpusLabel;
+QLabel* clockRateLabel;
+QLabel* tlbSizeLabel;
+QLabel* tlbFloorAddressLabel;
+QLabel* ramSizeLabel;
 
-    QLabel* bootstrapROMLabel;
-    QLabel* executionROMLabel;
+QLabel* bootstrapROMLabel;
+QLabel* executionROMLabel;
 
-    QLabel* loadCoreLabel;
-    QLabel* coreFileLabel;
+QLabel* loadCoreLabel;
+QLabel* coreFileLabel;
 
-    QLabel* stabLabel;
-    QLabel* stabAsidLabel;
+QLabel* stabLabel;
+QLabel* stabAsidLabel;
 };
 
 #endif // QMPS_MACHINE_CONFIG_VIEW_H

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -25,11 +24,11 @@
 
 TrackableMixin::~TrackableMixin()
 {
-    for (sigc::connection& c : connections)
-        c.disconnect();
+	for (sigc::connection& c : connections)
+		c.disconnect();
 }
 
 void TrackableMixin::RegisterSigc(sigc::connection c)
 {
-    connections.push_back(c);
+	connections.push_back(c);
 }

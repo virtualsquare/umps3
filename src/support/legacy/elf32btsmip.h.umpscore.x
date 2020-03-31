@@ -142,7 +142,7 @@ SECTIONS
   }
   .data1          : { *(.data1) }
   /* _gp = ALIGN(16) + 0x7ff0; */
-  _gp = ALIGN(0x800); 
+  _gp = ALIGN(0x800);
   .got            : { *(.got.plt) *(.got) }
   /* We want the small data sections together, so single-instruction offsets
      can access them all, and initialized data all before uninitialized, so

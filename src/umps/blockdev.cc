@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -41,7 +40,8 @@
 
 // This method returns an empty (unitialized) 512 byte Block
 Block::Block()
-{}
+{
+}
 
 
 // This method fills a Block with file contents starting at "offset"
@@ -53,12 +53,12 @@ bool Block::ReadBlock(FILE * blkFile, SWord offset)
 		// already at EOF
 		return(true);
 	else
-		if (fread((void *)blkBuf, WORDLEN, BLOCKSIZE, blkFile) != BLOCKSIZE)
-			// file too short
-			return(true);
-		else
-			// all OK
-			return(false);
+	if (fread((void *)blkBuf, WORDLEN, BLOCKSIZE, blkFile) != BLOCKSIZE)
+		// file too short
+		return(true);
+	else
+		// all OK
+		return(false);
 }
 
 
@@ -71,12 +71,12 @@ bool Block::WriteBlock(FILE * blkFile, SWord offset)
 		// already at EOF
 		return(true);
 	else
-		if (fwrite((void *)blkBuf, WORDLEN, BLOCKSIZE, blkFile) != BLOCKSIZE)
-			// some error occurred
-			return(true);
-		else
-			// all OK
-			fflush(blkFile);
+	if (fwrite((void *)blkBuf, WORDLEN, BLOCKSIZE, blkFile) != BLOCKSIZE)
+		// some error occurred
+		return(true);
+	else
+		// all OK
+		fflush(blkFile);
 	return(false);
 }
 
@@ -111,29 +111,29 @@ void Block::setWord(unsigned int ofs, Word value)
 // allows to modify the parameters' size without changing the caller.
 // If fileOfs returned is 0, something has gone wrong; file is rewound after
 // use
-DiskParams::DiskParams(FILE * diskFile, SWord * fileOfs) 
+DiskParams::DiskParams(FILE * diskFile, SWord * fileOfs)
 {
 	SWord ret;
 	unsigned int i;
 	Block * blk = new Block();
-	
+
 	rewind(diskFile);
 	if (blk->ReadBlock(diskFile, 0) || blk->getWord(0) != DISKFILEID)
 		// errors in file reading or disk file magic number missing
 		ret = 0;
 	else
 	{
-		// if DISKFILEID is present all parameters should be correct; 
+		// if DISKFILEID is present all parameters should be correct;
 		// fills the object
 		for (i = 0; i < DISKPNUM; i++)
 			parms[i] = (unsigned int) blk->getWord(i + 1);
-	
+
 		rewind(diskFile);
-		// sets the disk contents start position 
+		// sets the disk contents start position
 		ret = DISKPNUM + 1;
-	}	
+	}
 	delete blk;
-	
+
 	*fileOfs = ret;
 }
 
@@ -176,29 +176,29 @@ unsigned int DiskParams::getDataSect(void)
 // allows to modify the parameters' size without changing the caller.
 // If fileOfs returned is 0, something has gone wrong; file is rewound after
 // use
-FlashParams::FlashParams(FILE * flashFile, SWord * fileOfs) 
+FlashParams::FlashParams(FILE * flashFile, SWord * fileOfs)
 {
 	SWord ret;
 	unsigned int i;
 	Block * blk = new Block();
-	
+
 	rewind(flashFile);
 	if (blk->ReadBlock(flashFile, 0) || blk->getWord(0) != FLASHFILEID)
 		// errors in file reading or flash device file magic number missing
 		ret = 0;
 	else
 	{
-		// if FLASHFILEID is present all parameters should be correct; 
+		// if FLASHFILEID is present all parameters should be correct;
 		// fills the object
 		for (i = 0; i < FLASHPNUM; i++)
 			parms[i] = (unsigned int) blk->getWord(i + 1);
-	
+
 		rewind(flashFile);
-		// sets the flash device contents start position 
+		// sets the flash device contents start position
 		ret = FLASHPNUM + 1;
-	}	
+	}
 	delete blk;
-	
+
 	*fileOfs = ret;
 }
 

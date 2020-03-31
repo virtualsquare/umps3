@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -26,6 +25,6 @@
 
 void Panic(const char* message)
 {
-    QMessageBox::critical(0, "PANIC", QString("PANIC: %1").arg(message));
-    Appl()->quit();
+	QMessageBox::critical(0, "PANIC", QString("PANIC: %1").arg(message));
+	Appl()->quit();
 }

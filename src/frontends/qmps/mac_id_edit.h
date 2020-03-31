@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,10 +27,10 @@
 
 class MacIdEdit : public QLineEdit {
 public:
-    MacIdEdit(QWidget* parent = 0);
+MacIdEdit(QWidget* parent = 0);
 
-    uint8_t* getMacId(uint8_t* id) const;
-    void setMacId(const uint8_t* id);
+uint8_t* getMacId(uint8_t* id) const;
+void setMacId(const uint8_t* id);
 };
 
 #endif // QMPS_MAC_ID_EDIT_H

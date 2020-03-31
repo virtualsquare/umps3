@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -49,10 +48,10 @@ enum request_type { REQ_NEW_CONTROL };
 
 // FIXME: what is this for?
 struct request_v3 {
-  uint32_t magic;
-  uint32_t version;
-  enum request_type type;
-  struct sockaddr_un sock;
+	uint32_t magic;
+	uint32_t version;
+	enum request_type type;
+	struct sockaddr_un sock;
 };
 
 #define SWITCH_MAGIC 0xfeedface
@@ -67,55 +66,55 @@ HIDDEN char packbuf[MAXPACKETLEN];
 
 class netblock {
 public:
-    netblock(const char *icontent,int ilen);
-    ~netblock(void);
-    class netblock *getNext();
-    void setNext(class netblock *p);
-    char * getContent();
-    int getLen();
+netblock(const char *icontent,int ilen);
+~netblock(void);
+class netblock *getNext();
+void setNext(class netblock *p);
+char * getContent();
+int getLen();
 
 private:
-    char *content;
-    int len;
-    struct netblock *next;
+char *content;
+int len;
+struct netblock *next;
 };
 
 class netblockq {
 public:
-    netblockq(int imaxelem);
-    ~netblockq();
-    int enqueue(const char *content,int len);
-    int empty();
-    int dequeue(char *pcontent, int len);
+netblockq(int imaxelem);
+~netblockq();
+int enqueue(const char *content,int len);
+int empty();
+int dequeue(char *pcontent, int len);
 
 private:
-    class netblock *head,*tail;
-    int maxelem,nelem;
+class netblock *head,*tail;
+int maxelem,nelem;
 };
 
 unsigned int testnetinterface(const char *name)
 {
-    char name2[1024];
-    int size;
+	char name2[1024];
+	int size;
 
-    if (!vdepluglib.dl_handle)
-        libvdeplug_dynopen(vdepluglib);
-    /* vde lib does not exist */
-    if (vdepluglib.dl_handle == NULL)
-        return 0;
+	if (!vdepluglib.dl_handle)
+		libvdeplug_dynopen(vdepluglib);
+	/* vde lib does not exist */
+	if (vdepluglib.dl_handle == NULL)
+		return 0;
 
-    if ((size = readlink(name,name2,1023)) > 0) {
-        name2[size]=0;
-        name=name2;
-    }
-    /* file does not exist or read error */
-    if (access(name,R_OK) != 0)
-        return 0;
-    return 1;
+	if ((size = readlink(name,name2,1023)) > 0) {
+		name2[size]=0;
+		name=name2;
+	}
+	/* file does not exist or read error */
+	if (access(name,R_OK) != 0)
+		return 0;
+	return 1;
 }
 
 netinterface::netinterface(const char *name, const char *addr, int intnum)
-{ 
+{
 	char name2[1024];
 	int size;
 
@@ -130,14 +129,14 @@ netinterface::netinterface(const char *name, const char *addr, int intnum)
 	polldata.events = POLLIN | POLLOUT | POLLERR | POLLHUP | POLLNVAL;
 
 	if (addr != NULL) {
-		for (int i=0;i<6;i++)
+		for (int i=0; i<6; i++)
 			ethaddr[i]=addr[i];
 	} else {
 		char tempaddr[7];
 		snprintf(tempaddr,7," %5d",getpid());
-                
+
 		ethaddr[0]=intnum*2;
-                for (int i=1;i<6;i++)
+		for (int i=1; i<6; i++)
 			ethaddr[i]=tempaddr[i];
 	}
 
@@ -165,7 +164,7 @@ unsigned int netinterface::writedata(char *buf, int len)
 	if ((pollout=poll(&polldata,1,0)) < 0) {
 		sprintf(strbuf,"poll: %s",strerror(errno));
 		Panic(strbuf);
-		return 0; // -1 ??
+		return 0;                 // -1 ??
 	} else {
 		if (!(polldata.revents & POLLOUT))
 			retval=0;
@@ -188,16 +187,16 @@ unsigned int netinterface::polling()
 		if ((poll(&polldata,1,0)) < 0) {
 			sprintf(strbuf,"poll: %s",strerror(errno));
 			Panic(strbuf);
-		} else 
-			if (polldata.revents & POLLIN) {
-				/* We don't store sender address to avoid EINVAL in recvfrom */
-				len=vdepluglib.vde_recv(vdeconn,packbuf,MAXPACKETLEN,0);
-				if (mode & PROMISQ //promiquous mode: receive everything
-						|| (len > 12 // header okay and
-							&& (memcmp(packbuf,ethaddr,6)==0 //it is sent to this interface
-								|| (packbuf[0] & 1)))) //or it's a broadcast
-					queue->enqueue(packbuf,len);
-			}
+		} else
+		if (polldata.revents & POLLIN) {
+			/* We don't store sender address to avoid EINVAL in recvfrom */
+			len=vdepluglib.vde_recv(vdeconn,packbuf,MAXPACKETLEN,0);
+			if (mode & PROMISQ                         //promiquous mode: receive everything
+			    || (len > 12                         // header okay and
+			        && (memcmp(packbuf,ethaddr,6)==0                         //it is sent to this interface
+			            || (packbuf[0] & 1))))                         //or it's a broadcast
+				queue->enqueue(packbuf,len);
+		}
 	}
 	while (polldata.revents & POLLIN);
 	return (!queue->empty());
@@ -206,9 +205,9 @@ unsigned int netinterface::polling()
 void netinterface::setaddr(char *iethaddr)
 {
 	register int i;
-	for (i=0;i<6;i++) 
+	for (i=0; i<6; i++)
 		ethaddr[i]=iethaddr[i];
-		
+
 //	for (int i = 0; i < 6; i++)
 //		printf("%x:",ethaddr[i]);
 //	printf("\n");
@@ -217,7 +216,7 @@ void netinterface::setaddr(char *iethaddr)
 void netinterface::getaddr(char *pethaddr)
 {
 	register int i;
-	for (i=0;i<6;i++)
+	for (i=0; i<6; i++)
 		pethaddr[i]=ethaddr[i];
 }
 
@@ -238,7 +237,7 @@ netblock::netblock(const char *icontent,int ilen)
 	if (ilen>0) {
 		content=new char [ilen];
 		memcpy(content,icontent,ilen);
-	} else 
+	} else
 		content=NULL;
 	len=ilen;
 }
@@ -279,7 +278,7 @@ netblockq::netblockq(int imaxelem)
 
 netblockq::~netblockq()
 {
-	class netblock *next;	
+	class netblock *next;
 	while (head != NULL)
 	{
 		next=head->getNext();
@@ -294,12 +293,12 @@ int netblockq::enqueue(const char *content,int len)
 		return 0;
 	else
 	{
-		class netblock *oldtail=tail;	
+		class netblock *oldtail=tail;
 		tail=new netblock(content,len);
 		if (oldtail!=NULL)
 			oldtail->setNext(tail);
 		tail->setNext(NULL);
-		if (head==NULL) 
+		if (head==NULL)
 			head=tail;
 		nelem++;
 		return 1;
@@ -315,7 +314,7 @@ int netblockq::dequeue(char *pcontent, int len)
 {
 	if (head==NULL)
 		return 0;
-	else 
+	else
 	{
 		class netblock *oldhead=head;
 		int packlen;

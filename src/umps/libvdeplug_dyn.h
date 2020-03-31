@@ -1,4 +1,22 @@
 /*
+ * uMPS - A general purpose computer system simulator
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+/*
  * libvdeplug - A library to connect to a VDE Switch.
  * dynamic loading version (requires libdl).
  *
@@ -20,12 +38,12 @@
  */
 
 /* Use this include file when you need to write an application that can
- * benefit from vde when available. 
+ * benefit from vde when available.
  * Linking libvdeplug to your programs you force your application users
  * to have the library installed (otherway the dynamic linker complies
  * and the program does not start).
  *
- * 
+ *
  * usage:
  * define a struct vdepluglib variable;
  * eg:
@@ -73,7 +91,7 @@ struct vde_open_args {
 	char *group;
 	mode_t mode;
 };
-	
+
 /* vde_open args:
  *   vde_switch: switch id (path)
  *   descr: description (it will appear in the port description on the switch)
@@ -96,24 +114,24 @@ typedef size_t (* VDE_RECV_T)(VDECONN *conn,void *buf,size_t len,int flags);
 typedef size_t (* VDE_SEND_T)(VDECONN *conn,const void *buf,size_t len,int flags);
 typedef int (* VDE_INT_FUN)(VDECONN *conn);
 #define libvdeplug_dynopen(x) do { \
-	(x).dl_handle=dlopen("libvdeplug.so",RTLD_NOW); \
-	if ((x).dl_handle) { \
-		(x).vde_open_real=(VDE_OPEN_REAL_T) dlsym((x).dl_handle,"vde_open_real"); \
-		(x).vde_recv=(VDE_RECV_T) dlsym((x).dl_handle,"vde_recv"); \
-		(x).vde_send=(VDE_SEND_T) dlsym((x).dl_handle,"vde_send"); \
-		(x).vde_datafd=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_datafd"); \
-		(x).vde_ctlfd=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_ctlfd"); \
-		(x).vde_close=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_close"); \
+		(x).dl_handle=dlopen("libvdeplug.so",RTLD_NOW); \
+		if ((x).dl_handle) { \
+			(x).vde_open_real=(VDE_OPEN_REAL_T) dlsym((x).dl_handle,"vde_open_real"); \
+			(x).vde_recv=(VDE_RECV_T) dlsym((x).dl_handle,"vde_recv"); \
+			(x).vde_send=(VDE_SEND_T) dlsym((x).dl_handle,"vde_send"); \
+			(x).vde_datafd=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_datafd"); \
+			(x).vde_ctlfd=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_ctlfd"); \
+			(x).vde_close=(VDE_INT_FUN) dlsym((x).dl_handle,"vde_close"); \
 		} else { \
-		(x).vde_open_real=NULL; \
-		(x).vde_send= NULL; \
-		(x).vde_recv= NULL; \
-		(x).vde_datafd= (x).vde_ctlfd= (x).vde_close= NULL; \
+			(x).vde_open_real=NULL; \
+			(x).vde_send= NULL; \
+			(x).vde_recv= NULL; \
+			(x).vde_datafd= (x).vde_ctlfd= (x).vde_close= NULL; \
 		} \
-		} while (0);
+} while (0);
 
 #define libvdeplug_dynclose(x) ({ \
 		dlclose((x).dl_handle); \
-		})
+	})
 
 #endif

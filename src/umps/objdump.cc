@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -53,33 +52,33 @@
 static const size_t AOUTENTNUM = 10;
 
 // number of NOPS, empty words and characters before skip in displaying
-#define NOPSMIN	2
-#define EMPTYWMIN 	3
-#define EMPTYCMIN	3
+#define NOPSMIN 2
+#define EMPTYWMIN   3
+#define EMPTYCMIN   3
 
-// character and word buffer sizes for file read 
-#define WBUFSIZE 	4
-#define CBUFSIZE	16
+// character and word buffer sizes for file read
+#define WBUFSIZE    4
+#define CBUFSIZE    16
 
 // .aout header field names (copied from elf2mps.cc)
 HIDDEN const char* const aoutName[] = {
-    "",
-    "Program (virtual) starting address",
-    ".text (virtual) start address",
-    ".text memory size", 
-    ".text file start offset",
-    ".text file size", 
-    ".data (virtual) start address",
-    ".data memory size",
-    ".data file start offset",
-    ".data file size"
+	"",
+	"Program (virtual) starting address",
+	".text (virtual) start address",
+	".text memory size",
+	".text file start offset",
+	".text file size",
+	".data (virtual) start address",
+	".data memory size",
+	".data file start offset",
+	".data file size"
 };
 
 
 //
 // Program functions
 //
- 						
+
 HIDDEN void showHelp(const char * prgName);
 HIDDEN int hdrDump(const char * prgName, const char * fileName);
 HIDDEN int disAsm(const char * prgName, const char * fileName);
@@ -104,7 +103,7 @@ int main(int argc, char * argv[])
 	bool bdump = false;
 	int ret = EXIT_SUCCESS;
 	int i;
-	
+
 	if (argc == 1)
 		showHelp(argv[0]);
 	else
@@ -114,38 +113,38 @@ int main(int argc, char * argv[])
 		{
 			if (SAMESTRING("-h", argv[i]))
 				hdr = true;
-			else	
-				if (SAMESTRING("-d", argv[i]))
-					disasm = true;
-				else
-					if (SAMESTRING("-x", argv[i]))
-						xdump = true;
-					else
-						if (SAMESTRING("-b", argv[i]))
-							bdump = true;
-						else
-							if (SAMESTRING("-a", argv[i]))
-							{
-								hdr = true;
-								disasm = true;
-								xdump = true;
-								bdump = true;
-							}
-							else
-								// unrecognized option
-								ret = EXIT_FAILURE;
-		} 
+			else
+			if (SAMESTRING("-d", argv[i]))
+				disasm = true;
+			else
+			if (SAMESTRING("-x", argv[i]))
+				xdump = true;
+			else
+			if (SAMESTRING("-b", argv[i]))
+				bdump = true;
+			else
+			if (SAMESTRING("-a", argv[i]))
+			{
+				hdr = true;
+				disasm = true;
+				xdump = true;
+				bdump = true;
+			}
+			else
+				// unrecognized option
+				ret = EXIT_FAILURE;
+		}
 		if (ret != EXIT_FAILURE && strstr(argv[argc - 1], MPSFILETYPE) != NULL)
 		{
 			if (hdr == true)
 				ret = hdrDump(argv[0], argv[argc - 1]);
-			
+
 			if (disasm == true && ret != EXIT_FAILURE)
 				ret = disAsm(argv[0], argv[argc - 1]);
-				
+
 			if (xdump == true && ret != EXIT_FAILURE)
-				ret = xDump(argv[0], argv[argc - 1]);	
-			
+				ret = xDump(argv[0], argv[argc - 1]);
+
 			if (bdump == true && ret != EXIT_FAILURE)
 				ret = bDump(argv[0], argv[argc - 1]);
 		}
@@ -174,7 +173,7 @@ HIDDEN void showHelp(const char * prgName)
 
 
 // This function locates and prints the header contents of a .aout/.core file;
-// Returns an EXIT_SUCCESS/FAILURE code 
+// Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int hdrDump(const char * prgName, const char * fileName)
 {
 	int ret = EXIT_SUCCESS;
@@ -183,53 +182,53 @@ HIDDEN int hdrDump(const char * prgName, const char * fileName)
 	Word aoutHdr[AOUTENTNUM];
 	unsigned int i;
 	SWord offs;
-	
+
 	if ((inFile = fopen(fileName, "r")) == NULL)
 	{
 		fprintf(stderr, "%s : Error opening file %s : %s\n", prgName, fileName, strerror(errno));
 		ret = EXIT_FAILURE;
 	}
 	else
-		if (fread((void *) &tag, WORDLEN, 1, inFile) != 1 || !(tag == AOUTFILEID || tag == COREFILEID || tag == BIOSFILEID))
-		{
-				fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
-				ret = EXIT_FAILURE;
-		}
+	if (fread((void *) &tag, WORDLEN, 1, inFile) != 1 || !(tag == AOUTFILEID || tag == COREFILEID || tag == BIOSFILEID))
+	{
+		fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
+		ret = EXIT_FAILURE;
+	}
+	else
+	{
+		// file is of correct type
+		if (tag == BIOSFILEID)
+			printf("%s : ROM file type : it has no a.out header\n\n", fileName);
 		else
 		{
-			// file is of correct type
-			if (tag == BIOSFILEID)
-				printf("%s : ROM file type : it has no a.out header\n\n", fileName);
+			if (tag == AOUTFILEID)
+			{
+				offs = 0L;
+				printf("%s : a.out file type\n\n", fileName);
+			}
 			else
 			{
-				if (tag == AOUTFILEID)
-				{
-					offs = 0L;
-					printf("%s : a.out file type\n\n", fileName); 
-				}	
-				else
-				{
-					offs = CORE_HDR_SIZE * WORDLEN;
-					printf("%s : core file type\n\n", fileName);
-				}
-				// load header
-				
-				if (fseek(inFile, offs, SEEK_SET) == EOF || \
-					fread((void *) aoutHdr, WORDLEN, AOUTENTNUM, inFile) != AOUTENTNUM || \
-					fclose(inFile) == EOF)
-				{
-					fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
-					ret = EXIT_FAILURE;
-				}
-				else
-				{
-					// print header
-					for (i = 1; i < AOUTENTNUM; i++)
-						printf("%-35.35s: 0x%.8X\n", aoutName[i], aoutHdr[i]);
-					printf("\n");
-				}
+				offs = CORE_HDR_SIZE * WORDLEN;
+				printf("%s : core file type\n\n", fileName);
+			}
+			// load header
+
+			if (fseek(inFile, offs, SEEK_SET) == EOF || \
+			    fread((void *) aoutHdr, WORDLEN, AOUTENTNUM, inFile) != AOUTENTNUM || \
+			    fclose(inFile) == EOF)
+			{
+				fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
+				ret = EXIT_FAILURE;
+			}
+			else
+			{
+				// print header
+				for (i = 1; i < AOUTENTNUM; i++)
+					printf("%-35.35s: 0x%.8X\n", aoutName[i], aoutHdr[i]);
+				printf("\n");
 			}
 		}
+	}
 	return(ret);
 }
 
@@ -244,7 +243,7 @@ HIDDEN int disAsm(const char * prgName, const char * fileName)
 	Word tag, size;
 	Word aoutHdr[AOUTENTNUM];
 	SWord offs;
-	
+
 	if ((inFile = fopen(fileName, "r")) == NULL)
 	{
 		fprintf(stderr, "%s : Error opening file %s : %s\n", prgName, fileName, strerror(errno));
@@ -255,8 +254,8 @@ HIDDEN int disAsm(const char * prgName, const char * fileName)
 		// file exists
 		if (fread((void *) &tag, WORDLEN, 1, inFile) != 1 || !(tag == AOUTFILEID || tag == COREFILEID || tag == BIOSFILEID))
 		{
-				fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
-				ret = EXIT_FAILURE;
+			fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
+			ret = EXIT_FAILURE;
 		}
 		else
 		{
@@ -278,9 +277,9 @@ HIDDEN int disAsm(const char * prgName, const char * fileName)
 
 				// load header
 				if (fseek(inFile, offs, SEEK_SET) == EOF || \
-					fread((void *) aoutHdr, WORDLEN, AOUTENTNUM, inFile) != AOUTENTNUM || \
-					fseek(inFile, (SWord) ((aoutHdr[AOUT_HE_ENTRY] - aoutHdr[AOUT_HE_TEXT_VADDR]) + aoutHdr[AOUT_HE_TEXT_OFFSET]) + offs, SEEK_SET) == EOF)
-					
+				    fread((void *) aoutHdr, WORDLEN, AOUTENTNUM, inFile) != AOUTENTNUM || \
+				    fseek(inFile, (SWord) ((aoutHdr[AOUT_HE_ENTRY] - aoutHdr[AOUT_HE_TEXT_VADDR]) + aoutHdr[AOUT_HE_TEXT_OFFSET]) + offs, SEEK_SET) == EOF)
+
 				{
 					fprintf(stderr, "%s : Error reading file %s : invalid/corrupted file\n", prgName, fileName);
 					ret = EXIT_FAILURE;
@@ -299,12 +298,12 @@ HIDDEN int disAsm(const char * prgName, const char * fileName)
 // instructions contained there (up to asmSize) numbering them by beginning
 // with asmStart.
 // It skips blocks of NOPs after finding NOPSMIN ones.
-// Returns an EXIT_SUCCESS/FAILURE code 
+// Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int asmPrint(const char * prg, const char * fname, FILE * inF, Word asmStart, Word asmSize)
 {
 	Word instr;
 	unsigned int nops = 0;
-	
+
 	for (; asmSize > 0 && !feof(inF) && !ferror(inF); asmStart += WORDLEN, asmSize -= WORDLEN)
 	{
 		// read one instruction
@@ -312,18 +311,18 @@ HIDDEN int asmPrint(const char * prg, const char * fname, FILE * inF, Word asmSt
 		{
 			if (instr == NOP)
 				// count NOPs for skipping
-				nops++; 
+				nops++;
 			else
 				nops = 0;
 
-			if (nops < NOPSMIN)	
+			if (nops < NOPSMIN)
 				printf("0x%.8X : %s\n", asmStart, StrInstr(instr));
 			else
-				if (nops == NOPSMIN)
-					// tries to skip a NOPs block
-					printf("*\n");
-		} 	
-	}	
+			if (nops == NOPSMIN)
+				// tries to skip a NOPs block
+				printf("*\n");
+		}
+	}
 	if (ferror(inF))
 	{
 		fprintf(stderr, "%s : Error	disassembling file %s : %s\n", prg, fname, strerror(errno));
@@ -341,7 +340,7 @@ HIDDEN int asmPrint(const char * prg, const char * fname, FILE * inF, Word asmSt
 // hexadecimal word dump of them. It skips magic file number for .core
 // and .rom file types, since it is not "seen" inside simulation.
 // It skips blocks of zero-filled words after finding EMPTYWMIN ones.
-// Returns an EXIT_SUCCESS/FAILURE code 
+// Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int xDump(const char * prgName, const char * fileName)
 {
 	int ret = EXIT_SUCCESS;
@@ -352,7 +351,7 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 	bool empty;
 	unsigned int emptyl = 0;
 	unsigned int idx = 0;
-	
+
 	if ((inFile = fopen(fileName, "r")) == NULL)
 	{
 		fprintf(stderr, "%s : Error opening file %s : %s\n", prgName, fileName, strerror(errno));
@@ -363,28 +362,28 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 		// identifies file type
 		if (fread((void *) &tag, WORDLEN, 1, inFile) != 1 || !(tag == AOUTFILEID || tag == COREFILEID || tag == BIOSFILEID))
 		{
-				fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
-				ret = EXIT_FAILURE;
+			fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
+			ret = EXIT_FAILURE;
 		}
 		else
 		{
 			// file is of correct type
 			if (tag == AOUTFILEID)
 				rewind(inFile);
-				// core and bios file tag should be skipped, since it is not "seen"
-				// inside mps simulations 
+			// core and bios file tag should be skipped, since it is not "seen"
+			// inside mps simulations
 			else
-				if (tag == BIOSFILEID)
-					// skip size header too
-					if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
-                        if (ferror(inFile))
-                        {
-                            fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
-                            ret = EXIT_FAILURE;
-                        }
-                        // else all is ok
-                    
-			 
+			if (tag == BIOSFILEID)
+				// skip size header too
+				if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
+					if (ferror(inFile))
+					{
+						fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
+						ret = EXIT_FAILURE;
+					}
+			// else all is ok
+
+
 			while (!ferror(inFile) && !feof(inFile))
 				// scans file
 				if ((words = fread((void *) buf, WORDLEN, WBUFSIZE, inFile)) > 0)
@@ -392,30 +391,30 @@ HIDDEN int xDump(const char * prgName, const char * fileName)
 					for (i = 0, empty = true; i < words && empty; i++)
 						if (buf[i] != 0UL)
 							empty = false;
-							
+
 					// count empty lines
 					if (empty)
 						emptyl++;
 					else
 						emptyl = 0;
-						
+
 					if (emptyl < EMPTYWMIN)
 					{
-						printf ("0x%.8X : ", idx); 
+						printf ("0x%.8X : ", idx);
 						for (i = 0; i < words; i++)
 							printf("0x%.8X  ", buf[i]);
 						printf("\n");
 					}
 					else
-						if (emptyl == EMPTYWMIN)
-							// skips empty lines
-							printf("*\n");
+					if (emptyl == EMPTYWMIN)
+						// skips empty lines
+						printf("*\n");
 					idx += (words * WORDLEN);
 				}
 			printf("\n");
 		}
-		fclose (inFile);		
-	}			
+		fclose (inFile);
+	}
 	return(ret);
 }
 
@@ -435,7 +434,7 @@ HIDDEN int bDump(const char * prgName, const char * fileName)
 	bool empty;
 	unsigned int emptyl = 0;
 	unsigned int idx = 0;
-	
+
 	if ((inFile = fopen(fileName, "r")) == NULL)
 	{
 		fprintf(stderr, "%s : Error opening file %s : %s\n", prgName, fileName, strerror(errno));
@@ -446,56 +445,56 @@ HIDDEN int bDump(const char * prgName, const char * fileName)
 		// tries file recognition
 		if (fread((void *) &tag, WORDLEN, 1, inFile) != 1 || !(tag == AOUTFILEID || tag == COREFILEID || tag == BIOSFILEID))
 		{
-				fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
-				ret = EXIT_FAILURE;
+			fprintf(stderr, "%s : Error opening file %s : invalid/corrupted file\n", prgName, fileName);
+			ret = EXIT_FAILURE;
 		}
 		else
 		{
 			// file is of correct type
 			if (tag == AOUTFILEID)
 				rewind(inFile);
-				// core and bios file tag should be skipped, since it is not
-				// "seen" inside mps simulations
+			// core and bios file tag should be skipped, since it is not
+			// "seen" inside mps simulations
 			else
-				if (tag == BIOSFILEID)
-					// skip size header too
-					if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
-                        if (ferror(inFile))
-                        {
-                            fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
-                            ret = EXIT_FAILURE;
-                        }
-                        // else all is ok
-			
+			if (tag == BIOSFILEID)
+				// skip size header too
+				if (fread((void *) &size, WORDLEN, 1, inFile) != 1)
+					if (ferror(inFile))
+					{
+						fprintf(stderr, "%s : Error	reading file %s : %s\n", prgName, fileName, strerror(errno));
+						ret = EXIT_FAILURE;
+					}
+			// else all is ok
+
 			while (!ferror(inFile) && !feof(inFile))
 				if ((chars = fread((void *) buf, sizeof(unsigned char), CBUFSIZE, inFile)) > 0)
 				{
 					for (i = 0, empty = true; i < chars && empty; i++)
 						if (buf[i] != 0)
 							empty = false;
-					
+
 					if (empty)
 						// counts empty lines
 						emptyl++;
 					else
 						emptyl = 0;
-						
+
 					if (emptyl < EMPTYCMIN)
 					{
-						printf ("0x%.8X : ", idx); 
+						printf ("0x%.8X : ", idx);
 						for (i = 0; i < chars; i++)
 							printf("%.2X  ", buf[i]);
 						printf("\n");
 					}
 					else
-						if (emptyl == EMPTYCMIN)
-							// skips empty lines
-							printf("*\n");
+					if (emptyl == EMPTYCMIN)
+						// skips empty lines
+						printf("*\n");
 					idx += chars;
 				}
 			printf("\n");
 		}
-		fclose (inFile);		
-	}			
+		fclose (inFile);
+	}
 	return(ret);
 }

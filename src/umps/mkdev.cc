@@ -49,18 +49,18 @@ HIDDEN char diskDflFName[] = "disk0";
 HIDDEN char flashDflFName[] = "flash0";
 
 // default disk header parameters (see h/blockdev.h)
-HIDDEN unsigned int diskDfl[DISKPNUM] =		{	DFLCYL,
-												DFLHEAD, 
-												DFLSECT,
-												DFLROTTIME, 
-												DFLSEEKTIME,
-												DFLDATAS
-											};
+HIDDEN unsigned int diskDfl[DISKPNUM] =         {       DFLCYL,
+	                                                    DFLHEAD,
+	                                                    DFLSECT,
+	                                                    DFLROTTIME,
+	                                                    DFLSEEKTIME,
+	                                                    DFLDATAS
+};
 
 // default flash device header parameters (see h/blockdev.h)
-HIDDEN unsigned int flashDfl[FLASHPNUM] =	{	DFLBLOCKS,
-												DFLWTIME,
-											};							
+HIDDEN unsigned int flashDfl[FLASHPNUM] =       {       DFLBLOCKS,
+	                                                    DFLWTIME,
+};
 
 //
 // Program functions
@@ -89,21 +89,21 @@ HIDDEN bool StrToWord(const char * str, Word * value);
 // Returns an EXIT_SUCCESS/FAILURE code
 int main(int argc, char* argv[])
 {
-    int ret = EXIT_SUCCESS;
+	int ret = EXIT_SUCCESS;
 
-    if (argc == 1)
-        showHelp(argv[0]);
-    else if (SAMESTRING("-d", argv[1]))
-        ret = mkDisk(argc, argv);
-    else if (SAMESTRING("-f", argv[1]))
+	if (argc == 1)
+		showHelp(argv[0]);
+	else if (SAMESTRING("-d", argv[1]))
+		ret = mkDisk(argc, argv);
+	else if (SAMESTRING("-f", argv[1]))
 		ret = mkFlash(argc, argv);
-    else {
-        fprintf(stderr, "%s : Unknown argument(s)\n", argv[0]);
-        showHelp(argv[0]);
-        ret = EXIT_FAILURE;
-    }
+	else {
+		fprintf(stderr, "%s : Unknown argument(s)\n", argv[0]);
+		showHelp(argv[0]);
+		ret = EXIT_FAILURE;
+	}
 
-    return ret;
+	return ret;
 }
 
 /****************************************************************************/
@@ -113,17 +113,17 @@ int main(int argc, char* argv[])
 // This function prints a warning/help message on standard error
 HIDDEN void showHelp(const char * prgName)
 {
-    fprintf(stderr, "%s syntax : %s {-d | -f} [parameters..]\n\n", prgName, prgName);
-    fprintf(stderr, "%s -d <diskfile%s> [cyl [head [sect [rpm [seekt [datas]]]]]]\n",prgName, MPSFILETYPE);
-    fprintf(stderr, "where:\n\tcyl = no. of cylinders\t\t\t[1..%u]\t(default = %u)\n", MAXCYL, diskDfl[CYLNUM]);
-    fprintf(stderr, "\thead = no. of heads\t\t\t[1..%u]\t(default = %u)\n", MAXHEAD, diskDfl[HEADNUM]);
-    fprintf(stderr, "\tsect = no. of sectors\t\t\t[1..%u]\t(default = %u)\n", MAXSECT, diskDfl[SECTNUM]); 
-    fprintf(stderr, "\trpm = disk rotations per min.\t\t[%u..%u]\t(default = %.0f)\n", MINRPM, MAXRPM, 6E7F / diskDfl[ROTTIME]);
-    fprintf(stderr, "\tseekt = avg. cyl2cyl time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXSEEKTIME, diskDfl[SEEKTIME]);
-    fprintf(stderr, "\tdatas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, diskDfl[DATASECT]); 
-    fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
-    fprintf(stderr, "\n%s -f <flashfile%s> [blocks [wt]]\n", prgName, MPSFILETYPE);
-    fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
+	fprintf(stderr, "%s syntax : %s {-d | -f} [parameters..]\n\n", prgName, prgName);
+	fprintf(stderr, "%s -d <diskfile%s> [cyl [head [sect [rpm [seekt [datas]]]]]]\n",prgName, MPSFILETYPE);
+	fprintf(stderr, "where:\n\tcyl = no. of cylinders\t\t\t[1..%u]\t(default = %u)\n", MAXCYL, diskDfl[CYLNUM]);
+	fprintf(stderr, "\thead = no. of heads\t\t\t[1..%u]\t(default = %u)\n", MAXHEAD, diskDfl[HEADNUM]);
+	fprintf(stderr, "\tsect = no. of sectors\t\t\t[1..%u]\t(default = %u)\n", MAXSECT, diskDfl[SECTNUM]);
+	fprintf(stderr, "\trpm = disk rotations per min.\t\t[%u..%u]\t(default = %.0f)\n", MINRPM, MAXRPM, 6E7F / diskDfl[ROTTIME]);
+	fprintf(stderr, "\tseekt = avg. cyl2cyl time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXSEEKTIME, diskDfl[SEEKTIME]);
+	fprintf(stderr, "\tdatas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, diskDfl[DATASECT]);
+	fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
+	fprintf(stderr, "\n%s -f <flashfile%s> [blocks [wt]]\n", prgName, MPSFILETYPE);
+	fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
 	fprintf(stderr, "\twt = avg. write time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXWTIME, flashDfl[WTIME]);
 	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(default = %s%s)\n\n", flashDflFName, MPSFILETYPE);
 }
@@ -132,21 +132,21 @@ HIDDEN void showHelp(const char * prgName)
 // This function builds an empty disk image file, putting geometry and
 // performance figures (by default or passed as command line arguments)
 // in file header.
-// Returns an EXIT_SUCCESS/FAILURE code 
+// Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int mkDisk(int argc, char * argv[])
 {
 	int i;
 	bool error = false;
 	int ret = EXIT_SUCCESS;
-	
+
 	if (argc < 3 || argc > 9 || strstr(argv[2], MPSFILETYPE) == NULL)
 	{
 		// too many or too few args
-		fprintf(stderr, "%s : disk image file parameters wrong/missing\n", argv[0]); 
+		fprintf(stderr, "%s : disk image file parameters wrong/missing\n", argv[0]);
 		ret = EXIT_FAILURE;
 	}
 	else
-	{ 
+	{
 		// start argument decoding
 		if (argc == 3)
 			// all by default: build file image
@@ -155,13 +155,13 @@ HIDDEN int mkDisk(int argc, char * argv[])
 		{
 			// scan args and places them in diskDfl[]
 			for (i = 0; i < argc - 3 && !error; i++)
-				error = decodeDiskP(i, &(diskDfl[i]), argv[i + 3]);	
+				error = decodeDiskP(i, &(diskDfl[i]), argv[i + 3]);
 			if (!error)
 				// build file images
 				ret = writeDisk(argv[0], argv[2]);
 			else
 			{
-				fprintf(stderr, "%s : disk image file parameters wrong/missing\n", argv[0]); 
+				fprintf(stderr, "%s : disk image file parameters wrong/missing\n", argv[0]);
 				ret = EXIT_FAILURE;
 			}
 		}
@@ -174,21 +174,21 @@ HIDDEN int mkDisk(int argc, char * argv[])
 // command line argument, putting geometry and performance figures (by default
 // or passed as command line arguments) in file header. The data file is split
 // into BLOCKSIZE blocks.
-// Returns an EXIT_SUCCESS/FAILURE code 
+// Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int mkFlash(int argc, char * argv[])
 {
 	int i;
 	bool error = false;
 	int ret = EXIT_SUCCESS;
-	
+
 	if (argc < 4 || argc > 6 || strstr(argv[2], MPSFILETYPE) == NULL)
 	{
 		// too many or too few args
-		fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]); 
+		fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]);
 		ret = EXIT_FAILURE;
 	}
 	else
-	{ 
+	{
 		// start argument decoding
 		if (argc == 4)
 			// all by default: build file image
@@ -203,7 +203,7 @@ HIDDEN int mkFlash(int argc, char * argv[])
 				ret = writeFlash(argv[0], argv[2], argv[3]);
 			else
 			{
-				fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]); 
+				fprintf(stderr, "%s : flash device image file parameters wrong/missing\n", argv[0]);
 				ret = EXIT_FAILURE;
 			}
 		}
@@ -221,63 +221,63 @@ HIDDEN bool decodeDiskP(int idx, unsigned int * par, const char * str)
 {
 	Word temp;
 	bool error = false;
-	
+
 	if (!StrToWord(str, &temp))
 		// error decoding parameter
 		error = true;
-	else 
+	else
 		switch (idx)
 		{
-			// argument decoded by position on command line
-			// min and max values are checked if needed
-			
-			case CYLNUM:
-				if (INBOUNDS(temp, 1, MAXCYL + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			case HEADNUM:
-				if (INBOUNDS(temp, 1, MAXHEAD + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			case SECTNUM:
-				if (INBOUNDS(temp, 1, MAXSECT + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			case ROTTIME:
-				if (INBOUNDS(temp, MINRPM, MAXRPM + 1))
-					*par = (unsigned int) (6E7F / temp);
-				else 
-					error = true;
-				break;
-			
-			case SEEKTIME:
-				if (INBOUNDS(temp, 1, MAXSEEKTIME + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			case DATASECT:
-				if (INBOUNDS(temp, MINDATAS, MAXDATAS + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			default:
-				// unknown parameter
+		// argument decoded by position on command line
+		// min and max values are checked if needed
+
+		case CYLNUM:
+			if (INBOUNDS(temp, 1, MAXCYL + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		case HEADNUM:
+			if (INBOUNDS(temp, 1, MAXHEAD + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		case SECTNUM:
+			if (INBOUNDS(temp, 1, MAXSECT + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		case ROTTIME:
+			if (INBOUNDS(temp, MINRPM, MAXRPM + 1))
+				*par = (unsigned int) (6E7F / temp);
+			else
+				error = true;
+			break;
+
+		case SEEKTIME:
+			if (INBOUNDS(temp, 1, MAXSEEKTIME + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		case DATASECT:
+			if (INBOUNDS(temp, MINDATAS, MAXDATAS + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		default:
+			// unknown parameter
 			error = true;
 		}
-	return(error);			
+	return(error);
 }
 
 
@@ -290,39 +290,39 @@ HIDDEN bool decodeFlashP(int idx, unsigned int * par, const char * str)
 {
 	Word temp;
 	bool error = false;
-	
+
 	if (!StrToWord(str, &temp))
 		// error decoding parameter
 		error = true;
-	else 
+	else
 		switch (idx)
 		{
-			// argument decoded by position on command line
-			// min and max values are checked if needed
-			
-			case BLOCKSNUM:
-				if (INBOUNDS(temp, 1, MAXBLOCKS + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			case WTIME:
-				if (INBOUNDS(temp, 1, MAXWTIME + 1))
-					*par = (unsigned int) temp;
-				else 
-					error = true;
-				break;
-			
-			default:
-				// unknown parameter
+		// argument decoded by position on command line
+		// min and max values are checked if needed
+
+		case BLOCKSNUM:
+			if (INBOUNDS(temp, 1, MAXBLOCKS + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		case WTIME:
+			if (INBOUNDS(temp, 1, MAXWTIME + 1))
+				*par = (unsigned int) temp;
+			else
+				error = true;
+			break;
+
+		default:
+			// unknown parameter
 			error = true;
 		}
-	return(error);			
+	return(error);
 }
 
 
-// This function creates the disk image file on the disk, prepending it with 
+// This function creates the disk image file on the disk, prepending it with
 // a header containing geometry and performance figures.
 // A number of 512-byte empty blocks is created, depending on disk geometry.
 // Returns an EXIT_SUCCESS/FAILURE code
@@ -330,31 +330,31 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 {
 	FILE * dfile = NULL;
 	int ret = EXIT_SUCCESS;
-	
+
 	unsigned int i;
 	unsigned int dfsize = diskDfl[CYLNUM] * diskDfl[HEADNUM] * diskDfl[SECTNUM];
 	Word blk[BLOCKSIZE];
 	Word diskid = DISKFILEID;
-	
+
 	// clears block
 	for (i = 0; i < BLOCKSIZE; i++)
 		blk[i] = 0;
 
-	// tries to open image file and write header	
+	// tries to open image file and write header
 	if ((dfile = fopen(fname, "w")) == NULL || \
-		fwrite((void *) &diskid, WORDLEN, 1, dfile) != 1 || \
-		fwrite((void *) diskDfl, sizeof(unsigned int), DISKPNUM, dfile) != DISKPNUM)
+	    fwrite((void *) &diskid, WORDLEN, 1, dfile) != 1 || \
+	    fwrite((void *) diskDfl, sizeof(unsigned int), DISKPNUM, dfile) != DISKPNUM)
 		ret = EXIT_FAILURE;
 	else
 	{
-		// writes empty blocks 
+		// writes empty blocks
 		for (i = 0; i < dfsize && ret != EXIT_FAILURE; i++)
 			if (fwrite((void *) blk, WORDLEN, BLOCKSIZE, dfile) != BLOCKSIZE)
 				ret = EXIT_FAILURE;
 		if (fclose(dfile) != 0)
 			ret = EXIT_FAILURE;
 	}
-	
+
 	if (ret == EXIT_FAILURE)
 		fprintf(stderr, "%s : error writing disk file image %s : %s\n", prg, fname, strerror(errno));
 
@@ -362,7 +362,7 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 }
 
 
-// This function creates the flash device image file on the disk, prepending it with 
+// This function creates the flash device image file on the disk, prepending it with
 // a header containing geometry and performance figures.
 // Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
@@ -370,15 +370,15 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 	FILE * ffile = NULL;
 	FILE * rfile = NULL;
 	int ret = EXIT_SUCCESS;
-	
+
 	unsigned int i, n = 0;
 	Word blk[BLOCKSIZE];
 	Word flashid = FLASHFILEID;
-	
-	// tries to open image file and write header	
+
+	// tries to open image file and write header
 	if ((ffile = fopen(fname, "w")) == NULL || \
-		fwrite((void *) &flashid, WORDLEN, 1, ffile) != 1 || \
-		fwrite((void *) flashDfl, sizeof(unsigned int), FLASHPNUM, ffile) != FLASHPNUM)
+	    fwrite((void *) &flashid, WORDLEN, 1, ffile) != 1 || \
+	    fwrite((void *) flashDfl, sizeof(unsigned int), FLASHPNUM, ffile) != FLASHPNUM)
 		ret = EXIT_FAILURE;
 	else
 	{
@@ -391,14 +391,14 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 			// .core files should be stripped of magic file tag for
 			// .alignment reasons
 			testForCore(rfile);
-			
+
 			// splits file into blocks inside the flash device image
 			while (!feof(rfile))
 			{
 				// clear block
 				for (i = 0; i < BLOCKSIZE; i++)
 					blk[i] = 0UL;
-					
+
 				if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0) {
 					n++;
 					// copy block to output file
@@ -407,11 +407,11 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 			}
 			fclose(rfile);
 		}
-		// tries to close flash device image file	
+		// tries to close flash device image file
 		if (fclose(ffile) != 0)
 			ret = EXIT_FAILURE;
 	}
-	
+
 	if (ret == EXIT_FAILURE)
 		fprintf(stderr, "%s : error writing flash device file image %s : %s\n", prg, fname, strerror(errno));
 
@@ -425,7 +425,7 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 HIDDEN void testForCore(FILE * rfile)
 {
 	Word tag;
-	
+
 	// file existence have been tested by caller
 	if (fread((void *) &tag, WORDLEN, 1, rfile) == 0 || tag != COREFILEID)
 		// file is empty or not .core
@@ -442,8 +442,8 @@ HIDDEN bool StrToWord(const char * str, Word * value)
 	bool valid = true;
 
 	// tries to convert the string into a unsigned long
-	*value = strtoul(str, &endp, 0); 
-	
+	*value = strtoul(str, &endp, 0);
+
 	if (endp != NULL)
 	{
 		// there may be some garbage
@@ -455,6 +455,4 @@ HIDDEN bool StrToWord(const char * str, Word * value)
 		}
 	}
 	return(valid);
-} 
-
-	
+}

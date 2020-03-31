@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -38,25 +37,25 @@ unsigned int testnetinterface(const char *name);
 
 class netinterface
 {
-	public:
-		netinterface(const char *name, const char *addr, int intnum);
-	
-		~netinterface(void);
+public:
+netinterface(const char *name, const char *addr, int intnum);
 
-		unsigned int readdata(char *buf, int len);
-		unsigned int writedata(char *buf, int len);
-		unsigned int polling();
-		void setaddr(char *iethaddr);
-		void getaddr(char *pethaddr);
-		void setmode(int imode);
-		unsigned int getmode();
+~netinterface(void);
 
-	private:
-		VDECONN *vdeconn;
-		char ethaddr[6];
-		char mode;
-		struct pollfd polldata;
-		class netblockq *queue;
+unsigned int readdata(char *buf, int len);
+unsigned int writedata(char *buf, int len);
+unsigned int polling();
+void setaddr(char *iethaddr);
+void getaddr(char *pethaddr);
+void setmode(int imode);
+unsigned int getmode();
+
+private:
+VDECONN *vdeconn;
+char ethaddr[6];
+char mode;
+struct pollfd polldata;
+class netblockq *queue;
 };
 
 #endif // UMPS_VDE_NETWORK_H

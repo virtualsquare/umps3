@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,28 +30,28 @@ class TerminalView;
 class TerminalStatusWidget;
 
 class TerminalWindow : public QMainWindow {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    TerminalWindow(unsigned int devNo, QWidget* parent = 0);
+TerminalWindow(unsigned int devNo, QWidget* parent = 0);
 
 protected:
-    virtual void closeEvent(QCloseEvent* event);
+virtual void closeEvent(QCloseEvent* event);
 
 private Q_SLOTS:
-    void onMachineReset();
+void onMachineReset();
 
 private:
-    static const int kDefaultCols = 60;
-    static const int kDefaultRows = 20;
+static const int kDefaultCols = 60;
+static const int kDefaultRows = 20;
 
-    static TerminalDevice* getTerminal(unsigned int devNo);
+static TerminalDevice* getTerminal(unsigned int devNo);
 
-    const unsigned int devNo;
+const unsigned int devNo;
 
-    QVBoxLayout* layout;
-    TerminalView* terminalView;
-    TerminalStatusWidget* statusWidget;
+QVBoxLayout* layout;
+TerminalView* terminalView;
+TerminalStatusWidget* statusWidget;
 };
 
 #endif // QMPS_TERMINAL_WINDOW_H

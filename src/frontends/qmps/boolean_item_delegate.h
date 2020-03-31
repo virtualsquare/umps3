@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -25,25 +24,25 @@
 #include <QStyledItemDelegate>
 
 class BooleanItemDelegate : public QStyledItemDelegate {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    BooleanItemDelegate(QObject* parent = 0);
+BooleanItemDelegate(QObject* parent = 0);
 
-    void paint(QPainter* painter,
-               const QStyleOptionViewItem& option,
-               const QModelIndex& index) const;
+void paint(QPainter* painter,
+           const QStyleOptionViewItem& option,
+           const QModelIndex& index) const;
 
-    // We reimplement `editorEvent' as the implementation in
-    // QStyledItemDelegate isn't of any use for us (i.e. we don't want
-    // a default editor!).
-    bool editorEvent(QEvent* event,
-                     QAbstractItemModel* model,
-                     const QStyleOptionViewItem& option,
-                     const QModelIndex& index);
+// We reimplement `editorEvent' as the implementation in
+// QStyledItemDelegate isn't of any use for us (i.e. we don't want
+// a default editor!).
+bool editorEvent(QEvent* event,
+                 QAbstractItemModel* model,
+                 const QStyleOptionViewItem& option,
+                 const QModelIndex& index);
 
 private:
-    static QRect buttonGeometry(const QRect& viewItemRect);
+static QRect buttonGeometry(const QRect& viewItemRect);
 };
 
 #endif // QMPS_BOOLEAN_ITEM_DELEGATE_H

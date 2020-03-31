@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -34,44 +33,48 @@
 class MonitorWindow;
 class QWidget;
 
-class Application : public QApplication {
-    Q_OBJECT
+class Application: public QApplication {
+	Q_OBJECT
 
 public:
-    static const unsigned int kMaxRecentConfigs = 5;
+	static const unsigned int kMaxRecentConfigs = 5;
 
-    Application(int& argc, char** argv);
-    ~Application();
+	Application(int& argc, char** argv);
+	~Application();
 
-    MachineConfig* getConfig();
-    void CreateConfig(const QString& path);
-    void LoadConfig(const QString& path);
-    void LoadRecentConfig(unsigned int i);
+	MachineConfig* getConfig();
+	void CreateConfig(const QString& path);
+	void LoadConfig(const QString& path);
+	void LoadRecentConfig(unsigned int i);
 
-    DebugSession* getDebugSession() { return dbgSession.get(); }
-    QWidget* getApplWindow();
+	DebugSession* getDebugSession() {
+		return dbgSession.get();
+	}
+	QWidget* getApplWindow();
 
-    const QString& getCurrentDir() const { return dir; }
+	const QString& getCurrentDir() const {
+		return dir;
+	}
 
-    QFont getMonospaceFont();
-    QFont getBoldFont();
+	QFont getMonospaceFont();
+	QFont getBoldFont();
 
-    QSettings settings;
+	QSettings settings;
 
-    QString document;
+	QString document;
 
 Q_SIGNALS:
-    void MachineConfigChanged();
+	void MachineConfigChanged();
 
 private:
-    void setCurrentConfig(const QString& path, MachineConfig* newConfig);
+	void setCurrentConfig(const QString& path, MachineConfig* newConfig);
 
-    scoped_ptr<DebugSession> dbgSession;
+	scoped_ptr<DebugSession> dbgSession;
 
-    scoped_ptr<MachineConfig> config;
-    QString dir;
+	scoped_ptr<MachineConfig> config;
+	QString dir;
 
-    scoped_ptr<MonitorWindow> monitorWindow;
+	scoped_ptr<MonitorWindow> monitorWindow;
 };
 
 Application* Appl();

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -30,26 +29,26 @@
 class TerminalDevice;
 
 class TerminalView : public QPlainTextEdit,
-                     public sigc::trackable
+	public sigc::trackable
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    TerminalView(TerminalDevice* terminal, QWidget* parent = 0);
+TerminalView(TerminalDevice* terminal, QWidget* parent = 0);
 
 protected:
-    virtual void keyPressEvent(QKeyEvent* e);
-    virtual void mousePressEvent(QMouseEvent* e);
+virtual void keyPressEvent(QKeyEvent* e);
+virtual void mousePressEvent(QMouseEvent* e);
 
-    virtual bool canInsertFromMimeData(const QMimeData* source) const;
-    virtual void insertFromMimeData(const QMimeData* source);
+virtual bool canInsertFromMimeData(const QMimeData* source) const;
+virtual void insertFromMimeData(const QMimeData* source);
 
 private:
-    void flushInput();
-    void onCharTransmitted(char c);
+void flushInput();
+void onCharTransmitted(char c);
 
-    TerminalDevice* const terminal;
-    QByteArray input;
+TerminalDevice* const terminal;
+QByteArray input;
 };
 
 #endif // QMPS_TERMINAL_VIEW_H

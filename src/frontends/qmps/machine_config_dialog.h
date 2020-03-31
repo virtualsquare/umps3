@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -37,48 +36,48 @@ class QLabel;
 class AsidLineEdit;
 
 class MachineConfigDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    MachineConfigDialog(MachineConfig* config, QWidget* parent = 0);
+MachineConfigDialog(MachineConfig* config, QWidget* parent = 0);
 
 private:
-    QWidget* createGeneralTab();
-    QWidget* createDeviceTab();
-    void registerDeviceClass(const QString& label,
-                             const QString& icon,
-                             unsigned int   devClassIndex,
-                             const QString& deviceClassName,
-                             const QString& deviceName,
-                             bool           selected = false);
+QWidget* createGeneralTab();
+QWidget* createDeviceTab();
+void registerDeviceClass(const QString& label,
+                         const QString& icon,
+                         unsigned int devClassIndex,
+                         const QString& deviceClassName,
+                         const QString& deviceName,
+                         bool selected = false);
 
-    MachineConfig* const config;
+MachineConfig* const config;
 
-    QSpinBox* cpuSpinner;
-    QSpinBox* clockRateSpinner;
-    QComboBox* tlbSizeList;
-    QComboBox* tlbFloorAddressList;
-    QSpinBox* ramSizeSpinner;
-    QCheckBox* coreBootCheckBox;
-    AsidLineEdit* stabAsidEdit;
-    QLabel* tlbFloorAddrWarningLabel;
+QSpinBox* cpuSpinner;
+QSpinBox* clockRateSpinner;
+QComboBox* tlbSizeList;
+QComboBox* tlbFloorAddressList;
+QSpinBox* ramSizeSpinner;
+QCheckBox* coreBootCheckBox;
+AsidLineEdit* stabAsidEdit;
+QLabel* tlbFloorAddrWarningLabel;
 
-    struct {
-        const char* description;
-        QLineEdit* lineEdit;
-    } romFileInfo[N_ROM_TYPES];
+struct {
+	const char* description;
+	QLineEdit* lineEdit;
+} romFileInfo[N_ROM_TYPES];
 
-    QListWidget* devClassView;
-    QStackedLayout* devFileChooserStack;
+QListWidget* devClassView;
+QStackedLayout* devFileChooserStack;
 
 private Q_SLOTS:
-    void getROMFileName(int index);
+void getROMFileName(int index);
 
-    void onDeviceClassChanged();
+void onDeviceClassChanged();
 
-    void saveConfigChanges();
-    
-    void validate();
+void saveConfigChanges();
+
+void validate();
 };
 
 #endif // QMPS_MACHINE_CONFIG_DIALOG_H

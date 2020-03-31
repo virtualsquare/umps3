@@ -1,5 +1,3 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
-
 #include "umps/regdef.h"
 #include "umps/bios_defs.h"
 #include "umps/arch.h"
@@ -8,7 +6,7 @@
 
 	PROGVSTART	= 0x20001004
 	GPSTARTADDR	= 0x200010A8
-	
+
 	.text
 	.align	2
 
@@ -51,7 +49,7 @@ __start:
 	move	$sp,$fp
 	lw	$fp,12($sp)
 	addu	$sp,$sp,16
-	
+
 	.set noreorder
 	.set nomacro
 
@@ -61,7 +59,7 @@ __start:
 	break
 	nop
 	.set reorder
-	.set macro	
+	.set macro
 	.end __start
 
 L__startEnd:

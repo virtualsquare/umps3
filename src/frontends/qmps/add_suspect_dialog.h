@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -34,31 +33,31 @@ class QItemSelection;
 class QPushButton;
 
 class AddSuspectDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    AddSuspectDialog(QWidget* parent = 0);
+AddSuspectDialog(QWidget* parent = 0);
 
-    Word getStartAddress() const;
-    Word getEndAddress() const;
-    Word getASID() const;
+Word getStartAddress() const;
+Word getEndAddress() const;
+Word getASID() const;
 
 private:
-    static const int kInitialWidth = 380;
-    static const int kInitialHeight = 340;
+static const int kInitialWidth = 380;
+static const int kInitialHeight = 340;
 
-    AsidLineEdit* asidEditor;
-    AddressLineEdit* startAddressEdit;
-    AddressLineEdit* endAddressEdit;
+AsidLineEdit* asidEditor;
+AddressLineEdit* startAddressEdit;
+AddressLineEdit* endAddressEdit;
 
-    const SymbolTable* const stab;
-    SortFilterSymbolTableModel* proxyModel;
+const SymbolTable* const stab;
+SortFilterSymbolTableModel* proxyModel;
 
-    QPushButton* okButton;
+QPushButton* okButton;
 
 private Q_SLOTS:
-    void validate();
-    void onSelectionChanged(const QItemSelection& selected);
+void validate();
+void onSelectionChanged(const QItemSelection& selected);
 };
 
 #endif // QMPS_ADD_SUSPECT_DIALOG_H

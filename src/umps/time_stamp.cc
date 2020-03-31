@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,9 +27,9 @@ namespace TimeStamp {
 
 std::string toString(uint64_t ts)
 {
-    using boost::format;
-    using boost::str;
-    return str(format("0x%08lx.%08lx") %((unsigned long) getHi(ts)) %((unsigned long) getLo(ts)));
+	using boost::format;
+	using boost::str;
+	return str(format("0x%08lx.%08lx") %((unsigned long) getHi(ts)) %((unsigned long) getLo(ts)));
 }
 
 } // namespace TimeStamp

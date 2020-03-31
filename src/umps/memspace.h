@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -32,28 +31,34 @@
 
 class RamSpace {
 public:
-    // This method creates a RamSpace object of a given size (in words)
-    // and fills it with file contents if needed
-    RamSpace(Word size_, const char* fName);
+// This method creates a RamSpace object of a given size (in words)
+// and fills it with file contents if needed
+	RamSpace(Word size_, const char* fName);
 
-    // This method returns the value of Word at index
-    Word MemRead(Word index) const { return ram[index]; }
+// This method returns the value of Word at index
+	Word MemRead(Word index) const {
+		return ram[index];
+	}
 
-    // This method allows to write data to a specified address (as word
-    // offset). SystemBus must check address validity and make
-    // byte-to-word address conversion)
-    void MemWrite(Word index, Word data) { ram[index] = data; }
+// This method allows to write data to a specified address (as word
+// offset). SystemBus must check address validity and make
+// byte-to-word address conversion)
+	void MemWrite(Word index, Word data) {
+		ram[index] = data;
+	}
 
-    bool CompareAndSet(Word index, Word oldval, Word newval);
+	bool CompareAndSet(Word index, Word oldval, Word newval);
 
-    // This method returns RamSpace size in bytes
-    Word Size() const { return size << 2; }
+// This method returns RamSpace size in bytes
+	Word Size() const {
+		return size << 2;
+	}
 
 private:
-    scoped_array<Word> ram;
+	scoped_array<Word> ram;
 
-    // size of structure in words (C style addressing: [0..size - 1])
-    Word size;
+// size of structure in words (C style addressing: [0..size - 1])
+	Word size;
 };
 
 
@@ -64,22 +69,22 @@ private:
 
 class BiosSpace {
 public:
-    // This method creates a BiosSpace object, filling with .rom file
-    // contents
-    BiosSpace(const char *name);
+// This method creates a BiosSpace object, filling with .rom file
+// contents
+	BiosSpace(const char *name);
 
-    // This method returns the value of Word at ofs address
-    // (SystemBus must assure that ofs is in range)
-    Word MemRead(Word ofs);
+// This method returns the value of Word at ofs address
+// (SystemBus must assure that ofs is in range)
+	Word MemRead(Word ofs);
 
-    // This method returns BiosSpace size in bytes
-    Word Size();
+// This method returns BiosSpace size in bytes
+	Word Size();
 
 private:
-    scoped_array<Word> memPtr;
+	scoped_array<Word> memPtr;
 
-    // size of structure in Words (C style addressing: [0..size - 1])
-    Word size;
+// size of structure in Words (C style addressing: [0..size - 1])
+	Word size;
 };
 
 #endif // UMPS_MEMSPACE_H

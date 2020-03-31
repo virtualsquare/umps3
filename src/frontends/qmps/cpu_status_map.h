@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -32,35 +31,35 @@ class Machine;
 class Processor;
 
 class CpuStatusMap : public QObject {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    CpuStatusMap(DebugSession* dbgSession);
+CpuStatusMap(DebugSession* dbgSession);
 
-    const QString& getStatus(unsigned int cpuId) const;
-    const QString& getLocation(unsigned int cpuId) const;
+const QString& getStatus(unsigned int cpuId) const;
+const QString& getLocation(unsigned int cpuId) const;
 
 Q_SIGNALS:
-    void Changed();
+void Changed();
 
 private:
-    struct StatusInfo {
-        QString status;
-        QString location;
-    };
+struct StatusInfo {
+	QString status;
+	QString location;
+};
 
-    void formatActiveCpuStatus(Processor* cpu);
-    void formatActiveCpuLocation(Processor* cpu);
+void formatActiveCpuStatus(Processor* cpu);
+void formatActiveCpuLocation(Processor* cpu);
 
-    DebugSession* const dbgSession;
-    Machine* const machine;
+DebugSession* const dbgSession;
+Machine* const machine;
 
-    static const char* const statusTemplates[];
+static const char* const statusTemplates[];
 
-    std::vector<StatusInfo> statusMap;
+std::vector<StatusInfo> statusMap;
 
 private Q_SLOTS:
-    void update();
+void update();
 };
 
 #endif // QMPS_CPU_STATUS_MAP_H

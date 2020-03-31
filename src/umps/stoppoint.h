@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -35,162 +34,189 @@
 class Processor;
 
 enum AccessMode {
-    AM_EXEC       = 1 << 0,
-    AM_WRITE      = 1 << 1,
-    AM_READ       = 1 << 2,
-    AM_READ_WRITE = AM_WRITE | AM_READ
+	AM_EXEC       = 1 << 0,
+	AM_WRITE      = 1 << 1,
+	AM_READ       = 1 << 2,
+	AM_READ_WRITE = AM_WRITE | AM_READ
 };
 
 class AddressRange {
 public:
-    AddressRange(Word asid, Word start, Word end)
-        : asid(asid),
-          start(start),
-          end(end)
-    {
-        assert(start <= end);
-    }
+	AddressRange(Word asid, Word start, Word end)
+		: asid(asid),
+		start(start),
+		end(end)
+	{
+		assert(start <= end);
+	}
 
-    Word getASID() const { return asid; }
-    Word getStart() const { return start; }
-    Word getEnd() const { return end; }
+	Word getASID() const {
+		return asid;
+	}
+	Word getStart() const {
+		return start;
+	}
+	Word getEnd() const {
+		return end;
+	}
 
-    bool LessThan(const AddressRange& other) const
-    {
-        return (asid < other.asid) || (asid == other.asid && start < other.start);
-    }
+	bool LessThan(const AddressRange& other) const
+	{
+		return (asid < other.asid) || (asid == other.asid && start < other.start);
+	}
 
-    bool operator<(const AddressRange& other) const
-    {
-        return LessThan(other);
-    }
+	bool operator<(const AddressRange& other) const
+	{
+		return LessThan(other);
+	}
 
-    bool Overlaps(const AddressRange& r) const
-    {
-        return !(asid != r.asid || r.end < start || r.start > end);
-    }
+	bool Overlaps(const AddressRange& r) const
+	{
+		return !(asid != r.asid || r.end < start || r.start > end);
+	}
 
-    bool Contains(Word asid, Word addr) const
-    {
-        return asid == this->asid && start <= addr && addr <= end;
-    }
+	bool Contains(Word asid, Word addr) const
+	{
+		return asid == this->asid && start <= addr && addr <= end;
+	}
 
 private:
-    Word asid, start, end;
+	Word asid, start, end;
 };
 
-class Stoppoint : public enable_shared_from_this<Stoppoint> {
+class Stoppoint: public enable_shared_from_this<Stoppoint> {
 public:
-    typedef shared_ptr<Stoppoint> Ptr;
-    typedef shared_ptr<Stoppoint const> ConstPtr;
+	typedef shared_ptr<Stoppoint> Ptr;
+	typedef shared_ptr<Stoppoint const> ConstPtr;
 
-    Stoppoint(unsigned int id, const AddressRange& range, AccessMode mode)
-        : id(id),
-          enabled(true),
-          range(range),
-          accessMode(mode)
-    {}
+	Stoppoint(unsigned int id, const AddressRange& range, AccessMode mode)
+		: id(id),
+		enabled(true),
+		range(range),
+		accessMode(mode)
+	{
+	}
 
-    unsigned int getId() const { return id; }
+	unsigned int getId() const {
+		return id;
+	}
 
-    void SetEnabled(bool setting) { enabled = setting; }
-    bool IsEnabled() const { return enabled; }
+	void SetEnabled(bool setting) {
+		enabled = setting;
+	}
+	bool IsEnabled() const {
+		return enabled;
+	}
 
-    const AddressRange& getRange() const { return range; }
+	const AddressRange& getRange() const {
+		return range;
+	}
 
-    void setAccessMode(AccessMode mode) { accessMode = mode; }
-    AccessMode getAccessMode() const { return accessMode; }
+	void setAccessMode(AccessMode mode) {
+		accessMode = mode;
+	}
+	AccessMode getAccessMode() const {
+		return accessMode;
+	}
 
-    bool Matches(Word asid, Word addr, AccessMode mode) const
-    {
-        return (enabled &&
-                range.Contains(asid, addr) &&
-                (accessMode & mode));
-    }
+	bool Matches(Word asid, Word addr, AccessMode mode) const
+	{
+		return (enabled &&
+		        range.Contains(asid, addr) &&
+		        (accessMode & mode));
+	}
 
-    std::string ToString() const;
+	std::string ToString() const;
 
 private:
-    unsigned int id;
-    bool enabled;
-    AddressRange range;
-    AccessMode accessMode;
+	unsigned int id;
+	bool enabled;
+	AddressRange range;
+	AccessMode accessMode;
 };
 
 
 class StoppointSet {
 public:
-    virtual ~StoppointSet();
+	virtual ~StoppointSet();
 
-    size_t Size() const { return points.size(); }
-    bool IsEmpty() const { return points.empty(); }
+	size_t Size() const {
+		return points.size();
+	}
+	bool IsEmpty() const {
+		return points.empty();
+	}
 
-    Stoppoint* Get(size_t index);
-    const Stoppoint* Get(size_t index) const;
+	Stoppoint* Get(size_t index);
+	const Stoppoint* Get(size_t index) const;
 
-    Stoppoint* Find(Word asid, Word addr);
+	Stoppoint* Find(Word asid, Word addr);
 
-    bool CanInsert(const AddressRange& range) const;
-    bool Add(const AddressRange& range, AccessMode mode);
-    bool Add(const AddressRange& range, AccessMode mode, unsigned int id, bool enabled = true);
-    void Remove(size_t index);
-    void Clear();
+	bool CanInsert(const AddressRange& range) const;
+	bool Add(const AddressRange& range, AccessMode mode);
+	bool Add(const AddressRange& range, AccessMode mode, unsigned int id, bool enabled = true);
+	void Remove(size_t index);
+	void Clear();
 
-    void SetEnabled(size_t index, bool setting);
+	void SetEnabled(size_t index, bool setting);
 
-    Stoppoint* Probe(Word asid, Word addr, AccessMode mode, const Processor* cpu) const;
+	Stoppoint* Probe(Word asid, Word addr, AccessMode mode, const Processor* cpu) const;
 
-    template<typename OutputIterator>
-    void GetStoppointsInRange(Word asid, Word start, Word end, OutputIterator out);
+	template<typename OutputIterator>
+	void GetStoppointsInRange(Word asid, Word start, Word end, OutputIterator out);
 
-    std::string ToString(bool sorted = false) const;
+	std::string ToString(bool sorted = false) const;
 
-    sigc::signal<void> SignalStoppointInserted;
-    sigc::signal<void, size_t> SignalStoppointRemoved;
-    sigc::signal<void, size_t> SignalEnabledChanged;
-    sigc::signal<void, size_t, const Stoppoint*, Word, const Processor*> SignalHit;
+	sigc::signal<void> SignalStoppointInserted;
+	sigc::signal<void, size_t> SignalStoppointRemoved;
+	sigc::signal<void, size_t> SignalEnabledChanged;
+	sigc::signal<void, size_t, const Stoppoint*, Word, const Processor*> SignalHit;
 
 private:
-    unsigned int nextId() const;
+	unsigned int nextId() const;
 
-    typedef std::vector<Stoppoint::Ptr> StoppointVector;
-    StoppointVector points;
+	typedef std::vector<Stoppoint::Ptr> StoppointVector;
+	StoppointVector points;
 
-    typedef std::map<AddressRange, Stoppoint*> StoppointMap;
-    StoppointMap addressMap;
+	typedef std::map<AddressRange, Stoppoint*> StoppointMap;
+	StoppointMap addressMap;
 
 public:
-    typedef StoppointVector::const_iterator const_iterator;
-    typedef const_iterator iterator;
-    const_iterator begin() const { return points.begin(); }
-    const_iterator end() const { return points.end(); }
+	typedef StoppointVector::const_iterator const_iterator;
+	typedef const_iterator iterator;
+	const_iterator begin() const {
+		return points.begin();
+	}
+	const_iterator end() const {
+		return points.end();
+	}
 };
 
 inline Stoppoint* StoppointSet::Get(size_t index)
 {
-    assert(index < Size());
-    return points[index].get();
+	assert(index < Size());
+	return points[index].get();
 }
 
 inline const Stoppoint* StoppointSet::Get(size_t index) const
 {
-    assert(index < Size());
-    return points[index].get();
+	assert(index < Size());
+	return points[index].get();
 }
 
 template<typename OutputIterator>
 void StoppointSet::GetStoppointsInRange(Word asid, Word start, Word end, OutputIterator out)
 {
-    AddressRange r1(asid, start, start);
-    AddressRange r2(asid, end, end);
+	AddressRange r1(asid, start, start);
+	AddressRange r2(asid, end, end);
 
-    StoppointMap::const_iterator it = addressMap.lower_bound(r1);
-    for (it = addressMap.lower_bound(r1);
-         it != addressMap.end() && (it->first < r2 || !(r2 < it->first));
-         ++it)
-    {
-        *out++ = it->second;
-    }
+	StoppointMap::const_iterator it = addressMap.lower_bound(r1);
+	for (it = addressMap.lower_bound(r1);
+	     it != addressMap.end() && (it->first < r2 || !(r2 < it->first));
+	     ++it)
+	{
+		*out++ = it->second;
+	}
 }
 
 #endif // UMPS_STOPPOINT_H

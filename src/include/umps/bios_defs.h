@@ -1,3 +1,21 @@
+/*
+ * uMPS - A general purpose computer system simulator
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #ifndef BIOS_DEFS_H
 #define BIOS_DEFS_H
 
@@ -18,8 +36,8 @@
 #define BIOS_SCRATCH_BASE  CPUCTL_BIOS_RES_1
 
 /* Legacy exception vector base address */
-#define BIOS_LEGACY_EXCVEC_BASE  0x20000000
-#define BIOS_LEGACY_SCRATCH_BASE 0x20000fe0
+#define BIOS_LEGACY_EXCVEC_BASE  0x0FFFF000
+#define BIOS_LEGACY_SCRATCH_BASE 0x0FFFFFE0
 
 /* Scratch RAM the BIOS needs for each cpu, in bytes */
 #define BIOS_CPU_SCRATCH_RAM_SIZE 32

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -29,24 +28,24 @@
 class QAbstractItemModel;
 
 class TreeView : public QTreeView {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    TreeView(const QString& name,
-             const std::list<int>& resizedToContents,
-             bool persistItemState = false,
-             QWidget* parent = 0);
+TreeView(const QString& name,
+         const std::list<int>& resizedToContents,
+         bool persistItemState = false,
+         QWidget* parent = 0);
 
-    void setModel(QAbstractItemModel* model);
+void setModel(QAbstractItemModel* model);
 
 private Q_SLOTS:
-    void sectionResized(int logicalIndex, int oldSize, int newSize);
-    void saveItemState();
+void sectionResized(int logicalIndex, int oldSize, int newSize);
+void saveItemState();
 
 private:
-    const std::list<int> resizedToContents;
-    const bool persistItemState;
-    QString itemStateKey;
+const std::list<int> resizedToContents;
+const bool persistItemState;
+QString itemStateKey;
 };
 
 #endif // QMPS_TREE_VIEW_H

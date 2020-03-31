@@ -1,3 +1,21 @@
+/*
+ * uMPS - A general purpose computer system simulator
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 #ifndef UMPS_CP0_H
 #define UMPS_CP0_H
 
@@ -73,8 +91,6 @@
 #define EXC_RI                 10
 #define EXC_CPU                11
 #define EXC_OV                 12
-#define EXC_BDPT               13  /* uMPS-specific */
-#define EXC_PTMS               14  /* uMPS-specific */
 
 #define CAUSE_IP_MASK          0x0000ff00
 #define CAUSE_IP(line)         (1U << (8 + (line)))

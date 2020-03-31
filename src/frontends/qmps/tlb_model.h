@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,40 +30,40 @@
 class Processor;
 
 class TLBModel : public QAbstractTableModel,
-                 public sigc::trackable
+	public sigc::trackable
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    enum Column {
-        COLUMN_PTE_HI,
-        COLUMN_PTE_LO,
-        N_COLUMNS
-    };
+enum Column {
+	COLUMN_PTE_HI,
+	COLUMN_PTE_LO,
+	N_COLUMNS
+};
 
-    TLBModel(Word cpuId, QObject* parent = 0);
+TLBModel(Word cpuId, QObject* parent = 0);
 
-    Qt::ItemFlags flags(const QModelIndex& index) const;
+Qt::ItemFlags flags(const QModelIndex& index) const;
 
-    virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-    virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
+virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
+QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
+bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 
 private Q_SLOTS:
-    void onMachineReset();
+void onMachineReset();
 
 private:
-    static const char* const detailsTemplate;
+static const char* const detailsTemplate;
 
-    void onTLBChanged(unsigned int index);
-    QString tlbEntryDetails(unsigned int index) const;
+void onTLBChanged(unsigned int index);
+QString tlbEntryDetails(unsigned int index) const;
 
-    const Word cpuId;
-    Processor* cpu;
+const Word cpuId;
+Processor* cpu;
 };
 
 #endif // QMPS_TLB_MODEL_H

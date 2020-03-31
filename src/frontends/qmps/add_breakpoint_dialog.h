@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -33,26 +32,26 @@ class SymbolTable;
 class SortFilterSymbolTableModel;
 
 class AddBreakpointDialog : public QDialog {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    AddBreakpointDialog(QWidget* parent = 0);
+AddBreakpointDialog(QWidget* parent = 0);
 
-    Word getStartAddress() const;
-    Word getASID() const;
+Word getStartAddress() const;
+Word getASID() const;
 
 private:
-    static const int kInitialWidth = 380;
-    static const int kInitialHeight = 340;
+static const int kInitialWidth = 380;
+static const int kInitialHeight = 340;
 
-    AsidLineEdit* asidEditor;
-    AddressLineEdit* addressEditor;
+AsidLineEdit* asidEditor;
+AddressLineEdit* addressEditor;
 
-    const SymbolTable* const stab;
-    SortFilterSymbolTableModel* proxyModel;
+const SymbolTable* const stab;
+SortFilterSymbolTableModel* proxyModel;
 
 private Q_SLOTS:
-    void onSelectionChanged(const QItemSelection& selected);
+void onSelectionChanged(const QItemSelection& selected);
 };
 
 #endif // QMPS_ADD_BREAKPOINT_DIALOG_H

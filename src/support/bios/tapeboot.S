@@ -1,4 +1,3 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,8 +30,8 @@
  */
 
 /* Device register ptrs */
-#define TERM0COMMAND      DEV_REG_ADDR(IL_TERMINAL, 0) + 0xC
-#define TAPE0BASE         DEV_REG_ADDR(IL_FLASH, 0)
+#define TERM0COMMAND    DEV_REG_ADDR(IL_TERMINAL, 0) + 0xC
+#define FLASH0BASE      DEV_REG_ADDR(IL_FLASH, 0)
 
 /* Panic vector */
 #define BIOSPANIC 0x00000108
@@ -87,7 +86,7 @@ tapeboot:
 	.set noreorder
 	.set nomacro
 
-	# boot starts here 
+	# boot starts here
 	b LTapeBootStart
 	nop
 
@@ -106,43 +105,43 @@ tapeboot:
 	lui	$k0, 0x0000
 	ori	$k0, $k0, 0x88
 	jr	$k0
-	nop	
+	nop
 
 	.set reorder
 	.set macro
 
-LTapeBootStart:	
+LTapeBootStart:
 	# mapping all exception vectors to BIOS code
 	# this is done resetting bit 22 in STATUS CP0 register
 	# we also assure that kernel will start in kernel mode with
 	# interrupts disabled: this is done zeroing bits 3 and 2.
 	mfc0	$a0, $CP0_Status
-	li	$a1, STATUSMASK   
+	li	$a1, STATUSMASK
 	and	$a0, $a0, $a1
 	mtc0	$a0, $CP0_Status
 
 	# loads the kernel from tape: for each block loaded a dot will be
-	# printed on terminal 0 
+	# printed on terminal 0
 
-	# initializations	
+	# initializations
 
-	li 	$v0, TAPE0BASE
+	li 	$v0, FLASH0BASE
 	li 	$v1, TAPESTART
 	lw	$a0, +12($v0)
-	
+
 	/* if tape is not loaded from start, BIOS panic() routine is called */
 	beq	$v1, $a0, LStartLoad
-	
+
 	li	$k0, BIOSPANIC
 	jr	$k0
 
-LStartLoad:	
+LStartLoad:
 
 	/* else loading may start */
 
 	# physical memory load index
 	li	$k0, RAMBASE - BLOCKSIZE
-	
+
 	# tape READBLK command
 	li	$k1, READBLK
 
@@ -150,7 +149,7 @@ LStartLoad:
 	li 	$a3, TERM0COMMAND
 	li 	$t0, BUSYCODE
 
-	# tape loading main loop 
+	# tape loading main loop
 
 LTapeLoadLoop:
 	# stores physical loading address into TAPE0 DATA0 register
@@ -160,7 +159,7 @@ LTapeLoadLoop:
 
 	sw 	$k0, +8($v0)
 	sw 	$k1, +4($v0)
-	
+
 	li	$v1, BUSYCODE
 
 LTapeWaitLoop:
@@ -185,8 +184,8 @@ LPrintDotWaitLoop:
 
 	lw 	$a2, -4($a3)
 	beq	$a2, $t0, LPrintDotWaitLoop
-	
-	#load ASCII value of '.' into register 
+
+	#load ASCII value of '.' into register
 	li	$a1, DOTCHAR
 
 	#prepares PRINTCHAR command
@@ -216,8 +215,8 @@ LPrintLFWaitLoop:
 
 	lw 	$a2, -4($a3)
 	beq	$a2, $t0, LPrintLFWaitLoop
-	
-	#load ASCII value of LF into register 
+
+	#load ASCII value of LF into register
 	li	$a1, LFCHAR
 
 	#prepares PRINTCHAR command
@@ -235,26 +234,26 @@ LPrintLoop2:
 
 	li	$a1, ACK
 	sw	$a1, 0($a3)
-	
+
 	# setting boot exception vectors into first page of RAM memory:
  	# at first, all exceptions cause a kernel panic()
 
 	# load kernel panic() BIOS routine address into every PC field
 	# of exception vectors
 
-	# there are: 1 vector for interrupt, 1 for TLB memory management, 
+	# there are: 1 vector for interrupt, 1 for TLB memory management,
 	# 1 for syscall and break (passup from BIOS), 1 for program traps
 	# (all remaining exceptions)
-	# total: 4 vectors; 
+	# total: 4 vectors;
 	# each contains two areas: old and new; fill both PCs at start
 
-	# every vector area contains:  
-	# 1 for EntryHI, 1 for CAUSE, 
+	# every vector area contains:
+	# 1 for EntryHI, 1 for CAUSE,
 	# 1 for STATUS, and 1 for EPC (old area) or PC (new area)
-	# 29 words for GPR ($0, k0 & k1 are 
+	# 29 words for GPR ($0, k0 & k1 are
 	# excluded), 2 for HI & LO regs
 	# total: 35 words of memory per area
-	
+
 	li 	$a0, BIOSVECTPAGE
 	li 	$a1, BIOSPANIC # put here panic() address
 	li 	$a2, VECTAREANUM
@@ -273,12 +272,12 @@ Lfor:
 	li	$t0, BIOS_SCRATCH_BASE
 	li	$t1, BIOS_LEGACY_SCRATCH_BASE
 	sw	$t1, 0($t0)
-	
+
 	# finally, we set EntryHI and STATUS for kernel:
 	# being EntryHI = 0, and STATUS good as it is now,
 	# do not touch anything
-	
-	# and now let's start kernel: its starting address is 
+
+	# and now let's start kernel: its starting address is
 	# in aout place for it
 	li	$a0, PROGVSTART
 	lw	$ra, 0($a0)

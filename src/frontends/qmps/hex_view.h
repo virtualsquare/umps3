@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,79 +30,81 @@
 class HexViewMargin;
 
 class HexView : public QPlainTextEdit,
-                public MemoryViewDelegate
+	public MemoryViewDelegate
 {
-    Q_OBJECT
-    Q_PROPERTY(bool reversedByteOrder READ HasReversedByteOrder WRITE setReversedByteOrder)
+Q_OBJECT
+Q_PROPERTY(bool reversedByteOrder READ HasReversedByteOrder WRITE setReversedByteOrder)
 
 public:
-    enum ByteOrder {
-        BYTE_ORDER_NATIVE,
-        BYTE_ORDER_REVERSED
-    };
+enum ByteOrder {
+	BYTE_ORDER_NATIVE,
+	BYTE_ORDER_REVERSED
+};
 
-    HexView(Word start, Word end, QWidget* parent = 0);
+HexView(Word start, Word end, QWidget* parent = 0);
 
-    bool HasReversedByteOrder() const { return revByteOrder; }
-    void setReversedByteOrder(bool setting);
+bool HasReversedByteOrder() const {
+	return revByteOrder;
+}
+void setReversedByteOrder(bool setting);
 
 public Q_SLOTS:
-    void Refresh();
+void Refresh();
 
 protected:
-    void resizeEvent(QResizeEvent* event);
+void resizeEvent(QResizeEvent* event);
 
-    bool canInsertFromMimeData(const QMimeData* source) const;
-    void insertFromMimeData(const QMimeData* source);
+bool canInsertFromMimeData(const QMimeData* source) const;
+void insertFromMimeData(const QMimeData* source);
 
-    void keyPressEvent(QKeyEvent* event);
-    void mousePressEvent(QMouseEvent* event);
+void keyPressEvent(QKeyEvent* event);
+void mousePressEvent(QMouseEvent* event);
 
 private Q_SLOTS:
-    void updateMargin(const QRect& rect, int dy);
-    void onCursorPositionChanged();
+void updateMargin(const QRect& rect, int dy);
+void onCursorPositionChanged();
 
 private:
-    enum {
-        COL_HI_NIBBLE    = 0,
-        COL_LO_NIBBLE    = 1,
-        COL_SPACING      = 2,
-        N_COLS_PER_BYTE
-    };
+enum {
+	COL_HI_NIBBLE    = 0,
+	COL_LO_NIBBLE    = 1,
+	COL_SPACING      = 2,
+	N_COLS_PER_BYTE
+};
 
-    static const unsigned int kWordsPerRow = 2;
-    static const unsigned int kCharsPerWord = WS * N_COLS_PER_BYTE;
-    static const unsigned int kCharsPerRow = kWordsPerRow * kCharsPerWord;
-    static const unsigned int kHorizontalSpacing = 1;
+static const unsigned int kWordsPerRow = 2;
+static const unsigned int kCharsPerWord = WS * N_COLS_PER_BYTE;
+static const unsigned int kCharsPerRow = kWordsPerRow * kCharsPerWord;
+static const unsigned int kHorizontalSpacing = 1;
 
-    static const unsigned int kInvalidLocationChar = 0x2592;
+static const unsigned int kInvalidLocationChar = 0x2592;
 
-    unsigned int currentWord(const QTextCursor& cursor = QTextCursor()) const;
-    unsigned int currentByte(const QTextCursor& cursor = QTextCursor()) const;
-    unsigned int currentNibble(const QTextCursor& cursor = QTextCursor()) const;
+unsigned int currentWord(const QTextCursor& cursor = QTextCursor()) const;
+unsigned int currentByte(const QTextCursor& cursor = QTextCursor()) const;
+unsigned int currentNibble(const QTextCursor& cursor = QTextCursor()) const;
 
-    unsigned char byteValue(unsigned int word, unsigned int byte) const;
-    Word dataAtCursor() const;
+unsigned char byteValue(unsigned int word, unsigned int byte) const;
+Word dataAtCursor() const;
 
-    void moveCursor(QTextCursor::MoveOperation operation, int n = 1);
-    void setPoint(unsigned int word,
-                  unsigned int byte = 0,
-                  unsigned int nibble = 0);
+void moveCursor(QTextCursor::MoveOperation operation, int n = 1);
+void setPoint(unsigned int word,
+              unsigned int byte = 0,
+              unsigned int nibble = 0);
 
-    void paintMargin(QPaintEvent* event);
-    void highlightWord();
+void paintMargin(QPaintEvent* event);
+void highlightWord();
 
-    friend class HexViewMargin;
+friend class HexViewMargin;
 
-    const Word start;
-    const Word end;
-    const Word length;
+const Word start;
+const Word end;
+const Word length;
 
-    bool revByteOrder;
+bool revByteOrder;
 
-    const QString invalidByteRepr;
+const QString invalidByteRepr;
 
-    HexViewMargin* margin;
+HexViewMargin* margin;
 };
 
 #endif // QMPS_HEX_VIEW_H

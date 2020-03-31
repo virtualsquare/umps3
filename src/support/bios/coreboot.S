@@ -1,4 +1,3 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -76,7 +75,7 @@ coreboot:
 	.set reorder
 	.set macro
 
-LCoreBootStart:	
+LCoreBootStart:
 	/*
 	 * Mapping all exception vectors to BIOS code
 	 * This is done resetting bit 22 in STATUS CP0 register
@@ -84,26 +83,26 @@ LCoreBootStart:
 	 * interrupts disabled: this is done zeroing bits 3 and 2.
 	 */
 	mfc0	$a0, $CP0_Status
-	li	$a1, STATUSMASK   
+	li	$a1, STATUSMASK
 	and	$a0, $a0, $a1
 	mtc0	$a0, $CP0_Status
-	
+
 	/*
 	 * Setting boot exception vectors into first page of RAM memory:
 	 * at first, we make all exceptions cause a kernel panic()
 	 * by loading panic() BIOS routine address into every PC field
 	 * of exception vectors.
 	 *
-	 * There are: 1 vector for interrupt, 1 for TLB memory management, 
+	 * There are: 1 vector for interrupt, 1 for TLB memory management,
 	 * 1 for syscall and break (passup from BIOS), 1 for program traps
 	 * (all remaining exceptions),
 	 * for a total of 4 vectors; each contains two areas: old and
 	 * new; fill both PCs at start.
 	 *
-	 * Every vector area contains:  
-	 * 1 for EntryHI, 1 for CAUSE, 
+	 * Every vector area contains:
+	 * 1 for EntryHI, 1 for CAUSE,
 	 * 1 for STATUS, and 1 for EPC (old area) or PC (new area)
-	 * 29 words for GPR ($0, k0 & k1 are 
+	 * 29 words for GPR ($0, k0 & k1 are
 	 * excluded), 2 for HI & LO regs
 	 * total: 35 words of memory per area
 	 */
@@ -144,6 +143,6 @@ Lfor:
 	rfe
 	.set reorder
 	.set macro
-	
+
 	.end coreboot
 	.size	 coreboot, . - coreboot

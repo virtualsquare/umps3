@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -41,59 +40,59 @@ class StoppointSet;
 class StoppointListModel;
 
 class CodeView : public QPlainTextEdit,
-                 public sigc::trackable
+	public sigc::trackable
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    CodeView(Word cpuId);
+CodeView(Word cpuId);
 
 protected:
-    // We need to handle the resizeEvent since we're responsible of
-    // resizing our margin.
-    void resizeEvent(QResizeEvent* event);
+// We need to handle the resizeEvent since we're responsible of
+// resizing our margin.
+void resizeEvent(QResizeEvent* event);
 
 private Q_SLOTS:
-    void loadCode();
-    void onMachineStopped();
-    void updateMargin(const QRect& rect, int dy);
-    void reset();
+void loadCode();
+void onMachineStopped();
+void updateMargin(const QRect& rect, int dy);
+void reset();
 
 private:
-    static const int TAB_STOP_CHARS = 8;
+static const int TAB_STOP_CHARS = 8;
 
-    void paintMargin(QPaintEvent* event);
-    void ensureCurrentInstructionVisible();
+void paintMargin(QPaintEvent* event);
+void ensureCurrentInstructionVisible();
 
-    void onBreakpointInserted();
-    void onBreakpointChanged(size_t);
+void onBreakpointInserted();
+void onBreakpointChanged(size_t);
 
-    QString disassemble(Word instr, Word pc) const;
-    QString disasmBranch(Word instr, Word pc) const;
-    QString disasmJump(Word instr, Word pc) const;
+QString disassemble(Word instr, Word pc) const;
+QString disasmBranch(Word instr, Word pc) const;
+QString disasmJump(Word instr, Word pc) const;
 
-    CodeViewMargin* codeMargin;
+CodeViewMargin* codeMargin;
 
-    DebugSession* const dbgSession;
-    const Word cpuId;
-    Processor* cpu;
-    SymbolTable* symbolTable;
-    StoppointSet* breakpoints;
+DebugSession* const dbgSession;
+const Word cpuId;
+Processor* cpu;
+SymbolTable* symbolTable;
+StoppointSet* breakpoints;
 
-    bool codeLoaded;
-    Word startPC, endPC;
+bool codeLoaded;
+Word startPC, endPC;
 
-    StoppointListModel* bplModel;
+StoppointListModel* bplModel;
 
-    QPixmap pcMarkerPixmap;
-    QPixmap enabledBpMarkerPixmap;
-    QPixmap disabledBpMarkerPixmap;
+QPixmap pcMarkerPixmap;
+QPixmap enabledBpMarkerPixmap;
+QPixmap disabledBpMarkerPixmap;
 
-    typedef boost::function<QString (Word, Word)> DisasmFunc;
-    typedef std::map<unsigned int, DisasmFunc> DisasmMap;
-    DisasmMap disasmMap;
+typedef boost::function<QString (Word, Word)> DisasmFunc;
+typedef std::map<unsigned int, DisasmFunc> DisasmMap;
+DisasmMap disasmMap;
 
-    friend class CodeViewMargin;
+friend class CodeViewMargin;
 };
 
 #endif // QMPS_CODE_VIEW_H

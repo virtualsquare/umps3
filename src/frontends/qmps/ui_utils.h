@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -30,9 +29,9 @@ class SymbolTable;
 class QTreeView;
 
 const char* GetSymbolicAddress(const SymbolTable* symbolTable,
-                               Word               asid,
-                               Word               address,
-                               bool               onlyFunctions,
+                               Word asid,
+                               Word address,
+                               bool onlyFunctions,
                                SWord*             offset);
 
 QString FormatAddress(Word address);

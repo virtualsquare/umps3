@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -24,7 +23,7 @@
 
 class MemoryViewDelegate {
 public:
-    virtual void Refresh() = 0;
+virtual void Refresh() = 0;
 };
 
 #endif // QMPS_MEMORY_VIEW_DELEGATE_H

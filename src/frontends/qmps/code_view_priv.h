@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -29,29 +28,29 @@
 class CodeView;
 
 class CodeViewMargin : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    static const int kMarkerSize = 16;
+static const int kMarkerSize = 16;
 
-    CodeViewMargin(CodeView* codeView);
+CodeViewMargin(CodeView* codeView);
 
-    virtual QSize sizeHint() const;
+virtual QSize sizeHint() const;
 
 protected:
-    bool event(QEvent* event);
-    void paintEvent(QPaintEvent* event);
-    void mousePressEvent(QMouseEvent* event);
+bool event(QEvent* event);
+void paintEvent(QPaintEvent* event);
+void mousePressEvent(QMouseEvent* event);
 
-    // For some reason we have to proxy this to QAbstractScollArea
-    // _explicitely_! Cannot figure out why, since by default the
-    // parent should handle it automatically if ignored.
-    void wheelEvent(QWheelEvent* event);
+// For some reason we have to proxy this to QAbstractScollArea
+// _explicitely_! Cannot figure out why, since by default the
+// parent should handle it automatically if ignored.
+void wheelEvent(QWheelEvent* event);
 
 private:
-    int indexAt(const QPoint& pos) const;
+int indexAt(const QPoint& pos) const;
 
-    CodeView* const codeView;
+CodeView* const codeView;
 };
 
 #endif // QMPS_CODE_VIEW_PRIV_H

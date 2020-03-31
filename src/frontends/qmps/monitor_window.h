@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -49,129 +48,129 @@ class TraceBrowser;
 class TerminalWindow;
 class QModelIndex;
 
-class MonitorWindow : public QMainWindow {
-    Q_OBJECT
+class MonitorWindow: public QMainWindow {
+	Q_OBJECT
 
 public:
-    MonitorWindow();
+	MonitorWindow();
 
 protected:
-    virtual void closeEvent(QCloseEvent* event);
+	virtual void closeEvent(QCloseEvent* event);
 
 private:
-    static const int TAB_INDEX_CONFIG_VIEW = 0;
-    static const int TAB_INDEX_CPU = 1;
-    static const int TAB_INDEX_MEMORY = 2;
-    static const int TAB_INDEX_DEVICES = 3;
+	static const int TAB_INDEX_CONFIG_VIEW = 0;
+	static const int TAB_INDEX_CPU = 1;
+	static const int TAB_INDEX_MEMORY = 2;
+	static const int TAB_INDEX_DEVICES = 3;
 
-    void createActions();
-    void addStopMaskAction(const char* text, StopCause sc);
-    void createMenu();
-    void initializeToolBar();
-    void createTabs();
+	void createActions();
+	void addStopMaskAction(const char* text, StopCause sc);
+	void createMenu();
+	void initializeToolBar();
+	void createTabs();
 
-    QPushButton* linkButtonFromAction(const QAction* action, const QString& text = QString());
+	QPushButton* linkButtonFromAction(const QAction* action, const QString& text = QString());
 
-    QWidget* createWelcomeTab();
-    QWidget* createConfigTab();
-    QWidget* createCpuTab();
-    QWidget* createMemoryTab();
-    QWidget* createDeviceTab();
+	QWidget* createWelcomeTab();
+	QWidget* createConfigTab();
+	QWidget* createCpuTab();
+	QWidget* createMemoryTab();
+	QWidget* createDeviceTab();
 
-    void updateRecentConfigList();
+	void updateRecentConfigList();
 
-    bool discardMachineConfirmed();
+	bool discardMachineConfirmed();
 
-    DebugSession* const dbgSession;
-    Machine* machine;
+	DebugSession* const dbgSession;
+	Machine* machine;
 
-    scoped_ptr<ProcessorListModel> cpuListModel;
+	scoped_ptr<ProcessorListModel> cpuListModel;
 
-    scoped_ptr<StoppointListModel> suspectListModel;
+	scoped_ptr<StoppointListModel> suspectListModel;
 
-    scoped_ptr<DeviceTreeModel> deviceTreeModel;
+	scoped_ptr<DeviceTreeModel> deviceTreeModel;
 
-    QAction* newConfigAction;
-    QAction* loadConfigAction;
-    QAction* loadRecentConfigActions[Application::kMaxRecentConfigs];
-    QAction* recentConfigSeparatorAction;
+	QAction* newConfigAction;
+	QAction* loadConfigAction;
+	QAction* loadRecentConfigActions[Application::kMaxRecentConfigs];
+	QAction* recentConfigSeparatorAction;
 
-    QAction* quitAction;
+	QAction* quitAction;
 
-    QAction* viewToolbarAction;
-    QAction* viewStopMaskAction;
+	QAction* viewToolbarAction;
+	QAction* viewStopMaskAction;
 
-    QAction* editConfigAction;
+	QAction* editConfigAction;
 
-    QAction* addBreakpointAction;
-    QAction* removeBreakpointAction;
-    QAction* addSuspectAction;
-    QAction* removeSuspectAction;
-    QAction* addTraceAction;
-    QAction* removeTraceAction;
+	QAction* addBreakpointAction;
+	QAction* removeBreakpointAction;
+	QAction* addSuspectAction;
+	QAction* removeSuspectAction;
+	QAction* addTraceAction;
+	QAction* removeTraceAction;
 
-    QActionGroup* speedActionGroup;
-    QAction* simSpeedActions[DebugSession::kNumSpeedLevels];
-    static const char* const simSpeedMnemonics[DebugSession::kNumSpeedLevels];
-    QAction* increaseSpeedAction;
-    QAction* decreaseSpeedAction;
+	QActionGroup* speedActionGroup;
+	QAction* simSpeedActions[DebugSession::kNumSpeedLevels];
+	static const char* const simSpeedMnemonics[DebugSession::kNumSpeedLevels];
+	QAction* increaseSpeedAction;
+	QAction* decreaseSpeedAction;
 
-    QAction* showCpuWindowActions[MachineConfig::MAX_CPUS];
-    QAction* showTerminalActions[N_DEV_PER_IL];
+	QAction* showCpuWindowActions[MachineConfig::MAX_CPUS];
+	QAction* showTerminalActions[N_DEV_PER_IL];
 
-    QAction* aboutAction;
+	QAction* aboutAction;
 
-    typedef std::map<StopCause, QAction*> StopMaskActionMap;
-    StopMaskActionMap stopMaskActions;
+	typedef std::map<StopCause, QAction*> StopMaskActionMap;
+	StopMaskActionMap stopMaskActions;
 
-    QToolBar* toolBar;
-    QSlider* speedSlider;
+	QToolBar* toolBar;
+	QSlider* speedSlider;
 
-    QTabWidget* tabWidget;
+	QTabWidget* tabWidget;
 
-    MachineConfigView* configView;
+	MachineConfigView* configView;
 
-    QWidget* cpuListPane;
-    QTreeView* cpuListView;
-    QTreeView* breakpointListView;
-    QTreeView* suspectListView;
-    TraceBrowser* traceBrowser;
-    QTreeView* deviceTreeView;
+	QWidget* cpuListPane;
+	QTreeView* cpuListView;
+	QTreeView* breakpointListView;
+	QTreeView* suspectListView;
+	TraceBrowser* traceBrowser;
+	QTreeView* deviceTreeView;
 
-    QPointer<ProcessorWindow> cpuWindows[MachineConfig::MAX_CPUS];
-    QPointer<TerminalWindow> terminalWindows[N_DEV_PER_IL];
+	QPointer<ProcessorWindow> cpuWindows[MachineConfig::MAX_CPUS];
+	QPointer<TerminalWindow> terminalWindows[N_DEV_PER_IL];
 
 private Q_SLOTS:
-    void onCreateConfig();
-    void onLoadConfig();
-    void onLoadRecentConfig();
+	void onCreateConfig();
+	void onLoadConfig();
+	void onLoadRecentConfig();
 
-    void editConfig();
-    void onStopMaskChanged();
+	void editConfig();
+	void onStopMaskChanged();
 
-    void onSpeedActionChecked();
-    void onSpeedChanged(int speed);
-    void increaseSpeed();
-    void decreaseSpeed();
+	void onSpeedActionChecked();
+	void onSpeedChanged(int speed);
+	void increaseSpeed();
+	void decreaseSpeed();
 
-    void showCpuWindow(int cpuId);
-    void onCpuItemActivated(const QModelIndex& index);
-    void showTerminal();
+	void showCpuWindow(int cpuId);
+	void onCpuItemActivated(const QModelIndex& index);
+	void showTerminal();
 
-    void showAboutInfo();
+	void showAboutInfo();
 
-    void onMachineConfigChanged();
+	void onMachineConfigChanged();
 
-    void onMachineStarted();
-    void onMachineHalted();
+	void onMachineStarted();
+	void onMachineHalted();
 
-    void updateStoppointActionsSensitivity();
+	void updateStoppointActionsSensitivity();
 
-    void onAddBreakpoint();
-    void onRemoveBreakpoint();
-    void onAddSuspect();
-    void onRemoveSuspect();
-    void onAddTracepoint();
+	void onAddBreakpoint();
+	void onRemoveBreakpoint();
+	void onAddSuspect();
+	void onRemoveSuspect();
+	void onAddTracepoint();
 };
 
 #endif // QMPS_MONITOR_WINDOW_H

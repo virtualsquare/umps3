@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -37,29 +36,29 @@ class QActionGroup;
 class QToolBar;
 
 class RegisterSetWidget : public QDockWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    RegisterSetWidget(Word cpuId, QWidget* parent = 0);
+RegisterSetWidget(Word cpuId, QWidget* parent = 0);
 
 protected:
-    RegisterSetSnapshot* model;
+RegisterSetSnapshot* model;
 
 private Q_SLOTS:
-    void updateWindowTitle();
-    void setDisplayType(QAction* action);
+void updateWindowTitle();
+void setDisplayType(QAction* action);
 
 private:
-    void addDisplayAction(const QString& text,
-                          QStyledItemDelegate* delegate,
-                          QActionGroup* group,
-                          QToolBar* toolBar);
-    int currentDelegate() const;
+void addDisplayAction(const QString& text,
+                      QStyledItemDelegate* delegate,
+                      QActionGroup* group,
+                      QToolBar* toolBar);
+int currentDelegate() const;
 
-    const Word cpuId;
-    QTreeView* treeView;
-    std::vector<QStyledItemDelegate*> delegates;
-    const QString delegateKey;
+const Word cpuId;
+QTreeView* treeView;
+std::vector<QStyledItemDelegate*> delegates;
+const QString delegateKey;
 };
 
 #endif // QMPS_REGISTER_SET_WIDGET_H

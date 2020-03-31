@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -27,20 +26,20 @@
 class QLabel;
 
 class StatusDisplay : public QWidget {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    StatusDisplay(QWidget* parent = 0);
+StatusDisplay(QWidget* parent = 0);
 
 private Q_SLOTS:
-    void refreshAll();
-    void refreshTod();
+void refreshAll();
+void refreshTod();
 
 private:
-    static const int kFieldSpacing = 10;
+static const int kFieldSpacing = 10;
 
-    QLabel* statusLabel;
-    QLabel* todLabel;
+QLabel* statusLabel;
+QLabel* todLabel;
 };
 
 #endif // QMPS_MONITOR_WINDOW_PRIV_H

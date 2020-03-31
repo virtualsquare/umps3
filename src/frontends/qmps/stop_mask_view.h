@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,10 +30,10 @@ class QWidget;
 class QAction;
 
 class StopMaskView : public QGroupBox {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    StopMaskView(const std::map<StopCause, QAction*>& actions, QWidget* parent = 0);
+StopMaskView(const std::map<StopCause, QAction*>& actions, QWidget* parent = 0);
 };
 
 #endif // QMPS_STOP_MASK_VIEW_H

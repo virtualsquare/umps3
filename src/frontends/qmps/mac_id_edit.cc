@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,38 +27,39 @@
 
 class Validator : public QValidator {
 public:
-    Validator(QObject* parent = 0)
-        : QValidator(parent) {}
+Validator(QObject* parent = 0)
+	: QValidator(parent) {
+}
 
-    virtual State validate(QString& input, int& pos) const;
+virtual State validate(QString& input, int& pos) const;
 };
 
 QValidator::State Validator::validate(QString& input, int& pos) const
 {
-    UNUSED_ARG(pos);
+	UNUSED_ARG(pos);
 
-    input.replace(' ', '0');
-    if (input.left(2).toUInt(0, 16) % 2)
-        return Invalid;
-    else
-        return Acceptable;
+	input.replace(' ', '0');
+	if (input.left(2).toUInt(0, 16) % 2)
+		return Invalid;
+	else
+		return Acceptable;
 }
 
 
 MacIdEdit::MacIdEdit(QWidget* parent)
-    : QLineEdit(parent)
+	: QLineEdit(parent)
 {
-    setText("00:00:00:00:00:00");
-    setInputMask("HH:HH:HH:HH:HH:HH");
-    setValidator(new Validator);
+	setText("00:00:00:00:00:00");
+	setInputMask("HH:HH:HH:HH:HH:HH");
+	setValidator(new Validator);
 }
 
 uint8_t* MacIdEdit::getMacId(uint8_t* id) const
 {
-    return ParseMACId(qPrintable(text()), id);
+	return ParseMACId(qPrintable(text()), id);
 }
 
 void MacIdEdit::setMacId(const uint8_t* id)
 {
-    setText(MACIdToString(id).c_str());
+	setText(MACIdToString(id).c_str());
 }

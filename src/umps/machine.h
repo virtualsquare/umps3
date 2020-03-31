@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -28,12 +27,12 @@
 #include "umps/machine_config.h"
 
 enum StopCause {
-    SC_USER         = 1 << 0,
-    SC_BREAKPOINT   = 1 << 1,
-    SC_SUSPECT      = 1 << 2,
-    SC_EXCEPTION    = 1 << 3,
-    SC_UTLB_KERNEL  = 1 << 4,
-    SC_UTLB_USER    = 1 << 5
+	SC_USER         = 1 << 0,
+	SC_BREAKPOINT   = 1 << 1,
+	SC_SUSPECT      = 1 << 2,
+	SC_EXCEPTION    = 1 << 3,
+	SC_UTLB_KERNEL  = 1 << 4,
+	SC_UTLB_USER    = 1 << 5
 };
 
 class Processor;
@@ -43,66 +42,68 @@ class StoppointSet;
 
 class Machine {
 public:
-    Machine(const MachineConfig* config,
-            StoppointSet* breakpoints,
-            StoppointSet* suspects,
-            StoppointSet* tracepoints);
-    ~Machine();
+	Machine(const MachineConfig* config,
+	        StoppointSet* breakpoints,
+	        StoppointSet* suspects,
+	        StoppointSet* tracepoints);
+	~Machine();
 
-    void step(bool* stopped = NULL);
-    void step(unsigned int steps, unsigned int* stepped = NULL, bool* stopped = NULL);
+	void step(bool* stopped = NULL);
+	void step(unsigned int steps, unsigned int* stepped = NULL, bool* stopped = NULL);
 
-    uint32_t idleCycles() const;
-    void skip(uint32_t cycles);
+	uint32_t idleCycles() const;
+	void skip(uint32_t cycles);
 
-    void Halt();
-    bool IsHalted() const { return halted; }
+	void Halt();
+	bool IsHalted() const {
+		return halted;
+	}
 
-    Processor* getProcessor(unsigned int cpuId);
-    Device* getDevice(unsigned int line, unsigned int devNo);
-    SystemBus* getBus();
+	Processor* getProcessor(unsigned int cpuId);
+	Device* getDevice(unsigned int line, unsigned int devNo);
+	SystemBus* getBus();
 
-    void setStopMask(unsigned int mask);
-    unsigned int getStopMask() const;
+	void setStopMask(unsigned int mask);
+	unsigned int getStopMask() const;
 
-    unsigned int getStopCause(unsigned int cpuId) const;
-    unsigned int getActiveBreakpoint(unsigned int cpuId) const;
-    unsigned int getActiveSuspect(unsigned int cpuId) const;
+	unsigned int getStopCause(unsigned int cpuId) const;
+	unsigned int getActiveBreakpoint(unsigned int cpuId) const;
+	unsigned int getActiveSuspect(unsigned int cpuId) const;
 
-    bool ReadMemory(Word physAddr, Word* data);
-    bool WriteMemory(Word paddr, Word data);
+	bool ReadMemory(Word physAddr, Word* data);
+	bool WriteMemory(Word paddr, Word data);
 
-    void HandleBusAccess(Word pAddr, Word access, Processor* cpu);
-    void HandleVMAccess(Word asid, Word vaddr, Word access, Processor* cpu);
+	void HandleBusAccess(Word pAddr, Word access, Processor* cpu);
+	void HandleVMAccess(Word asid, Word vaddr, Word access, Processor* cpu);
 
 private:
-    struct ProcessorData {
-        unsigned int stopCause;
-        unsigned int breakpointId;
-        unsigned int suspectId;
-    };
+	struct ProcessorData {
+		unsigned int stopCause;
+		unsigned int breakpointId;
+		unsigned int suspectId;
+	};
 
-    void onCpuStatusChanged(const Processor* cpu);
-    void onCpuException(unsigned int, Processor* cpu);
+	void onCpuStatusChanged(const Processor* cpu);
+	void onCpuException(unsigned int, Processor* cpu);
 
-    unsigned int stopMask;
+	unsigned int stopMask;
 
-    const MachineConfig* const config;
+	const MachineConfig* const config;
 
-    scoped_ptr<SystemBus> bus;
+	scoped_ptr<SystemBus> bus;
 
-    typedef std::vector<Processor*> CpuVector;
-    std::vector<Processor*> cpus;
+	typedef std::vector<Processor*> CpuVector;
+	std::vector<Processor*> cpus;
 
-    ProcessorData pd[MachineConfig::MAX_CPUS];
+	ProcessorData pd[MachineConfig::MAX_CPUS];
 
-    bool halted;
-    bool stopRequested;
-    bool pauseRequested;
+	bool halted;
+	bool stopRequested;
+	bool pauseRequested;
 
-    StoppointSet* breakpoints;
-    StoppointSet* suspects;
-    StoppointSet* tracepoints;
+	StoppointSet* breakpoints;
+	StoppointSet* suspects;
+	StoppointSet* tracepoints;
 };
 
 #endif // UMPS_MACHINE_H

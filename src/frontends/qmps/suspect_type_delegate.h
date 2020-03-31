@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -25,34 +24,34 @@
 #include <QStyledItemDelegate>
 
 class SuspectTypeDelegate : public QStyledItemDelegate {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    SuspectTypeDelegate(QWidget* parent = 0);
+SuspectTypeDelegate(QWidget* parent = 0);
 
-    QWidget* createEditor(QWidget* parent,
+QWidget* createEditor(QWidget* parent,
+                      const QStyleOptionViewItem& option,
+                      const QModelIndex& index) const;
+
+void setEditorData(QWidget* editor, const QModelIndex& index) const;
+
+void setModelData(QWidget* editor,
+                  QAbstractItemModel* model,
+                  const QModelIndex& index) const;
+
+void updateEditorGeometry(QWidget* editor,
                           const QStyleOptionViewItem& option,
                           const QModelIndex& index) const;
 
-    void setEditorData(QWidget* editor, const QModelIndex& index) const;
-
-    void setModelData(QWidget* editor,
-                      QAbstractItemModel* model,
-                      const QModelIndex& index) const;
-
-    void updateEditorGeometry(QWidget* editor,
-                              const QStyleOptionViewItem& option,
-                              const QModelIndex& index) const;
-
 private:
-    static const unsigned int kValidTypes = 3;
+static const unsigned int kValidTypes = 3;
 
-    struct ItemInfo {
-        unsigned int value;
-        const char* label;
-    };
+struct ItemInfo {
+	unsigned int value;
+	const char* label;
+};
 
-    static ItemInfo valueMap[kValidTypes];
+static ItemInfo valueMap[kValidTypes];
 };
 
 #endif // QMPS_SUSPECT_TYPE_DELEGATE_H

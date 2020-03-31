@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -37,8 +36,8 @@ using boost::enable_shared_from_this;
 // and compilers by using the macro below somewhere in a private
 // section of a class definition.
 #define DISABLE_COPY_AND_ASSIGNMENT(Class)             \
-    Class(const Class&);                               \
-    Class& operator=(const Class&)
+	Class(const Class&);                               \
+	Class& operator=(const Class&)
 
 #define UNUSED_ARG(x) ((void) x)
 

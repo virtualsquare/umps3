@@ -1,4 +1,3 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *

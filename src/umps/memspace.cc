@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -42,46 +41,46 @@
 // This method creates a RamSpace object of a given size (in words) and
 // fills it with core file contents if needed
 RamSpace::RamSpace(Word size_, const char* fName)
-    : ram(new Word[size_]),
-      size(size_)
+	: ram(new Word[size_]),
+	size(size_)
 {
-    if (fName != NULL && *fName) {
-        FILE* cFile;
-        if ((cFile = fopen(fName, "r")) == NULL)
-            throw FileError(fName);
+	if (fName != NULL && *fName) {
+		FILE* cFile;
+		if ((cFile = fopen(fName, "r")) == NULL)
+			throw FileError(fName);
 
-        // Check validity
-        Word tag;
-        if (fread((void *) &tag, WORDLEN, 1, cFile) != 1 ||
-            tag != COREFILEID)
-        {
-            fclose(cFile);
-            throw InvalidCoreFileError(fName, "Invalid core file");
-        }
+		// Check validity
+		Word tag;
+		if (fread((void *) &tag, WORDLEN, 1, cFile) != 1 ||
+		    tag != COREFILEID)
+		{
+			fclose(cFile);
+			throw InvalidCoreFileError(fName, "Invalid core file");
+		}
 
-        if (fread((void *) ram.get(), WORDLEN, size, cFile) != size)
-            if (ferror(cFile)) {
-                fclose(cFile);
-                throw ReadingError();
-            }
+		if (fread((void *) ram.get(), WORDLEN, size, cFile) != size)
+			if (ferror(cFile)) {
+				fclose(cFile);
+				throw ReadingError();
+			}
 
-        if (!feof(cFile)) {
-            fclose(cFile);
-            throw CoreFileOverflow();
-        }
+		if (!feof(cFile)) {
+			fclose(cFile);
+			throw CoreFileOverflow();
+		}
 
-        fclose(cFile);
-    }
+		fclose(cFile);
+	}
 }
 
 bool RamSpace::CompareAndSet(Word index, Word oldval, Word newval)
 {
-    if (ram[index] == oldval) {
-        ram[index] = newval;
-        return true;
-    } else {
-        return false;
-    }
+	if (ram[index] == oldval) {
+		ram[index] = newval;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
@@ -91,41 +90,41 @@ bool RamSpace::CompareAndSet(Word index, Word oldval, Word newval)
 // This method creates a BiosSpace object, filling with .rom file contents
 BiosSpace::BiosSpace(const char* fileName)
 {
-    assert(fileName != NULL && *fileName);
+	assert(fileName != NULL && *fileName);
 
-    FILE* file;
+	FILE* file;
 
-    if ((file = fopen(fileName, "r")) == NULL)
-        throw FileError(fileName);
+	if ((file = fopen(fileName, "r")) == NULL)
+		throw FileError(fileName);
 
-    Word tag;
-    if ((fread((void *) &tag, WS, 1, file) != 1) ||
-        (tag != BIOSFILEID) ||
-        (fread((void *) &size, WS, 1, file) != 1))
-    {
-        fclose(file);
-        throw InvalidFileFormatError(fileName, "ROM file expected");
-    }
+	Word tag;
+	if ((fread((void *) &tag, WS, 1, file) != 1) ||
+	    (tag != BIOSFILEID) ||
+	    (fread((void *) &size, WS, 1, file) != 1))
+	{
+		fclose(file);
+		throw InvalidFileFormatError(fileName, "ROM file expected");
+	}
 
-    memPtr.reset(new Word[size]);
-    if (fread((void*) memPtr.get(), WS, size, file) != size) {
-        fclose(file);
-        throw InvalidFileFormatError(fileName, "Wrong ROM file size");
-    }
+	memPtr.reset(new Word[size]);
+	if (fread((void*) memPtr.get(), WS, size, file) != size) {
+		fclose(file);
+		throw InvalidFileFormatError(fileName, "Wrong ROM file size");
+	}
 
-    fclose(file);
+	fclose(file);
 }
 
 // This method returns the value of Word at ofs address
 // (SystemBus must assure that ofs is in range)
 Word BiosSpace::MemRead(Word ofs)
 {
-    assert(ofs < size);
-    return memPtr[ofs];
+	assert(ofs < size);
+	return memPtr[ofs];
 }
 
 // This method returns BiosSpace size in bytes
 Word BiosSpace::Size()
 {
-    return size * WORDLEN;
+	return size * WORDLEN;
 }

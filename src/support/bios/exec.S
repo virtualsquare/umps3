@@ -1,4 +1,3 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -43,11 +42,9 @@
 #define BYTELEN           8
 #define PRINTCHR          2
 
-
 #define CAUSENEGMASK      0xFFFFFF83
 #define KUPSTATUSMASK     0x00000008
 #define SAFESTATUSMASK    0xFFFFFFFC
-
 
 	/*
 	 * Code start
@@ -77,8 +74,8 @@ bios:
 	b	LUTLBHandler
 	nop
 
-EndStr:	
-	.asciiz	"System halted \n"	
+EndStr:
+	.asciiz	"System halted \n"
 PanicStr:
 	.asciiz "kernel panic()\n"
 
@@ -101,7 +98,7 @@ PanicStr:
 
 	/*
 	 * 0x00000108: panic()
-	 * Print a message on terminal 0 and loop forever 
+	 * Print a message on terminal 0 and loop forever
 	 */
 
 	.set	reorder
@@ -124,7 +121,7 @@ LPrintLoop:
 
 	# char 0 ends the string
 	beq	$0, $a1, LInfinite
-	
+
 	#prepares PRINTCHAR command
 	sll 	$a1, BYTELEN
 	addi	$a1, PRINTCHR
@@ -136,7 +133,7 @@ LInfinite:
 	b	LInfinite
 
 LHalt:
-	# this call prints a message on terminal 0 and loops forever 
+	# this call prints a message on terminal 0 and loops forever
 	li	$a0, ENDSTRADDR - 1
 	b 	LTermOp
 
@@ -170,10 +167,9 @@ LInitSecondaryProcessor:
  * $k1 is address of kernel branch address
  */
 LUTLBHandler:
-  li  $k1, KERNEL_UTLB_ADDR
-  b   LSOldLNewArea
+	li  $k1, KERNEL_UTLB_ADDR
+	b   LSOldLNewArea
 
-  
 /*
  * General exception handler
  *
@@ -185,28 +181,27 @@ LEXCHandler:
 	mfc0	$k0, $CP0_Cause
 	andi	$k0, $k0, CAUSE_EXCCODE_MASK
 	srl	$k0, CAUSE_EXCCODE_BIT
-  
-  /* cause 9 is BREAK */
-  addi  $k0, -9
-  beq   $k0, $0, LBreakHandler
-  
-/* Handle all other exception types the same */
 
-/* If EPC address is in BIOS area, something in kernel has
- * gone horribly wrong: eg. BIOS running with int unmasked (a big
- * bug for BIOS). 
-*/
+	/* cause 9 is BREAK */
+	addi  $k0, -9
+	beq   $k0, $0, LBreakHandler
+
+	/* Handle all other exception types the same */
+
+	/* If EPC address is in BIOS area, something in kernel has
+	 * gone horribly wrong: eg. BIOS running with int unmasked (a big
+	 * bug for BIOS).
+	 */
 	mfc0	$k0, $CP0_EPC
 	li	$k1, BIOS_LEGACY_EXCVEC_BASE
-  subu	$k0, $k0, $k1
+	subu	$k0, $k0, $k1
 	bltz	$k0, LPanic
-  
-/* Else: save processor state into ROM space and pass
- * along handling to the kernel 
- */
+
+	/* Else: save processor state into BIOS data RAM space and pass
+	 * along handling to the kernel
+	 */
 	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
-
 
 LBreakHandler:
 	/* If EPC address is in BIOS area, something in kernel or in BIOS
@@ -216,53 +211,53 @@ LBreakHandler:
 	subu	$k0, $k0, $k1
 	bltz	$k0, LPanic
 
-/*
- * A BIOS service routine is requested:
- * look into $a0 register for identification.
- */
- 
+	/*
+	 * A BIOS service routine is requested:
+	 * look into $a0 register for identification.
+	 */
+
 	move	$k1, $a0
 
 	/* any BREAK may be executed only in kernel mode
-	   kernel mode of caller is set when KUP bit in STATUS mask is 0 */
+	 * kernel mode of caller is set when KUP bit in STATUS mask is 0
+	 */
 	mfc0	$k0, $CP0_Status
 	andi	$k0, $k0, KUPSTATUSMASK
 	beq	  $k0, $0, LisKernel
-  
-  /* If in user mode, pass along to kernel */
+
+	/* If in user mode, pass along to kernel */
 	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
 
 LisKernel:
 	/* 0  is FORK(STATUS, EntryHI, PC, CAUSE) */
 	beq 	$0, $k1, LFORK
-	
+
 	addi    $k1, -1
-	
+
 	/* 1 is LDST */
 	beq 	$0, $k1, LLDST
-	
+
 	addi    $k1, -1
 
 	/* 2 is PANIC routine */
 	beq	$0, $k1, LPanic
 
 	addi	$k1, -1
-	
+
 	/* 3 is HALT routine */
 	beq     $0, $k1, LHalt
 
 	/* any other break is passed up to SYS handler */
 	li  $k1, KERNEL_EXCPT_ADDR
 	b	LSOldLNewArea
-  
 
 LFORK:
 	# $v0 is ENTRYHI, $a1 is STATUS, $a2 is new PC, $a3 is CAUSE
-	
+
 	# EntryHI loading
 	mtc0	$v0, $CP0_EntryHi
-	
+
 	# STATUS preparation
 	move 	$k1, $a1
 	# this for BIOS safety: no KU or IE bits on
@@ -271,13 +266,13 @@ LFORK:
 
 	# STATUS loading
 	mtc0	$k1, $CP0_Status
-	
+
 	# CAUSE loading
 	mtc0 	$a3, $CP0_Cause
 
 	# get new PC and jump
 	move 	$k1, $a2
-	
+
 	.set noreorder
 	.set nomacro
 	jr	$k1
@@ -293,12 +288,12 @@ LLDST:
 
 
 /*
- * Save cpu (exception) state into ROM reserved page, load PC and SP
+ * Save cpu (exception) state into BIOS data RAM space, load PC and SP
  *  and pass along handling to the kernel (address in $k1)
  */
-LSOldLNewArea:  
-  li  $k0, BIOS_DATA_BASE
-LSave:	
+LSOldLNewArea:
+	li  $k0, BIOS_DATA_BASE
+LSave:
 	sw	$1, 16($k0)
 	sw	$v0, 20($k0)
 	sw	$v1, 24($k0)
@@ -331,10 +326,10 @@ LSave:
 	sw	$sp, 120($k0)
 	sw	$fp, 124($k0)
 	sw	$ra, 128($k0)
-  
-  /* move kernel branch-to address to $a0 */
-  add   $a0, $0, $k1
-  
+
+	/* move kernel branch-to address to $a0 */
+	add   $a0, $0, $k1
+
 	mfhi	$k1
 	sw	$k1, 132($k0)
 	mflo	$k1
@@ -344,32 +339,32 @@ LSave:
 	/* gets EntryHI and stores it */
 	mfc0	$k1, $CP0_EntryHi
 	sw	$k1, 0($k0)
-	
+
 	/* gets CAUSE register and stores it */
 	mfc0    $k1, $CP0_Cause
 	sw      $k1, 4($k0)
-	
+
 	/* and now save STATUS and EPC registers */
 	mfc0	$k1, $CP0_Status
 	sw	$k1, 8($k0)
 	mfc0    $k1, $CP0_EPC
 	sw      $k1, 12($k0)
 
-  /* All registers saved. Load SP with RAMTOP */
+    /* All registers saved. Load SP with RAMTOP */
 	/* get RAMTOP */
 	li 	$k0, BUS_REG_RAM_BASE
 	lw 	$k0, 0($k0)
 	li 	$k1, BUS_REG_RAM_SIZE
 	lw 	$k1, 0($k1)
 	add	$sp, $k0, $k1
-  
-  /* Restore $a0 and Pass Control along to kernel */
-  add $k1, $0, $a0
-  li  $k0, BIOS_DATA_BASE
-  lw  $a0, 28($k0)
-  lw  $k0, 0($k1)
-  jr  $k0
-  nop
+
+	/* Restore $a0 and Pass Control along to kernel */
+	add $k1, $0, $a0
+	li  $k0, BIOS_DATA_BASE
+	lw  $a0, 28($k0)
+	lw  $k0, 0($k1)
+	jr  $k0
+	nop
 
 /*
  * Load CPU/CP0 registers from (state_t*) $k0
@@ -418,7 +413,7 @@ LLoadStart:
 	/* storing new EntryHI into CP0 register */
 	lw	$k1, 0($k0)
 	mtc0	$k1, $CP0_EntryHi
-	
+
 	/* storing new CAUSE into CP0 register */
 	lw	$k1, 4($k0)
 	mtc0	$k1, $CP0_Cause
@@ -441,6 +436,6 @@ LLoadStart:
 	rfe
 	.set reorder
 	.set macro
-	
+
 	.end	bios
 	.size	bios, . - bios

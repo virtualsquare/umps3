@@ -1,4 +1,20 @@
-/* -*- mode: asm; tab-width: 8; indent-tabs-mode: t -*- */
+/*
+ * uMPS - A general purpose computer system simulator
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 
 #include "umps/regdef.h"
 #include "umps/arch.h"
@@ -215,7 +231,7 @@ END_LEAF_FUNC(CAS)
  * void FORK(unsigned int entryhi, unsigned FORK
  *           int status, unsigned int pc, state_t *statep)
  *
- * This function loads a processor state from memory and start 
+ * This function loads a processor state from memory and start
  * executing it. It changes processor state completely, and it is
  * NOT an atomic operation (see interface for description).
  */
@@ -225,7 +241,7 @@ LEAF_FUNC(FORK)
 	mthi	$1
 	lw	$1, 136($a3)
 	mtlo	$1
-	
+
 	lw	$1, 16($a3)
 
 	/* register $v0 itself is not loaded */
@@ -266,7 +282,7 @@ LEAF_FUNC(FORK)
 
 	/* move $a0 to $v0 to use $a0 as EXEC call parameter */
 	move 	$v0, $a0
-	
+
 	.set noreorder
 	.set nomacro
 	li	$a0, BIOS_SRV_FORK
@@ -333,11 +349,11 @@ LEAF_FUNC(STST)
 	mflo	$a1
 	sw	$a1, 136($a0)
 	/* all processor registers saved */
-	
+
 	/* gets EntryHI and stores it */
 	mfc0	$v0, $CP0_EntryHi
 	sw	$v0, 0($a0)
-	
+
 	/* and now saves STATUS register and zeroes PC */
 	mfc0	$v0, $CP0_Status
 	sw	$v0, 8($a0)
@@ -394,7 +410,7 @@ END_LEAF_FUNC(PANIC)
  */
 LEAF_FUNC(LDST)
 	move	$a1, $a0
-	
+
 	.set noreorder
 	.set nomacro
 	li	$a0, BIOS_SRV_LDST

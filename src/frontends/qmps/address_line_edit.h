@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -27,21 +26,21 @@
 #include "umps/types.h"
 
 class AddressLineEdit : public QLineEdit {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    AddressLineEdit(QWidget* parent = 0);
-    Word getAddress() const;
-    void setAddress(Word address);
+AddressLineEdit(QWidget* parent = 0);
+Word getAddress() const;
+void setAddress(Word address);
 };
 
 class AsidLineEdit : public QLineEdit {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    AsidLineEdit(QWidget* parent = 0);
-    Word getAsid() const;
-    void setAsid(Word asid);
+AsidLineEdit(QWidget* parent = 0);
+Word getAsid() const;
+void setAsid(Word asid);
 };
 
 #endif // QMPS_ADDRESS_LINE_EDIT_H

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -65,83 +64,95 @@
 #include "umps/mpic.h"
 
 // This macro converts a byte address into a word address (minus offset)
-#define CONVERT(ad, bs)	((ad - bs) >> WORDSHIFT)	
+#define CONVERT(ad, bs) ((ad - bs) >> WORDSHIFT)
 
 class DeviceAreaAddress {
 public:
-    DeviceAreaAddress(Word paddr)
-        : pa(paddr)
-    {
-        assert(MMIO_BASE <= paddr && paddr < MMIO_END);
-    }
+DeviceAreaAddress(Word paddr)
+	: pa(paddr)
+{
+	assert(MMIO_BASE <= paddr && paddr < MMIO_END);
+}
 
-    DeviceAreaAddress(unsigned int line, unsigned int device, unsigned int field)
-        : pa(DEV_REG_ADDR(line + DEV_IL_START, device) + field * WS)
-    {
-        assert(line < N_EXT_IL && device < N_DEV_PER_IL && field < DEV_REG_SIZE_W);
-    }
+DeviceAreaAddress(unsigned int line, unsigned int device, unsigned int field)
+	: pa(DEV_REG_ADDR(line + DEV_IL_START, device) + field * WS)
+{
+	assert(line < N_EXT_IL && device < N_DEV_PER_IL && field < DEV_REG_SIZE_W);
+}
 
-    Word address() const { return pa; }
+Word address() const {
+	return pa;
+}
 
-    unsigned int regIndex() const { return wordIndex() / DEV_REG_SIZE_W; }
-    unsigned int line() const { return regIndex() / N_DEV_PER_IL; }
-    unsigned int device() const { return regIndex() % N_DEV_PER_IL; }
-    unsigned int field() const { return wordIndex() % DEV_REG_SIZE_W; }
+unsigned int regIndex() const {
+	return wordIndex() / DEV_REG_SIZE_W;
+}
+unsigned int line() const {
+	return regIndex() / N_DEV_PER_IL;
+}
+unsigned int device() const {
+	return regIndex() % N_DEV_PER_IL;
+}
+unsigned int field() const {
+	return wordIndex() % DEV_REG_SIZE_W;
+}
 
 private:
-    unsigned int wordIndex() const { return (pa - DEV_REG_START) >> 2; }
+unsigned int wordIndex() const {
+	return (pa - DEV_REG_START) >> 2;
+}
 
-    Word pa;
+Word pa;
 };
 
 
 SystemBus::SystemBus(const MachineConfig* conf, Machine* machine)
-    : config(conf),
-      machine(machine),
-      pic(new InterruptController(conf, this)),
-      mpController(new MPController(conf, machine))
+	: config(conf),
+	machine(machine),
+	pic(new InterruptController(conf, this)),
+	mpController(new MPController(conf, machine))
 {
-    tod = UINT64_C(0);
-    timer = MAXWORDVAL;
-    eventQ = new EventQueue();
+	tod = UINT64_C(0);
+	timer = MAXWORDVAL;
+	eventQ = new EventQueue();
 
-    tlbFloorAddr = config->getTLBFloorAddress();
-    
-    const char *coreFile = NULL;
-    if (config->isLoadCoreEnabled())
-        coreFile = config->getROM(ROM_TYPE_CORE).c_str();
-    ram = new RamSpace(config->getRamSize() * FRAMESIZE, coreFile);
+	tlbFloorAddr = config->getTLBFloorAddress();
 
-    biosdata = new RamSpace(BIOSDATASIZE, NULL);
-    bios = new BiosSpace(config->getROM(ROM_TYPE_BIOS).c_str());
-    boot = new BiosSpace(config->getROM(ROM_TYPE_BOOT).c_str());
+	const char *coreFile = NULL;
+	if (config->isLoadCoreEnabled())
+		coreFile = config->getROM(ROM_TYPE_CORE).c_str();
+	ram = new RamSpace(config->getRamSize() * FRAMESIZE, coreFile);
 
-    // Create devices and initialize registers used for interrupt
-    // handling.
-    intPendMask = 0UL;
-    for (unsigned intl = 0; intl < N_EXT_IL; intl++) {
-        instDevTable[intl] = 0UL;
-        for (unsigned int devNo = 0; devNo < N_DEV_PER_IL; devNo++) {
-            devTable[intl][devNo] = makeDev(intl, devNo);
-            if (devTable[intl][devNo]->Type() != NULLDEV)
-                instDevTable[intl] = SetBit(instDevTable[intl], devNo);
-        }
-    }
+	biosdata = new RamSpace(BIOSDATASIZE, NULL);
+	bios = new BiosSpace(config->getROM(ROM_TYPE_BIOS).c_str());
+	boot = new BiosSpace(config->getROM(ROM_TYPE_BOOT).c_str());
+
+	// Create devices and initialize registers used for interrupt
+	// handling.
+	intPendMask = 0UL;
+	for (unsigned intl = 0; intl < N_EXT_IL; intl++) {
+		instDevTable[intl] = 0UL;
+		for (unsigned int devNo = 0; devNo < N_DEV_PER_IL; devNo++) {
+			devTable[intl][devNo] = makeDev(intl, devNo);
+			if (devTable[intl][devNo]->Type() != NULLDEV)
+				instDevTable[intl] = SetBit(instDevTable[intl], devNo);
+		}
+	}
 }
 
 // This method deletes a SystemBus object and all related structures
 SystemBus::~SystemBus()
 {
-    delete eventQ;
+	delete eventQ;
 
-    delete ram;
-    delete biosdata;
-    delete bios;
-    delete boot;
+	delete ram;
+	delete biosdata;
+	delete bios;
+	delete boot;
 
-    for (unsigned int intl = 0; intl < DEVINTUSED; intl++)
-        for (unsigned int dnum = 0; dnum < DEVPERINT; dnum++)
-            delete devTable[intl][dnum];
+	for (unsigned int intl = 0; intl < DEVINTUSED; intl++)
+		for (unsigned int dnum = 0; dnum < DEVPERINT; dnum++)
+			delete devTable[intl][dnum];
 }
 
 // This method increments system clock and decrements interval timer;
@@ -151,69 +162,69 @@ SystemBus::~SystemBus()
 // are notified to Watch control object
 void SystemBus::ClockTick()
 {
-    tod++;
+	tod++;
 
-    // both registers signal "change" because they are conceptually one
-    machine->HandleBusAccess(BUS_REG_TOD_HI, WRITE, NULL);
-    machine->HandleBusAccess(BUS_REG_TOD_LO, WRITE, NULL);
+	// both registers signal "change" because they are conceptually one
+	machine->HandleBusAccess(BUS_REG_TOD_HI, WRITE, NULL);
+	machine->HandleBusAccess(BUS_REG_TOD_LO, WRITE, NULL);
 
-    // Update interval timer
-    if (UnsSub(&timer, timer, 1))
-        pic->StartIRQ(IL_TIMER);
-    machine->HandleBusAccess(BUS_REG_TIMER, WRITE, NULL);
+	// Update interval timer
+	if (UnsSub(&timer, timer, 1))
+		pic->StartIRQ(IL_TIMER);
+	machine->HandleBusAccess(BUS_REG_TIMER, WRITE, NULL);
 
-    // Scan the event queue
-    while (!eventQ->IsEmpty() && eventQ->nextDeadline() <= tod) {
-        (eventQ->nextCallback())();
-        eventQ->RemoveHead();
-    }
+	// Scan the event queue
+	while (!eventQ->IsEmpty() && eventQ->nextDeadline() <= tod) {
+		(eventQ->nextCallback())();
+		eventQ->RemoveHead();
+	}
 }
 
 uint32_t SystemBus::IdleCycles() const
 {
-    if (eventQ->IsEmpty())
-        return timer;
+	if (eventQ->IsEmpty())
+		return timer;
 
-    const uint64_t et = eventQ->nextDeadline();
-    if (et > tod)
-        return std::min(timer, (uint32_t) (et - tod - 1));
-    else
-        return 0;
+	const uint64_t et = eventQ->nextDeadline();
+	if (et > tod)
+		return std::min(timer, (uint32_t) (et - tod - 1));
+	else
+		return 0;
 }
 
 void SystemBus::Skip(uint32_t cycles)
 {
-    tod += cycles;
-    machine->HandleBusAccess(BUS_REG_TOD_HI, WRITE, NULL);
-    machine->HandleBusAccess(BUS_REG_TOD_LO, WRITE, NULL);
+	tod += cycles;
+	machine->HandleBusAccess(BUS_REG_TOD_HI, WRITE, NULL);
+	machine->HandleBusAccess(BUS_REG_TOD_LO, WRITE, NULL);
 
-    timer -= cycles;
-    machine->HandleBusAccess(BUS_REG_TIMER, WRITE, NULL);
+	timer -= cycles;
+	machine->HandleBusAccess(BUS_REG_TIMER, WRITE, NULL);
 }
 
 void SystemBus::setToDHI(Word hi)
 {
-    TimeStamp::setHi(tod, hi);
+	TimeStamp::setHi(tod, hi);
 }
 
 void SystemBus::setToDLO(Word lo)
 {
-    TimeStamp::setLo(tod, lo);
+	TimeStamp::setLo(tod, lo);
 }
 
 void SystemBus::setTimer(Word time)
 {
-    timer = time;
+	timer = time;
 }
 
 void SystemBus::setUTLBHandler(Word addr)
 {
-    utlbHandler = addr;
+	utlbHandler = addr;
 }
 
 void SystemBus::setExcptHandler(Word addr)
 {
-    excptHandler = addr;
+	excptHandler = addr;
 }
 
 // This method reads a data word from memory at address addr, returning it
@@ -222,15 +233,15 @@ void SystemBus::setExcptHandler(Word addr)
 // Watch control object
 bool SystemBus::DataRead(Word addr, Word* datap, Processor* cpu)
 {
-    machine->HandleBusAccess(addr, READ, cpu);
+	machine->HandleBusAccess(addr, READ, cpu);
 
-    if (busRead(addr, datap, cpu)) {
-        // address invalid: signal exception to processor
-        cpu->SignalExc(DBEXCEPTION);
-        return true;
-    }
+	if (busRead(addr, datap, cpu)) {
+		// address invalid: signal exception to processor
+		cpu->SignalExc(DBEXCEPTION);
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 
@@ -238,16 +249,16 @@ bool SystemBus::DataRead(Word addr, Word* datap, Processor* cpu)
 // These methods allow Watch to inspect or modify single memory locations;
 // they return TRUE if address is invalid or memory cannot be altered, and
 // FALSE otherwise
-// 
+//
 
 bool SystemBus::WatchRead(Word addr, Word* datap)
 {
-    return busRead(addr, datap, machine->getProcessor(0));
+	return busRead(addr, datap, machine->getProcessor(0));
 }
 
 bool SystemBus::WatchWrite(Word addr, Word data)
-{	
-    return busWrite(addr, data, machine->getProcessor(0));
+{
+	return busWrite(addr, data, machine->getProcessor(0));
 }
 
 // This method writes the data word at physical addr in RAM memory or device
@@ -256,30 +267,30 @@ bool SystemBus::WatchWrite(Word addr, Word data)
 // otherwise, and notifies access to Watch control object
 bool SystemBus::DataWrite(Word addr, Word data, Processor* proc)
 {
-    machine->HandleBusAccess(addr, WRITE, proc);
+	machine->HandleBusAccess(addr, WRITE, proc);
 
-    if (busWrite(addr, data, proc)) {
-        // data write is out of valid write bounds
-        proc->SignalExc(DBEXCEPTION);
-        return true;
-    } else
-        return false;
+	if (busWrite(addr, data, proc)) {
+		// data write is out of valid write bounds
+		proc->SignalExc(DBEXCEPTION);
+		return true;
+	} else
+		return false;
 }
 
 bool SystemBus::CompareAndSet(Word addr, Word oldval, Word newval, bool* result, Processor* cpu)
 {
-    // The CAS read-modify-write operation, as specified by the uMPS
-    // ISA, is required to fail for I/O locations.
-    if (RAMBASE <= addr && addr < RAMBASE + ram->Size()) {
-        *result = ram->CompareAndSet((addr - RAMBASE) >> 2, oldval, newval);
-        return false;
-    } else if (MMIO_BASE <= addr && addr < MMIO_END) {
-        *result = false;
-        return false;
-    } else {
-        cpu->SignalExc(DBEXCEPTION);
-        return true;
-    }
+	// The CAS read-modify-write operation, as specified by the uMPS
+	// ISA, is required to fail for I/O locations.
+	if (RAMBASE <= addr && addr < RAMBASE + ram->Size()) {
+		*result = ram->CompareAndSet((addr - RAMBASE) >> 2, oldval, newval);
+		return false;
+	} else if (MMIO_BASE <= addr && addr < MMIO_END) {
+		*result = false;
+		return false;
+	} else {
+		cpu->SignalExc(DBEXCEPTION);
+		return true;
+	}
 }
 
 // This method transfers a block from or to memory, starting with address
@@ -288,26 +299,26 @@ bool SystemBus::CompareAndSet(Word addr, Word oldval, Word newval, bool* result,
 // It notifies too the memory accesses to Watch control object
 bool SystemBus::DMATransfer(Block * blk, Word startAddr, bool toMemory)
 {
-    if (BADADDR(startAddr))
-        return true;
+	if (BADADDR(startAddr))
+		return true;
 
-    bool error = false;
+	bool error = false;
 
-    if (toMemory) {
-        for (Word ofs = 0; ofs < BLOCKSIZE && !error; ofs++) {
-            error = busWrite(startAddr + (ofs * WORDLEN), blk->getWord(ofs));  
-            machine->HandleBusAccess(startAddr + (ofs * WORDLEN), WRITE, NULL);
-        }
-    } else {
-        Word val;
-        for (Word ofs = 0; ofs < BLOCKSIZE && !error; ofs++) {
-            error = busRead(startAddr + (ofs * WORDLEN), &val);
-            machine->HandleBusAccess(startAddr + (ofs * WORDLEN), READ, NULL);
-            blk->setWord(ofs, val);
-        }
-    }
+	if (toMemory) {
+		for (Word ofs = 0; ofs < BLOCKSIZE && !error; ofs++) {
+			error = busWrite(startAddr + (ofs * WORDLEN), blk->getWord(ofs));
+			machine->HandleBusAccess(startAddr + (ofs * WORDLEN), WRITE, NULL);
+		}
+	} else {
+		Word val;
+		for (Word ofs = 0; ofs < BLOCKSIZE && !error; ofs++) {
+			error = busRead(startAddr + (ofs * WORDLEN), &val);
+			machine->HandleBusAccess(startAddr + (ofs * WORDLEN), READ, NULL);
+			blk->setWord(ofs, val);
+		}
+	}
 
-    return error;
+	return error;
 }
 
 
@@ -317,96 +328,96 @@ bool SystemBus::DMATransfer(Block * blk, Word startAddr, bool toMemory)
 // It notifies too the memory accesses to Watch control object
 bool SystemBus::DMAVarTransfer(Block* blk, Word startAddr, Word byteLength, bool toMemory)
 {
-    // fit bytes into words
-    Word length;
-    if (byteLength % WORDLEN)
-        length = (byteLength / WORDLEN) + 1;
-    else
-        length = byteLength / WORDLEN; 
-		
-    if (BADADDR(startAddr) || length > BLOCKSIZE)
-        return true;
+	// fit bytes into words
+	Word length;
+	if (byteLength % WORDLEN)
+		length = (byteLength / WORDLEN) + 1;
+	else
+		length = byteLength / WORDLEN;
 
-    bool error = false;
+	if (BADADDR(startAddr) || length > BLOCKSIZE)
+		return true;
 
-    if (toMemory) {
-        for (Word ofs = 0; ofs < length && !error; ofs++) {
-            error = busWrite(startAddr + (ofs * WORDLEN), blk->getWord(ofs));
-            machine->HandleBusAccess(startAddr + (ofs * WORDLEN), WRITE, NULL);
-        }
-    } else {
-        Word val;
-        for (Word ofs = 0; ofs < length && !error; ofs++) {
-            error = busRead(startAddr + (ofs * WORDLEN), &val);
-            machine->HandleBusAccess(startAddr + (ofs * WORDLEN), READ, NULL);
-            blk->setWord(ofs, val);
-        }
-    }
+	bool error = false;
 
-    return error;
+	if (toMemory) {
+		for (Word ofs = 0; ofs < length && !error; ofs++) {
+			error = busWrite(startAddr + (ofs * WORDLEN), blk->getWord(ofs));
+			machine->HandleBusAccess(startAddr + (ofs * WORDLEN), WRITE, NULL);
+		}
+	} else {
+		Word val;
+		for (Word ofs = 0; ofs < length && !error; ofs++) {
+			error = busRead(startAddr + (ofs * WORDLEN), &val);
+			machine->HandleBusAccess(startAddr + (ofs * WORDLEN), READ, NULL);
+			blk->setWord(ofs, val);
+		}
+	}
+
+	return error;
 }
 
-				
+
 // This method reads a istruction from memory at address addr, returning
 // it thru istrp pointer. It also returns TRUE if the address was invalid and
 // an exception was caused, FALSE otherwise, and notifies Watch
 bool SystemBus::InstrRead(Word addr, Word* instrp, Processor* proc)
 {
-    machine->HandleBusAccess(addr, EXEC, proc);
+	machine->HandleBusAccess(addr, EXEC, proc);
 
-    if (busRead(addr, instrp)) {
-        // address invalid: signal exception to processor
-        proc->SignalExc(IBEXCEPTION);
-        return true;
-    } else {
-        // address was valid
-        return false;
-    }
+	if (busRead(addr, instrp)) {
+		// address invalid: signal exception to processor
+		proc->SignalExc(IBEXCEPTION);
+		return true;
+	} else {
+		// address was valid
+		return false;
+	}
 }
 
 // This method inserts in the eventQ a event that must happen
 // at (current system time) + delay
 uint64_t SystemBus::scheduleEvent(uint64_t delay, Event::Callback callback)
 {
-    return eventQ->InsertQ(tod, delay, callback);
+	return eventQ->InsertQ(tod, delay, callback);
 }
 
 void SystemBus::IntReq(unsigned int intl, unsigned int devNum)
 {
-    pic->StartIRQ(DEV_IL_START + intl, devNum);
+	pic->StartIRQ(DEV_IL_START + intl, devNum);
 }
 
 void SystemBus::IntAck(unsigned int intl, unsigned int devNum)
 {
-    pic->EndIRQ(DEV_IL_START + intl, devNum);
+	pic->EndIRQ(DEV_IL_START + intl, devNum);
 }
 
 // This method returns the current interrupt line status
 Word SystemBus::getPendingInt(const Processor* cpu)
 {
-    return pic->GetIP(cpu->Id());
+	return pic->GetIP(cpu->Id());
 }
 
 void SystemBus::AssertIRQ(unsigned int il, unsigned int target)
 {
-    machine->getProcessor(target)->AssertIRQ(il);
+	machine->getProcessor(target)->AssertIRQ(il);
 }
 
 void SystemBus::DeassertIRQ(unsigned int il, unsigned int target)
 {
-    machine->getProcessor(target)->DeassertIRQ(il);
+	machine->getProcessor(target)->DeassertIRQ(il);
 }
 
 // This method returns the Device object with given "coordinates"
 Device * SystemBus::getDev(unsigned int intL, unsigned int dNum)
 {
-    if (intL < DEVINTUSED  && dNum < DEVPERINT)
-        return(devTable[intL][dNum]);
-    else {
-        Panic("Unknown device specified in SystemBus::getDev()");
-        // never returns
-        return NULL;
-    }
+	if (intL < DEVINTUSED  && dNum < DEVPERINT)
+		return(devTable[intL][dNum]);
+	else {
+		Panic("Unknown device specified in SystemBus::getDev()");
+		// never returns
+		return NULL;
+	}
 }
 
 
@@ -419,23 +430,23 @@ Device * SystemBus::getDev(unsigned int intL, unsigned int dNum)
 // otherwise
 bool SystemBus::busRead(Word addr, Word* datap, Processor* cpu)
 {
-    if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size()))
-        *datap = ram->MemRead(CONVERT(addr, RAMBASE));
-    else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size()))
-        *datap = biosdata->MemRead(CONVERT(addr, BIOSDATABASE));
-    else if (INBOUNDS(addr, BIOSBASE, BIOSBASE + bios->Size()))
-        *datap = bios->MemRead(CONVERT(addr,BIOSBASE));
-    else if (INBOUNDS(addr, BOOTBASE, BOOTBASE + boot->Size()))
-        *datap = boot->MemRead(CONVERT(addr, BOOTBASE));
-    else if (INBOUNDS(addr, MMIO_BASE, MMIO_END))
-        *datap = busRegRead(addr, cpu);
-    else {
-        // address invalid: data read is out of bounds
-        *datap = MAXWORDVAL;
-        return true;
-    }
-    // address was valid 
-    return false;
+	if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size()))
+		*datap = ram->MemRead(CONVERT(addr, RAMBASE));
+	else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size()))
+		*datap = biosdata->MemRead(CONVERT(addr, BIOSDATABASE));
+	else if (INBOUNDS(addr, BIOSBASE, BIOSBASE + bios->Size()))
+		*datap = bios->MemRead(CONVERT(addr,BIOSBASE));
+	else if (INBOUNDS(addr, BOOTBASE, BOOTBASE + boot->Size()))
+		*datap = boot->MemRead(CONVERT(addr, BOOTBASE));
+	else if (INBOUNDS(addr, MMIO_BASE, MMIO_END))
+		*datap = busRegRead(addr, cpu);
+	else {
+		// address invalid: data read is out of bounds
+		*datap = MAXWORDVAL;
+		return true;
+	}
+	// address was valid
+	return false;
 }
 
 
@@ -443,113 +454,113 @@ bool SystemBus::busRead(Word addr, Word* datap, Processor* cpu)
 // register area"
 Word SystemBus::busRegRead(Word addr, Processor* cpu)
 {
-    Word data;
+	Word data;
 
-    if (INBOUNDS(addr, DEV_REG_START, DEV_REG_END)) {
-        // We're in the device register space
-        DeviceAreaAddress da(addr);
-        Device* device = devTable[da.line()][da.device()];
-        data = device->ReadDevReg(da.field());
-    } else if (INBOUNDS(addr, IDEV_BITMAP_BASE, IDEV_BITMAP_END)) {
-        // We're in the "installed-devices bitmap" structure space
-        unsigned int wordIndex = CONVERT(addr, IDEV_BITMAP_BASE);
-        data = instDevTable[wordIndex];
-    } else if (INBOUNDS(addr, CDEV_BITMAP_BASE, CDEV_BITMAP_END) ||
-               INBOUNDS(addr, IRT_BASE, IRT_END) ||
-               INBOUNDS(addr, CPUCTL_BASE, CPUCTL_END))
-    {
-        data = pic->Read(addr, cpu);
-    } else if (MCTL_BASE <= addr && addr < MCTL_END) {
-        data = mpController->Read(addr, cpu);
-    } else {
-        // We're in the low "bus register area" space
-        switch (addr) {
-        case BUS_REG_TIME_SCALE:
-            // number of ticks for a microsecond
-            data = config->getClockRate();
-            break;
-        case BUS_REG_TOD_HI:
-            data = getToDHI();
-            break;
-        case BUS_REG_TOD_LO:
-            data = getToDLO();
-            break;
-        case BUS_REG_TIMER:
-            data = timer;
-            break;
-        case BUS_REG_RAM_BASE:
-            data = RAMBASE;
-            break;
-        case BUS_REG_RAM_SIZE:
-            data = ram->Size();
-            break;
-        case BUS_REG_BIOS_BASE:
-            data = BIOSBASE;
-            break;
-        case BUS_REG_BIOS_SIZE:
-            data = bios->Size();
-            break;
-        case BUS_REG_BOOT_BASE:
-            data = BOOTBASE;
-            break;
-        case BUS_REG_BOOT_SIZE:
-            data = boot->Size();
-            break;
-        case TLB_FLOOR_ADDR:
-            data = config->getTLBFloorAddress();
-            break;
-        case KERNEL_UTLB_ADDR:
-            data = utlbHandler;
-            break;
-        case KERNEL_EXCPT_ADDR:
-            data = excptHandler;
-            break;
-        default:
-            // unmapped bus device register area:
-            // read give 0, write has no effects
-            data = 0UL;
-            break;
-        }
-    }
-    return data;
+	if (INBOUNDS(addr, DEV_REG_START, DEV_REG_END)) {
+		// We're in the device register space
+		DeviceAreaAddress da(addr);
+		Device* device = devTable[da.line()][da.device()];
+		data = device->ReadDevReg(da.field());
+	} else if (INBOUNDS(addr, IDEV_BITMAP_BASE, IDEV_BITMAP_END)) {
+		// We're in the "installed-devices bitmap" structure space
+		unsigned int wordIndex = CONVERT(addr, IDEV_BITMAP_BASE);
+		data = instDevTable[wordIndex];
+	} else if (INBOUNDS(addr, CDEV_BITMAP_BASE, CDEV_BITMAP_END) ||
+	           INBOUNDS(addr, IRT_BASE, IRT_END) ||
+	           INBOUNDS(addr, CPUCTL_BASE, CPUCTL_END))
+	{
+		data = pic->Read(addr, cpu);
+	} else if (MCTL_BASE <= addr && addr < MCTL_END) {
+		data = mpController->Read(addr, cpu);
+	} else {
+		// We're in the low "bus register area" space
+		switch (addr) {
+		case BUS_REG_TIME_SCALE:
+			// number of ticks for a microsecond
+			data = config->getClockRate();
+			break;
+		case BUS_REG_TOD_HI:
+			data = getToDHI();
+			break;
+		case BUS_REG_TOD_LO:
+			data = getToDLO();
+			break;
+		case BUS_REG_TIMER:
+			data = timer;
+			break;
+		case BUS_REG_RAM_BASE:
+			data = RAMBASE;
+			break;
+		case BUS_REG_RAM_SIZE:
+			data = ram->Size();
+			break;
+		case BUS_REG_BIOS_BASE:
+			data = BIOSBASE;
+			break;
+		case BUS_REG_BIOS_SIZE:
+			data = bios->Size();
+			break;
+		case BUS_REG_BOOT_BASE:
+			data = BOOTBASE;
+			break;
+		case BUS_REG_BOOT_SIZE:
+			data = boot->Size();
+			break;
+		case TLB_FLOOR_ADDR:
+			data = config->getTLBFloorAddress();
+			break;
+		case KERNEL_UTLB_ADDR:
+			data = utlbHandler;
+			break;
+		case KERNEL_EXCPT_ADDR:
+			data = excptHandler;
+			break;
+		default:
+			// unmapped bus device register area:
+			// read give 0, write has no effects
+			data = 0UL;
+			break;
+		}
+	}
+	return data;
 }
 
 // This method accesses the system configuration and constructs
 // the devices needed, linking them to SystemBus object
 Device* SystemBus::makeDev(unsigned int intl, unsigned int dnum)
 {
-    unsigned int devt;
-    Device * dev;
+	unsigned int devt;
+	Device * dev;
 
-    devt = config->getDeviceType(intl, dnum);
+	devt = config->getDeviceType(intl, dnum);
 
-    switch(devt) {
-    case PRNTDEV:
-        dev = new PrinterDevice(this, config, intl, dnum);
-        break;
+	switch(devt) {
+	case PRNTDEV:
+		dev = new PrinterDevice(this, config, intl, dnum);
+		break;
 
-    case TERMDEV:
-        dev = new TerminalDevice(this, config, intl, dnum);
-        break;
-			
-    case ETHDEV:
-        dev = new EthDevice(this, config, intl, dnum);
-        break;
-			
-    case DISKDEV:
-        dev = new DiskDevice(this, config, intl, dnum);
-        break;
-		
-    case FLASHDEV:
-        dev = new FlashDevice(this, config, intl, dnum);
-        break;
-			
-    default:
-        dev = new Device(this, intl, dnum);
-        break;
-    }
+	case TERMDEV:
+		dev = new TerminalDevice(this, config, intl, dnum);
+		break;
 
-    return dev;
+	case ETHDEV:
+		dev = new EthDevice(this, config, intl, dnum);
+		break;
+
+	case DISKDEV:
+		dev = new DiskDevice(this, config, intl, dnum);
+		break;
+
+	case FLASHDEV:
+		dev = new FlashDevice(this, config, intl, dnum);
+		break;
+
+	default:
+		dev = new Device(this, intl, dnum);
+		break;
+	}
+
+	return dev;
 }
 
 // This method writes the data at the physical address addr, and passes it
@@ -557,45 +568,45 @@ Device* SystemBus::makeDev(unsigned int intl, unsigned int dnum)
 // and writable, and TRUE otherwise
 bool SystemBus::busWrite(Word addr, Word data, Processor* cpu)
 {
-    if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size())) {
-        ram->MemWrite(CONVERT(addr, RAMBASE), data);
-    } else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size())) {
-        biosdata->MemWrite(CONVERT(addr, BIOSDATABASE), data);
-    } else if (INBOUNDS(addr, MMIO_BASE, MMIO_END)) {
-        if (DEV_REG_START <= addr && addr < DEV_REG_END) {
-            DeviceAreaAddress dva(addr);
-            Device* device = devTable[dva.line()][dva.device()];
-            device->WriteDevReg(dva.field(), data);
-        } else if (INBOUNDS(addr, IRT_BASE, IRT_END) ||
-                   INBOUNDS(addr, CPUCTL_BASE, CPUCTL_END))
-        {
-            pic->Write(addr, data, cpu);
-        } else if (MCTL_BASE <= addr && addr < MCTL_END) {
-            mpController->Write(addr, data, NULL);
-        } else {
-            // data write is in bus registers area
-            switch (addr) {
-                case BUS_REG_TIMER:
-                    // update the interval timer and reset its interrupt line
-                    timer = data;
-                    pic->EndIRQ(IL_TIMER);
-                    break;
-                case KERNEL_UTLB_ADDR:
-                    utlbHandler = data;
-                    break;
-                case KERNEL_EXCPT_ADDR:
-                    excptHandler = data;
-                    break;
-                default:
-                    // data write is on a read only bus register, and
-                    // has no harmful effects
-                    break;
-            }
-        }
-    } else {
-        // Address out of valid write bounds
-        return(true);
-    }
+	if (INBOUNDS(addr, RAMBASE, RAMBASE + ram->Size())) {
+		ram->MemWrite(CONVERT(addr, RAMBASE), data);
+	} else if (INBOUNDS(addr, BIOSDATABASE, BIOSDATABASE + biosdata->Size())) {
+		biosdata->MemWrite(CONVERT(addr, BIOSDATABASE), data);
+	} else if (INBOUNDS(addr, MMIO_BASE, MMIO_END)) {
+		if (DEV_REG_START <= addr && addr < DEV_REG_END) {
+			DeviceAreaAddress dva(addr);
+			Device* device = devTable[dva.line()][dva.device()];
+			device->WriteDevReg(dva.field(), data);
+		} else if (INBOUNDS(addr, IRT_BASE, IRT_END) ||
+		           INBOUNDS(addr, CPUCTL_BASE, CPUCTL_END))
+		{
+			pic->Write(addr, data, cpu);
+		} else if (MCTL_BASE <= addr && addr < MCTL_END) {
+			mpController->Write(addr, data, NULL);
+		} else {
+			// data write is in bus registers area
+			switch (addr) {
+			case BUS_REG_TIMER:
+				// update the interval timer and reset its interrupt line
+				timer = data;
+				pic->EndIRQ(IL_TIMER);
+				break;
+			case KERNEL_UTLB_ADDR:
+				utlbHandler = data;
+				break;
+			case KERNEL_EXCPT_ADDR:
+				excptHandler = data;
+				break;
+			default:
+				// data write is on a read only bus register, and
+				// has no harmful effects
+				break;
+			}
+		}
+	} else {
+		// Address out of valid write bounds
+		return(true);
+	}
 
-    return(false);
+	return(false);
 }

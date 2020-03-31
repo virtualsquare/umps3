@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -40,54 +39,54 @@
 
 // register names
 HIDDEN const char* const regName[CPUREGNUM] = {
-    "00",
-    "at",
-    "v0",
-    "v1",
-    "a0",
-    "a1",
-    "a2",
-    "a3",
-    "t0",
-    "t1",
-    "t2",
-    "t3",
-    "t4",
-    "t5",
-    "t6",
-    "t7",
-    "s0",
-    "s1",
-    "s2",
-    "s3",
-    "s4",
-    "s5",
-    "s6",
-    "s7",
-    "t8",
-    "t9",
-    "k0",
-    "k1",
-    "gp",
-    "sp",
-    "s8",
-    "ra",
-    "HI",
-    "LO"
+	"00",
+	"at",
+	"v0",
+	"v1",
+	"a0",
+	"a1",
+	"a2",
+	"a3",
+	"t0",
+	"t1",
+	"t2",
+	"t3",
+	"t4",
+	"t5",
+	"t6",
+	"t7",
+	"s0",
+	"s1",
+	"s2",
+	"s3",
+	"s4",
+	"s5",
+	"s6",
+	"s7",
+	"t8",
+	"t9",
+	"k0",
+	"k1",
+	"gp",
+	"sp",
+	"s8",
+	"ra",
+	"HI",
+	"LO"
 };
 
 // CP0 register names
 HIDDEN const char* const cp0RegName[CP0REGNUM] = {
-    "Index",
-    "Random",
-    "EntryLo",
-    "BadVAddr",
-    "Timer",
-    "EntryHi",
-    "Status",
-    "Cause",
-    "EPC",
-    "PRId"
+	"Index",
+	"Random",
+	"EntryLo",
+	"BadVAddr",
+	"Timer",
+	"EntryHi",
+	"Status",
+	"Cause",
+	"EPC",
+	"PRId"
 };
 
 // instruction mnemonic names split by type: array is indexed by opcode
@@ -95,178 +94,178 @@ HIDDEN const char* const cp0RegName[CP0REGNUM] = {
 
 // register instructions
 HIDDEN const char* const regIName[] = {
-    "sll",
-    "",
-    "srl",
-    "sra",
-    "sllv",
-    "",
-    "srlv",
-    "srav",
-    "jr",
-    "jalr",
-    "",
-    "cas",
-    "syscall",
-    "break",
-    "",
-    "",
-    "mfhi",
-    "mthi",
-    "mflo",
-    "mtlo",
-    "",
-    "",
-    "",
-    "",
-    "mult",
-    "multu",
-    "div",
-    "divu",
-    "",
-    "",
-    "",
-    "",
-    "add",
-    "addu",
-    "sub",
-    "subu",
-    "and",
-    "or",
-    "xor",
-    "nor",
-    "",
-    "",
-    "slt",
-    "sltu",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "nop",
-    "ri/ill (r-type)"
+	"sll",
+	"",
+	"srl",
+	"sra",
+	"sllv",
+	"",
+	"srlv",
+	"srav",
+	"jr",
+	"jalr",
+	"",
+	"cas",
+	"syscall",
+	"break",
+	"",
+	"",
+	"mfhi",
+	"mthi",
+	"mflo",
+	"mtlo",
+	"",
+	"",
+	"",
+	"",
+	"mult",
+	"multu",
+	"div",
+	"divu",
+	"",
+	"",
+	"",
+	"",
+	"add",
+	"addu",
+	"sub",
+	"subu",
+	"and",
+	"or",
+	"xor",
+	"nor",
+	"",
+	"",
+	"slt",
+	"sltu",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"nop",
+	"ri/ill (r-type)"
 };
 
-// position for NOP (since its opcode clashes with SLL) 
-#define NOPINAME	62
+// position for NOP (since its opcode clashes with SLL)
+#define NOPINAME    62
 
 // reserved instruction string position for regIName array
-#define RIREGINAME	63
+#define RIREGINAME  63
 
 
 // immediate/branch/load/store instructions
 HIDDEN const char* const iName[] = {
-    "bltz",
-    "bgez",
-    "j",
-    "jal",
-    "beq",
-    "bne",
-    "blez",
-    "bgtz",
-    "addi",
-    "addiu",
-    "slti",
-    "sltiu",
-    "andi",
-    "ori",
-    "xori",
-    "lui",
-    "bltzal",
-    "bgezal",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "lb",
-    "lh",
-    "lwl",
-    "lw",
-    "lbu",
-    "lhu",
-    "lwr",
-    "",
-    "sb",
-    "sh",
-    "swl",
-    "sw",
-    "",
-    "",
-    "swr",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "ri/ill (unknown)",
-    "ri/ill (R4000)",
-    "ri/ill (load/store)",
-    "ri/ill (branch type)",
-    "ri/ill (immediate)"
+	"bltz",
+	"bgez",
+	"j",
+	"jal",
+	"beq",
+	"bne",
+	"blez",
+	"bgtz",
+	"addi",
+	"addiu",
+	"slti",
+	"sltiu",
+	"andi",
+	"ori",
+	"xori",
+	"lui",
+	"bltzal",
+	"bgezal",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"lb",
+	"lh",
+	"lwl",
+	"lw",
+	"lbu",
+	"lhu",
+	"lwr",
+	"",
+	"sb",
+	"sh",
+	"swl",
+	"sw",
+	"",
+	"",
+	"swr",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"ri/ill (unknown)",
+	"ri/ill (R4000)",
+	"ri/ill (load/store)",
+	"ri/ill (branch type)",
+	"ri/ill (immediate)"
 };
 
 // string positions for illegal opcodes by type in previous array
-#define RIIMMINAME		63
-#define RIBRANCHINAME	62
-#define RILSINAME		61
-#define RIR40INAME		60
-#define RIUNKINAME		59
+#define RIIMMINAME      63
+#define RIBRANCHINAME   62
+#define RILSINAME       61
+#define RIR40INAME      60
+#define RIUNKINAME      59
 
 
 // coprocessor instructions
 HIDDEN const char* const cp0IName[] = {
-    "mfc0",
-    "tlbr",
-    "tlbwi",
-    "bc0f",
-    "mtc0",
-    "bc0t",
-    "tlbwr",
-    "rfe",
-    "tlbp",
-    "ri/ill/unimp"
+	"mfc0",
+	"tlbr",
+	"tlbwi",
+	"bc0f",
+	"mtc0",
+	"bc0t",
+	"tlbwr",
+	"rfe",
+	"tlbp",
+	"ri/ill/unimp"
 };
 
 // string positions for peculiar istructions (decoding for them is peculiar)
-#define RFEINAME	7
-#define BC0FINAME	3
-#define BC0TINAME	5
-#define CPUILLINAME	9
+#define RFEINAME    7
+#define BC0FINAME   3
+#define BC0TINAME   5
+#define CPUILLINAME 9
 
 
 // static string buffer size and definition
-#define STRBUFSIZE	64
+#define STRBUFSIZE  64
 HIDDEN char strbuf[STRBUFSIZE];
 
 
@@ -286,7 +285,7 @@ HIDDEN void strCopInstr(Word instr);
 unsigned int OpType(Word instr)
 {
 	if (OPCODE(instr) == 0UL)
-	// SPECIAL field is 0: istruction type is REGTYPE
+		// SPECIAL field is 0: istruction type is REGTYPE
 		return(REGTYPE);
 	else
 		return((instr & OPTYPEMASK) >> OPCODEOFFS);
@@ -308,61 +307,61 @@ SWord SignExtImm(Word instr)
 // Returns FALSE if instruction is valid, and a non-zero value otherwise
 bool InvalidRegInstr(Word instr)
 {
-    bool invalid = false;
-	
-    switch (FUNCT(instr)) {
-    case SFN_ADD:
-    case SFN_ADDU:
-    case SFN_AND:
-    case SFN_NOR:
-    case SFN_OR:
-    case SFN_SLLV:
-    case SFN_SLT:
-    case SFN_SLTU:
-    case SFN_SRAV:
-    case SFN_SRLV:
-    case SFN_SUB:
-    case SFN_SUBU:
-    case SFN_XOR:
-    case SFN_CAS:
-        invalid = SHAMT(instr);
-        break;
+	bool invalid = false;
 
-    case SFN_SLL:
-    case SFN_SRA:
-    case SFN_SRL:
-        invalid = RS(instr);
-        break;
+	switch (FUNCT(instr)) {
+	case SFN_ADD:
+	case SFN_ADDU:
+	case SFN_AND:
+	case SFN_NOR:
+	case SFN_OR:
+	case SFN_SLLV:
+	case SFN_SLT:
+	case SFN_SLTU:
+	case SFN_SRAV:
+	case SFN_SRLV:
+	case SFN_SUB:
+	case SFN_SUBU:
+	case SFN_XOR:
+	case SFN_CAS:
+		invalid = SHAMT(instr);
+		break;
 
-    case SFN_DIV:
-    case SFN_DIVU:
-    case SFN_MULT:
-    case SFN_MULTU:
-        invalid = SHAMT(instr) || RD(instr);
-        break;
+	case SFN_SLL:
+	case SFN_SRA:
+	case SFN_SRL:
+		invalid = RS(instr);
+		break;
 
-    case SFN_JALR:
-        invalid = SHAMT(instr) || RT(instr);
-        break;
+	case SFN_DIV:
+	case SFN_DIVU:
+	case SFN_MULT:
+	case SFN_MULTU:
+		invalid = SHAMT(instr) || RD(instr);
+		break;
 
-    case SFN_MFHI:
-    case SFN_MFLO:
-        invalid = SHAMT(instr) || RT(instr) || RS(instr);
-        break;
+	case SFN_JALR:
+		invalid = SHAMT(instr) || RT(instr);
+		break;
 
-    case SFN_JR:
-    case SFN_MTHI:
-    case SFN_MTLO:
-        invalid = SHAMT(instr) || RT(instr) || RD(instr);
-        break;
+	case SFN_MFHI:
+	case SFN_MFLO:
+		invalid = SHAMT(instr) || RT(instr) || RS(instr);
+		break;
 
-    case SFN_BREAK:
-    case SFN_SYSCALL:
-    default:
-        break;
-    }
+	case SFN_JR:
+	case SFN_MTHI:
+	case SFN_MTLO:
+		invalid = SHAMT(instr) || RT(instr) || RD(instr);
+		break;
 
-    return invalid;
+	case SFN_BREAK:
+	case SFN_SYSCALL:
+	default:
+		break;
+	}
+
+	return invalid;
 }
 
 
@@ -371,113 +370,113 @@ bool InvalidRegInstr(Word instr)
 // FALSE otherwise
 bool ValidCP0Reg(unsigned int regnum, unsigned int* cpnum)
 {
-    bool ret = true;
+	bool ret = true;
 
-    switch(regnum) {
-    case CP0_Index:
-        *cpnum = INDEX;
-        break;
+	switch(regnum) {
+	case CP0_Index:
+		*cpnum = INDEX;
+		break;
 
-    case CP0_Random:
-        *cpnum = RANDOM;
-        break;
+	case CP0_Random:
+		*cpnum = RANDOM;
+		break;
 
-    case CP0_EntryLo:	
-        *cpnum = ENTRYLO;
-        break;
+	case CP0_EntryLo:
+		*cpnum = ENTRYLO;
+		break;
 
-    case CP0_BadVAddr:
-        *cpnum = BADVADDR;
-        break;
+	case CP0_BadVAddr:
+		*cpnum = BADVADDR;
+		break;
 
-    case CP0_Timer:
-        *cpnum = CP0REG_TIMER;
-        break;
+	case CP0_Timer:
+		*cpnum = CP0REG_TIMER;
+		break;
 
-    case CP0_EntryHi:
-        *cpnum = ENTRYHI;
-        break;
+	case CP0_EntryHi:
+		*cpnum = ENTRYHI;
+		break;
 
-    case CP0_Status:	
-        *cpnum = STATUS;
-        break;
+	case CP0_Status:
+		*cpnum = STATUS;
+		break;
 
-    case CP0_Cause:
-        *cpnum = CAUSE;
-        break;
+	case CP0_Cause:
+		*cpnum = CAUSE;
+		break;
 
-    case CP0_EPC:
-        *cpnum = EPC;
-        break;
+	case CP0_EPC:
+		*cpnum = EPC;
+		break;
 
-    case CP0_PRID:
-        *cpnum = PRID;
-        break;
+	case CP0_PRID:
+		*cpnum = PRID;
+		break;
 
-    default:
-        // invalid register
-        ret = false;
-        *cpnum = PRID;
-        // this way, bad function use doesn't touch critical CP0 reg
-        break;
-    }
+	default:
+		// invalid register
+		ret = false;
+		*cpnum = PRID;
+		// this way, bad function use doesn't touch critical CP0 reg
+		break;
+	}
 
-    return ret;
+	return ret;
 }
 
 // This function returns main processor's register name indexed by position
 const char* RegName(unsigned int index)
 {
-    if (index < CPUREGNUM)
-        return regName[index];
-    else 
-        return EMPTYSTR;
+	if (index < CPUREGNUM)
+		return regName[index];
+	else
+		return EMPTYSTR;
 }
 
 // This function returns CP0 register name indexed by position
 const char* CP0RegName(unsigned int index)
 {
-    if (index < CP0REGNUM)
-        return cp0RegName[index];
-    else
-        return "";
+	if (index < CP0REGNUM)
+		return cp0RegName[index];
+	else
+		return "";
 }
 
 // this function returns the pointer to a static buffer which contains
-// the instruction translation into readable form 
+// the instruction translation into readable form
 const char* StrInstr(Word instr)
 {
-    switch (OpType(instr)) {
-    case REGTYPE:
-        strRegInstr(instr);
-        break;
+	switch (OpType(instr)) {
+	case REGTYPE:
+		strRegInstr(instr);
+		break;
 
-    case IMMTYPE:	
-        strImmInstr(instr);
-        break;
+	case IMMTYPE:
+		strImmInstr(instr);
+		break;
 
-    case BRANCHTYPE:
-        strBranchInstr(instr);
-        break;					
+	case BRANCHTYPE:
+		strBranchInstr(instr);
+		break;
 
-    case LOADCOPTYPE:
-    case STORECOPTYPE:
-    case COPTYPE:
-        strCopInstr(instr);
-        break;
+	case LOADCOPTYPE:
+	case STORECOPTYPE:
+	case COPTYPE:
+		strCopInstr(instr);
+		break;
 
-    case LOADTYPE:
-    case STORETYPE:
-        strLSInstr(instr);
-        break;					
+	case LOADTYPE:
+	case STORETYPE:
+		strLSInstr(instr);
+		break;
 
-    default:
-        // unknown instruction (generic)
-        sprintf(strbuf, "%s", iName[RIUNKINAME]);
-        break;
-    }
+	default:
+		// unknown instruction (generic)
+		sprintf(strbuf, "%s", iName[RIUNKINAME]);
+		break;
+	}
 
-    return strbuf;
+	return strbuf;
 }
 
 
@@ -489,180 +488,180 @@ const char* StrInstr(Word instr)
 // readable form for MIPS register type instructions
 HIDDEN void strRegInstr(Word instr)
 {
-    if (InvalidRegInstr(instr))
-        sprintf(strbuf, "%s", regIName[RIREGINAME]);
-    else {
-        // instruction format is correct		
-        switch(FUNCT(instr)) {
-        case SFN_ADD:
-        case SFN_ADDU:
-        case SFN_AND:
-        case SFN_NOR:
-        case SFN_OR:
-        case SFN_SLLV:
-        case SFN_SLT:
-        case SFN_SLTU:
-        case SFN_SRAV:
-        case SFN_SRLV:
-        case SFN_SUB:
-        case SFN_SUBU:
-        case SFN_XOR:
-        case SFN_CAS:
-            sprintf(strbuf, "%s\t$%s, $%s, $%s",
-                    regIName[FUNCT(instr)],
-                    regName[RD(instr)],
-                    regName[RS(instr)],
-                    regName[RT(instr)]);
-            break;
+	if (InvalidRegInstr(instr))
+		sprintf(strbuf, "%s", regIName[RIREGINAME]);
+	else {
+		// instruction format is correct
+		switch(FUNCT(instr)) {
+		case SFN_ADD:
+		case SFN_ADDU:
+		case SFN_AND:
+		case SFN_NOR:
+		case SFN_OR:
+		case SFN_SLLV:
+		case SFN_SLT:
+		case SFN_SLTU:
+		case SFN_SRAV:
+		case SFN_SRLV:
+		case SFN_SUB:
+		case SFN_SUBU:
+		case SFN_XOR:
+		case SFN_CAS:
+			sprintf(strbuf, "%s\t$%s, $%s, $%s",
+			        regIName[FUNCT(instr)],
+			        regName[RD(instr)],
+			        regName[RS(instr)],
+			        regName[RT(instr)]);
+			break;
 
-        case SFN_SLL:
-        case SFN_SRA:
-        case SFN_SRL:
-            if (instr == NOP)
-                sprintf(strbuf, "%s", regIName[NOPINAME]);
-            else
-                sprintf(strbuf, "%s\t$%s, $%s, %.2lu",
-                        regIName[FUNCT(instr)],
-                        regName[RD(instr)],
-                        regName[RT(instr)],
-                        SHAMT(instr));
-            break;
+		case SFN_SLL:
+		case SFN_SRA:
+		case SFN_SRL:
+			if (instr == NOP)
+				sprintf(strbuf, "%s", regIName[NOPINAME]);
+			else
+				sprintf(strbuf, "%s\t$%s, $%s, %.2lu",
+				        regIName[FUNCT(instr)],
+				        regName[RD(instr)],
+				        regName[RT(instr)],
+				        SHAMT(instr));
+			break;
 
-        case SFN_DIV:
-        case SFN_DIVU:
-        case SFN_MULT:
-        case SFN_MULTU:
-            sprintf(strbuf, "%s\t$%s, $%s",
-                    regIName[FUNCT(instr)], regName[RS(instr)], regName[RT(instr)]); 
-            break;
+		case SFN_DIV:
+		case SFN_DIVU:
+		case SFN_MULT:
+		case SFN_MULTU:
+			sprintf(strbuf, "%s\t$%s, $%s",
+			        regIName[FUNCT(instr)], regName[RS(instr)], regName[RT(instr)]);
+			break;
 
-        case SFN_JALR:
-            sprintf(strbuf, "%s\t$%s, $%s",
-                    regIName[FUNCT(instr)], regName[RD(instr)], regName[RS(instr)]);
-            break;
+		case SFN_JALR:
+			sprintf(strbuf, "%s\t$%s, $%s",
+			        regIName[FUNCT(instr)], regName[RD(instr)], regName[RS(instr)]);
+			break;
 
-        case SFN_MFHI:
-        case SFN_MFLO:
-            sprintf(strbuf, "%s\t$%s", regIName[FUNCT(instr)], regName[RD(instr)]);
-            break;
+		case SFN_MFHI:
+		case SFN_MFLO:
+			sprintf(strbuf, "%s\t$%s", regIName[FUNCT(instr)], regName[RD(instr)]);
+			break;
 
-        case SFN_JR:
-        case SFN_MTHI:
-        case SFN_MTLO:
-            sprintf(strbuf, "%s\t$%s", regIName[FUNCT(instr)], regName[RS(instr)]);
-            break;
+		case SFN_JR:
+		case SFN_MTHI:
+		case SFN_MTLO:
+			sprintf(strbuf, "%s\t$%s", regIName[FUNCT(instr)], regName[RS(instr)]);
+			break;
 
-        case SFN_BREAK:
-        case SFN_SYSCALL:
-            sprintf(strbuf, "%s\t(%lu)", regIName[FUNCT(instr)], CALLVAL(instr));
-            break;
+		case SFN_BREAK:
+		case SFN_SYSCALL:
+			sprintf(strbuf, "%s\t(%lu)", regIName[FUNCT(instr)], CALLVAL(instr));
+			break;
 
-        default:
-            // unknown instruction
-            sprintf(strbuf, "%s", regIName[RIREGINAME]);
-            break;
-        }
-    }
+		default:
+			// unknown instruction
+			sprintf(strbuf, "%s", regIName[RIREGINAME]);
+			break;
+		}
+	}
 }
 
 // This function decodes and puts into static buffer the human readable form
 // for MIPS immediate type instructions
 HIDDEN void strImmInstr(Word instr)
 {
-    switch (OPCODE(instr)) {
-    case ADDI:
-    case ADDIU:
-    case SLTI:
-    case SLTIU:
-        sprintf(strbuf, "%s\t$%s, $%s, %+ld",
-                iName[OPCODE(instr)],
-                regName[RT(instr)],
-                regName[RS(instr)],
-                (long int) SignExtImm(instr));
-        break;
+	switch (OPCODE(instr)) {
+	case ADDI:
+	case ADDIU:
+	case SLTI:
+	case SLTIU:
+		sprintf(strbuf, "%s\t$%s, $%s, %+ld",
+		        iName[OPCODE(instr)],
+		        regName[RT(instr)],
+		        regName[RS(instr)],
+		        (long int) SignExtImm(instr));
+		break;
 
-    case ANDI:
-    case ORI:
-    case XORI:
-        sprintf(strbuf, "%s\t$%s, $%s, 0x%.8lX",
-                iName[OPCODE(instr)],
-                regName[RT(instr)],
-                regName[RS(instr)],
-                ZEXTIMM(instr));
-        break;
+	case ANDI:
+	case ORI:
+	case XORI:
+		sprintf(strbuf, "%s\t$%s, $%s, 0x%.8lX",
+		        iName[OPCODE(instr)],
+		        regName[RT(instr)],
+		        regName[RS(instr)],
+		        ZEXTIMM(instr));
+		break;
 
-    case LUI:
-        if (!RS(instr))
-            sprintf(strbuf, "%s\t$%s, 0x%.4lX",
-                    iName[OPCODE(instr)], regName[RT(instr)], ZEXTIMM(instr));
-        else
-            // instruction is ill-formed
-            sprintf(strbuf, "%s", iName[RIIMMINAME]);
-        break;
+	case LUI:
+		if (!RS(instr))
+			sprintf(strbuf, "%s\t$%s, 0x%.4lX",
+			        iName[OPCODE(instr)], regName[RT(instr)], ZEXTIMM(instr));
+		else
+			// instruction is ill-formed
+			sprintf(strbuf, "%s", iName[RIIMMINAME]);
+		break;
 
-    default:
-        sprintf(strbuf, "%s", iName[RIIMMINAME]);
-        break;
-    }
+	default:
+		sprintf(strbuf, "%s", iName[RIIMMINAME]);
+		break;
+	}
 }
 
 // This function decodes and puts into static buffer the human readable form
 // for MIPS branch type instructions
 HIDDEN void strBranchInstr(Word instr)
 {
-    switch (OPCODE(instr)) {
-    case BEQ:
-    case BNE:
-        sprintf(strbuf, "%s\t$%s, $%s, %+ld",
-                iName[OPCODE(instr)],
-                regName[RS(instr)],
-                regName[RT(instr)],
-                (long int) (SignExtImm(instr) << WORDSHIFT));
-        break;
+	switch (OPCODE(instr)) {
+	case BEQ:
+	case BNE:
+		sprintf(strbuf, "%s\t$%s, $%s, %+ld",
+		        iName[OPCODE(instr)],
+		        regName[RS(instr)],
+		        regName[RT(instr)],
+		        (long int) (SignExtImm(instr) << WORDSHIFT));
+		break;
 
-    case BGL:
-        // uses RT field to choose which branch type is requested
-        switch (RT(instr))
-        {
-        case BGEZ:
-        case BGEZAL:
-        case BLTZ:
-        case BLTZAL:
-            sprintf(strbuf, "%s\t$%s, %+ld",
-                    iName[RT(instr)],
-                    regName[RS(instr)],
-                    (long int) (SignExtImm(instr) << WORDSHIFT));
-            break;
+	case BGL:
+		// uses RT field to choose which branch type is requested
+		switch (RT(instr))
+		{
+		case BGEZ:
+		case BGEZAL:
+		case BLTZ:
+		case BLTZAL:
+			sprintf(strbuf, "%s\t$%s, %+ld",
+			        iName[RT(instr)],
+			        regName[RS(instr)],
+			        (long int) (SignExtImm(instr) << WORDSHIFT));
+			break;
 
-        default:
-            // unknown instruction of this type
-            sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
-            break;
-        }
-        break;
+		default:
+			// unknown instruction of this type
+			sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
+			break;
+		}
+		break;
 
-    case BLEZ:
-    case BGTZ:
-        if (!RT(instr))
-            // instruction is well formed
-            sprintf(strbuf, "%s\t$%s, %+ld",
-                    iName[OPCODE(instr)],
-                    regName[RS(instr)],
-                    (long int) (SignExtImm(instr) << WORDSHIFT));
-        else
-            // istruction is ill-formed
-            sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
-        break;
+	case BLEZ:
+	case BGTZ:
+		if (!RT(instr))
+			// instruction is well formed
+			sprintf(strbuf, "%s\t$%s, %+ld",
+			        iName[OPCODE(instr)],
+			        regName[RS(instr)],
+			        (long int) (SignExtImm(instr) << WORDSHIFT));
+		else
+			// istruction is ill-formed
+			sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
+		break;
 
-    case J:
-    case JAL:
-        sprintf(strbuf, "%s\t(4 bit PC)+0x%.7lX", iName[OPCODE(instr)], (instr & ~(OPCODEMASK)) << WORDSHIFT);
-        break;
+	case J:
+	case JAL:
+		sprintf(strbuf, "%s\t(4 bit PC)+0x%.7lX", iName[OPCODE(instr)], (instr & ~(OPCODEMASK)) << WORDSHIFT);
+		break;
 
-    default:
-        sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
-        break;
-    }
+	default:
+		sprintf(strbuf, "%s", iName[RIBRANCHINAME]);
+		break;
+	}
 }
 
 
@@ -670,27 +669,27 @@ HIDDEN void strBranchInstr(Word instr)
 // for MIPS load/store type instructions
 HIDDEN void strLSInstr(Word instr)
 {
-    switch (OPCODE(instr)) {	
-    case LB:
-    case LBU: 
-    case LH:
-    case LHU:
-    case LW:
-    case LWL:
-    case LWR:
-    case SB:
-    case SH:
-    case SW:
-    case SWL:
-    case SWR:
-        sprintf(strbuf, "%s\t$%s, %+ld($%s)",
-                iName[OPCODE(instr)], regName[RT(instr)], (long int) SignExtImm(instr), regName[RS(instr)]);
-        break;
+	switch (OPCODE(instr)) {
+	case LB:
+	case LBU:
+	case LH:
+	case LHU:
+	case LW:
+	case LWL:
+	case LWR:
+	case SB:
+	case SH:
+	case SW:
+	case SWL:
+	case SWR:
+		sprintf(strbuf, "%s\t$%s, %+ld($%s)",
+		        iName[OPCODE(instr)], regName[RT(instr)], (long int) SignExtImm(instr), regName[RS(instr)]);
+		break;
 
-    default:
-        sprintf(strbuf, "%s", iName[RILSINAME]);
-        break;
-    }
+	default:
+		sprintf(strbuf, "%s", iName[RILSINAME]);
+		break;
+	}
 }
 
 
@@ -698,108 +697,107 @@ HIDDEN void strLSInstr(Word instr)
 // for MIPS coprocessor handling instructions
 HIDDEN void strCopInstr(Word instr)
 {
-    unsigned int cp0Num;
+	unsigned int cp0Num;
 
-    if (OPCODE(instr) == COP0SEL) {
-        // COPOPTYPE corresponds to RS field
-        switch(COPOPTYPE(instr)) {
-        case CO0:
-            // coprocessor 0 operations
-            if (RT(instr) || RD(instr) || SHAMT(instr))
-                // instruction is ill-formed
-                sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-            else
-                switch(FUNCT(instr))
-                {
-                case RFE:
-                    sprintf(strbuf, "%s", cp0IName[RFEINAME]);
-                    break;
+	if (OPCODE(instr) == COP0SEL) {
+		// COPOPTYPE corresponds to RS field
+		switch(COPOPTYPE(instr)) {
+		case CO0:
+			// coprocessor 0 operations
+			if (RT(instr) || RD(instr) || SHAMT(instr))
+				// instruction is ill-formed
+				sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+			else
+				switch(FUNCT(instr))
+				{
+				case RFE:
+					sprintf(strbuf, "%s", cp0IName[RFEINAME]);
+					break;
 
-                case TLBP:
-                case TLBR:
-                case TLBWI:
-                case TLBWR:
-                    sprintf(strbuf, "%s", cp0IName[FUNCT(instr)]);
-                    break;
+				case TLBP:
+				case TLBR:
+				case TLBWI:
+				case TLBWR:
+					sprintf(strbuf, "%s", cp0IName[FUNCT(instr)]);
+					break;
 
-                case COFUN_WAIT:
-                    std::strcpy(strbuf, "wait");
-                    break;
+				case COFUN_WAIT:
+					std::strcpy(strbuf, "wait");
+					break;
 
-                default:
-                    // unknown coprocessor 0 operation requested
-                    sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-                    break;
-                }
-            break;
+				default:
+					// unknown coprocessor 0 operation requested
+					sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+					break;
+				}
+			break;
 
-        case BC0:
-            switch(COPOPCODE(instr)) {
-            case BC0F:
-                sprintf(strbuf, "%s\t%+ld", cp0IName[BC0FINAME], (long int) (SignExtImm(instr) << WORDSHIFT));
-                break;
+		case BC0:
+			switch(COPOPCODE(instr)) {
+			case BC0F:
+				sprintf(strbuf, "%s\t%+ld", cp0IName[BC0FINAME], (long int) (SignExtImm(instr) << WORDSHIFT));
+				break;
 
-            case BC0T:
-                sprintf(strbuf, "%s\t%+ld", cp0IName[BC0TINAME], (long int) (SignExtImm(instr) << WORDSHIFT));
-                break;
+			case BC0T:
+				sprintf(strbuf, "%s\t%+ld", cp0IName[BC0TINAME], (long int) (SignExtImm(instr) << WORDSHIFT));
+				break;
 
-            default:
-                // traps BC0FL R4000 instructions
-                // and the like...
-                sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-                break;
-            }
-            break;
+			default:
+				// traps BC0FL R4000 instructions
+				// and the like...
+				sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+				break;
+			}
+			break;
 
-        case MFC0:
-            // valid instruction has SHAMT and FUNCT fields
-            // set to 0, and refers to a valid CP0 register
-            if (ValidCP0Reg(RD(instr), &cp0Num) && !SHAMT(instr) && !FUNCT(instr))
-                // istruction is valid
-                sprintf(strbuf, "%s\t$%s, $%s", cp0IName[COPOPTYPE(instr)], regName[RT(instr)], cp0RegName[cp0Num]);
-            else
-                // invalid instruction format or CP0 reg
-                sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-            break;
+		case MFC0:
+			// valid instruction has SHAMT and FUNCT fields
+			// set to 0, and refers to a valid CP0 register
+			if (ValidCP0Reg(RD(instr), &cp0Num) && !SHAMT(instr) && !FUNCT(instr))
+				// istruction is valid
+				sprintf(strbuf, "%s\t$%s, $%s", cp0IName[COPOPTYPE(instr)], regName[RT(instr)], cp0RegName[cp0Num]);
+			else
+				// invalid instruction format or CP0 reg
+				sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+			break;
 
-        case MTC0:
-            // valid instruction has SHAMT and FUNCT fields
-            // set to 0, and refers to a valid CP0 register
-            if (ValidCP0Reg(RD(instr), &cp0Num) && !SHAMT(instr) && !FUNCT(instr))
-                // valid instr.
-                sprintf(strbuf, "%s\t$%s, $%s", cp0IName[COPOPTYPE(instr)], regName[RT(instr)], cp0RegName[cp0Num]);
-            else
-                // TLBCLR backpatch
-                if (RD(instr) == CONTEXTREG)
-                    sprintf(strbuf, "TLBCLR");
-                else 
-                    // invalid instr.
-                    sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-            break;
+		case MTC0:
+			// valid instruction has SHAMT and FUNCT fields
+			// set to 0, and refers to a valid CP0 register
+			if (ValidCP0Reg(RD(instr), &cp0Num) && !SHAMT(instr) && !FUNCT(instr))
+				// valid instr.
+				sprintf(strbuf, "%s\t$%s, $%s", cp0IName[COPOPTYPE(instr)], regName[RT(instr)], cp0RegName[cp0Num]);
+			else
+			// TLBCLR backpatch
+			if (RD(instr) == CONTEXTREG)
+				sprintf(strbuf, "TLBCLR");
+			else
+				// invalid instr.
+				sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+			break;
 
-        default:
-            // unknown and CFC0, CTC0, COP0, LWC0 generic instructions
-            sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-            break;
-        }
-    } else {
-        if (((instr >> DWCOPBITPOS) & 0x1UL))
-            // LDC, SDC, BEQL reserved instructions handling
-            sprintf(strbuf, "%s", iName[RIR40INAME]);
-        else
-            // LWC, SWC instr. handling:
-            // these ops are invalid for CP0 and
-            // other coprocessors are unavailable
-            sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
-    }
+		default:
+			// unknown and CFC0, CTC0, COP0, LWC0 generic instructions
+			sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+			break;
+		}
+	} else {
+		if (((instr >> DWCOPBITPOS) & 0x1UL))
+			// LDC, SDC, BEQL reserved instructions handling
+			sprintf(strbuf, "%s", iName[RIR40INAME]);
+		else
+			// LWC, SWC instr. handling:
+			// these ops are invalid for CP0 and
+			// other coprocessors are unavailable
+			sprintf(strbuf, "CP%.1lu %s", COPNUM(instr), cp0IName[CPUILLINAME]);
+	}
 }
 
 // FIXME: not _quite_ complete
 const char* InstructionMnemonic(Word ins)
 {
-    if (OpType(ins) == REGTYPE)
-        return regIName[FUNCT(ins)];
-    else
-        return iName[OPCODE(ins)];
+	if (OpType(ins) == REGTYPE)
+		return regIName[FUNCT(ins)];
+	else
+		return iName[OPCODE(ins)];
 }
-

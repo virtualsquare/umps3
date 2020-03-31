@@ -98,11 +98,11 @@
 #define BUS_REG_TIME_SCALE      0x10000024
 
 /* TLB floor address */
-#define TLB_FLOOR_ADDR			    0x10000028
+#define TLB_FLOOR_ADDR              0x10000028
 
 /* TLB-refill and general exceptions handlers */
-#define KERNEL_UTLB_ADDR		    0x1000002C
-#define KERNEL_EXCPT_ADDR		    0x10000030
+#define KERNEL_UTLB_ADDR            0x1000002C
+#define KERNEL_EXCPT_ADDR           0x10000030
 
 /* Installed devices bitmap */
 #define IDEV_BITMAP_BASE        0x10000034

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -31,287 +30,287 @@
 #include "qmps/application.h"
 
 const char* const RegisterSetSnapshot::headers[RegisterSetSnapshot::N_COLUMNS] = {
-    "Register",
-    "Value"
+	"Register",
+	"Value"
 };
 
 const char* const RegisterSetSnapshot::registerTypeNames[RegisterSetSnapshot::kNumRegisterTypes] = {
-    "CPU Registers",
-    "CP0 Registers",
-    "Other Registers"
+	"CPU Registers",
+	"CP0 Registers",
+	"Other Registers"
 };
 
 RegisterSetSnapshot::RegisterSetSnapshot(Word cpuId, QObject* parent)
-    : QAbstractItemModel(parent),
-      cpuId(cpuId)
+	: QAbstractItemModel(parent),
+	cpuId(cpuId)
 {
-    connect(debugSession, SIGNAL(MachineStopped()), this, SLOT(updateCache()));
-    connect(debugSession, SIGNAL(MachineRan()), this, SLOT(updateCache()));
-    connect(debugSession, SIGNAL(DebugIterationCompleted()), this, SLOT(updateCache()));
+	connect(debugSession, SIGNAL(MachineStopped()), this, SLOT(updateCache()));
+	connect(debugSession, SIGNAL(MachineRan()), this, SLOT(updateCache()));
+	connect(debugSession, SIGNAL(DebugIterationCompleted()), this, SLOT(updateCache()));
 
-    connect(debugSession, SIGNAL(MachineReset()), this, SLOT(reset()));
+	connect(debugSession, SIGNAL(MachineReset()), this, SLOT(reset()));
 
-    topLevelFont.setBold(true);
+	topLevelFont.setBold(true);
 
-    for (Word& v : gprCache)
-        v = 0;
-    for (Word& v : cp0Cache)
-        v = 0;
+	for (Word& v : gprCache)
+		v = 0;
+	for (Word& v : cp0Cache)
+		v = 0;
 
-    reset();
+	reset();
 }
 
 QModelIndex RegisterSetSnapshot::index(int row, int column, const QModelIndex& parent) const
 {
-    if (!hasIndex(row, column, parent) || column >= N_COLUMNS)
-        return QModelIndex();
+	if (!hasIndex(row, column, parent) || column >= N_COLUMNS)
+		return QModelIndex();
 
-    if (parent.isValid()) {
-        switch (parent.row() + 1) {
-        case RT_GENERAL:
-            if ((unsigned int) row < Processor::kNumCPURegisters)
-                return createIndex(row, column, (quint32) RT_GENERAL);
-            break;
-        case RT_CP0:
-            if ((unsigned int) row < Processor::kNumCP0Registers)
-                return createIndex(row, column, (quint32) RT_CP0);
-            break;
-        case RT_OTHER:
-            if ((unsigned int) row < sprCache.size())
-                return createIndex(row, column, (quint32) RT_OTHER);
-            break;
-        }
-    } else if (row < kNumRegisterTypes) {
-        return createIndex(row, column, (quintptr) 0);
-    }
+	if (parent.isValid()) {
+		switch (parent.row() + 1) {
+		case RT_GENERAL:
+			if ((unsigned int) row < Processor::kNumCPURegisters)
+				return createIndex(row, column, (quint32) RT_GENERAL);
+			break;
+		case RT_CP0:
+			if ((unsigned int) row < Processor::kNumCP0Registers)
+				return createIndex(row, column, (quint32) RT_CP0);
+			break;
+		case RT_OTHER:
+			if ((unsigned int) row < sprCache.size())
+				return createIndex(row, column, (quint32) RT_OTHER);
+			break;
+		}
+	} else if (row < kNumRegisterTypes) {
+		return createIndex(row, column, (quintptr) 0);
+	}
 
-    // Fallback case - clearly something bogus
-    return QModelIndex();
+	// Fallback case - clearly something bogus
+	return QModelIndex();
 }
 
 QModelIndex RegisterSetSnapshot::parent(const QModelIndex& index) const
 {
-    if (!index.isValid())
-        return QModelIndex();
+	if (!index.isValid())
+		return QModelIndex();
 
-    if (index.internalId() == 0)
-        return QModelIndex();
-    else
-        return createIndex(index.internalId() - 1, 0, (quintptr) 0);
+	if (index.internalId() == 0)
+		return QModelIndex();
+	else
+		return createIndex(index.internalId() - 1, 0, (quintptr) 0);
 }
 
 int RegisterSetSnapshot::rowCount(const QModelIndex& parent) const
 {
-    if (parent.column() > 0)
-        return 0;
+	if (parent.column() > 0)
+		return 0;
 
-    if (!parent.isValid()) {
-        // It's the root index, so return the number of toplevel
-        // items.
-        return kNumRegisterTypes;
-    } else if (parent.internalId() == 0) {
-        // 2nd level items
-        switch (parent.row() + 1) {
-        case RT_GENERAL:
-            return Processor::kNumCPURegisters;
-        case RT_CP0:
-            return Processor::kNumCP0Registers;
-        case RT_OTHER:
-            return sprCache.size();
-        default:
-            AssertNotReached();
-        }
-    } else {
-        // Leaf items have no children.
-        return 0;
-    }
+	if (!parent.isValid()) {
+		// It's the root index, so return the number of toplevel
+		// items.
+		return kNumRegisterTypes;
+	} else if (parent.internalId() == 0) {
+		// 2nd level items
+		switch (parent.row() + 1) {
+		case RT_GENERAL:
+			return Processor::kNumCPURegisters;
+		case RT_CP0:
+			return Processor::kNumCP0Registers;
+		case RT_OTHER:
+			return sprCache.size();
+		default:
+			AssertNotReached();
+		}
+	} else {
+		// Leaf items have no children.
+		return 0;
+	}
 }
 
 int RegisterSetSnapshot::columnCount(const QModelIndex& parent) const
 {
-    UNUSED_ARG(parent);
-    return N_COLUMNS;
+	UNUSED_ARG(parent);
+	return N_COLUMNS;
 }
 
 QVariant RegisterSetSnapshot::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-        return headers[section];
-    else
-        return QVariant();
+	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+		return headers[section];
+	else
+		return QVariant();
 }
 
 QVariant RegisterSetSnapshot::data(const QModelIndex& index, int role) const
 {
-    if (!index.isValid())
-        return QVariant();
+	if (!index.isValid())
+		return QVariant();
 
-    if (index.internalId() == 0) {
-        if (index.column() != 0)
-            return QVariant();
-        if (role == Qt::DisplayRole)
-            return registerTypeNames[index.row()];
-        if (role == Qt::FontRole)
-            return topLevelFont;
-    } else {
-        if (role == Qt::DisplayRole) {
-            switch (index.column()) {
-            case COL_REGISTER_MNEMONIC:
-                switch (index.internalId()) {
-                case RT_GENERAL:
-                    return RegName(index.row());
-                case RT_CP0:
-                    return CP0RegName(index.row());
-                case RT_OTHER:
-                    return sprCache[index.row()].name;
-                default:
-                    return QVariant();
-                }
+	if (index.internalId() == 0) {
+		if (index.column() != 0)
+			return QVariant();
+		if (role == Qt::DisplayRole)
+			return registerTypeNames[index.row()];
+		if (role == Qt::FontRole)
+			return topLevelFont;
+	} else {
+		if (role == Qt::DisplayRole) {
+			switch (index.column()) {
+			case COL_REGISTER_MNEMONIC:
+				switch (index.internalId()) {
+				case RT_GENERAL:
+					return RegName(index.row());
+				case RT_CP0:
+					return CP0RegName(index.row());
+				case RT_OTHER:
+					return sprCache[index.row()].name;
+				default:
+					return QVariant();
+				}
 
-            case COL_REGISTER_VALUE:
-                switch (index.internalId()) {
-                case RT_GENERAL:
-                    return gprCache[index.row()];
-                case RT_CP0:
-                    return cp0Cache[index.row()];
-                    break;
-                case RT_OTHER:
-                    return sprCache[index.row()].value;
-                    break;
-                default:
-                    return QVariant();
-                }
+			case COL_REGISTER_VALUE:
+				switch (index.internalId()) {
+				case RT_GENERAL:
+					return gprCache[index.row()];
+				case RT_CP0:
+					return cp0Cache[index.row()];
+					break;
+				case RT_OTHER:
+					return sprCache[index.row()].value;
+					break;
+				default:
+					return QVariant();
+				}
 
-            default:
-                AssertNotReached();
-            }
-        } else if (role == Qt::FontRole) {
-            return Appl()->getMonospaceFont();
-        }
-    }
+			default:
+				AssertNotReached();
+			}
+		} else if (role == Qt::FontRole) {
+			return Appl()->getMonospaceFont();
+		}
+	}
 
-    return QVariant();
+	return QVariant();
 }
 
 bool RegisterSetSnapshot::setData(const QModelIndex& index, const QVariant& variant, int role)
 {
-    if (!(index.isValid() &&
-          role == Qt::EditRole &&
-          variant.canConvert<Word>() &&
-          index.internalId() &&
-          index.column() == COL_REGISTER_VALUE))
-    {
-        return false;
-    }
+	if (!(index.isValid() &&
+	      role == Qt::EditRole &&
+	      variant.canConvert<Word>() &&
+	      index.internalId() &&
+	      index.column() == COL_REGISTER_VALUE))
+	{
+		return false;
+	}
 
-    int r = index.row();
+	int r = index.row();
 
-    switch (index.internalId()) {
-    case RT_GENERAL:
-        cpu->setGPR(r, variant.value<Word>());
-        if (gprCache[r] != (Word) cpu->getGPR(r)) {
-            gprCache[r] = cpu->getGPR(r);
-            Q_EMIT dataChanged(index, index);
-        }
-        break;
+	switch (index.internalId()) {
+	case RT_GENERAL:
+		cpu->setGPR(r, variant.value<Word>());
+		if (gprCache[r] != (Word) cpu->getGPR(r)) {
+			gprCache[r] = cpu->getGPR(r);
+			Q_EMIT dataChanged(index, index);
+		}
+		break;
 
-    case RT_CP0:
-        cpu->setCP0Reg(r, variant.value<Word>());
-        if (cp0Cache[r] != cpu->getCP0Reg(r)) {
-            cp0Cache[r] = cpu->getCP0Reg(r);
-            Q_EMIT dataChanged(index, index);
-        }
-        break;
+	case RT_CP0:
+		cpu->setCP0Reg(r, variant.value<Word>());
+		if (cp0Cache[r] != cpu->getCP0Reg(r)) {
+			cp0Cache[r] = cpu->getCP0Reg(r);
+			Q_EMIT dataChanged(index, index);
+		}
+		break;
 
-    case RT_OTHER:
-        if (sprCache[r].setter) {
-            sprCache[r].setter(variant.value<Word>());
-            if (sprCache[r].value != sprCache[r].getter()) {
-                sprCache[r].value = sprCache[r].getter();
-                Q_EMIT dataChanged(index, index);
-            }
-        }
-        break;
+	case RT_OTHER:
+		if (sprCache[r].setter) {
+			sprCache[r].setter(variant.value<Word>());
+			if (sprCache[r].value != sprCache[r].getter()) {
+				sprCache[r].value = sprCache[r].getter();
+				Q_EMIT dataChanged(index, index);
+			}
+		}
+		break;
 
-    default:
-        AssertNotReached();
-    }
+	default:
+		AssertNotReached();
+	}
 
-    return true;
+	return true;
 }
 
 Qt::ItemFlags RegisterSetSnapshot::flags(const QModelIndex& index) const
 {
-    if (!index.isValid())
-        return 0;
+	if (!index.isValid())
+		return 0;
 
-    if (index.internalId() == 0)
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	if (index.internalId() == 0)
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
-    switch (index.column()) {
-    case COL_REGISTER_MNEMONIC:
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    case COL_REGISTER_VALUE:
-        return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-    default:
-        AssertNotReached();
-    }
+	switch (index.column()) {
+	case COL_REGISTER_MNEMONIC:
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	case COL_REGISTER_VALUE:
+		return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+	default:
+		AssertNotReached();
+	}
 
-    return 0;
+	return 0;
 }
 
 void RegisterSetSnapshot::reset()
 {
-    cpu = debugSession->getMachine()->getProcessor(cpuId);
+	cpu = debugSession->getMachine()->getProcessor(cpuId);
 
-    sprCache.clear();
-    sprCache.push_back(SpecialRegisterInfo("nextPC",
-                                           boost::bind(&Processor::getNextPC, cpu),
-                                           boost::bind(&Processor::setNextPC, cpu, _1)));
-    sprCache.push_back(SpecialRegisterInfo("succPC",
-                                           boost::bind(&Processor::getSuccPC, cpu),
-                                           boost::bind(&Processor::setSuccPC, cpu, _1)));
-    sprCache.push_back(SpecialRegisterInfo("prevPhysPC",
-                                           boost::bind(&Processor::getPrevPPC, cpu)));
-    sprCache.push_back(SpecialRegisterInfo("currPhysPC",
-                                           boost::bind(&Processor::getCurrPPC, cpu)));
+	sprCache.clear();
+	sprCache.push_back(SpecialRegisterInfo("nextPC",
+	                                       boost::bind(&Processor::getNextPC, cpu),
+	                                       boost::bind(&Processor::setNextPC, cpu, _1)));
+	sprCache.push_back(SpecialRegisterInfo("succPC",
+	                                       boost::bind(&Processor::getSuccPC, cpu),
+	                                       boost::bind(&Processor::setSuccPC, cpu, _1)));
+	sprCache.push_back(SpecialRegisterInfo("prevPhysPC",
+	                                       boost::bind(&Processor::getPrevPPC, cpu)));
+	sprCache.push_back(SpecialRegisterInfo("currPhysPC",
+	                                       boost::bind(&Processor::getCurrPPC, cpu)));
 
-    SystemBus* bus = debugSession->getMachine()->getBus();
-    sprCache.push_back(SpecialRegisterInfo("Timer",
-                                           boost::bind(&SystemBus::getTimer, bus),
-                                           boost::bind(&SystemBus::setTimer, bus, _1)));
+	SystemBus* bus = debugSession->getMachine()->getBus();
+	sprCache.push_back(SpecialRegisterInfo("Timer",
+	                                       boost::bind(&SystemBus::getTimer, bus),
+	                                       boost::bind(&SystemBus::setTimer, bus, _1)));
 
-    updateCache();
+	updateCache();
 }
 
 void RegisterSetSnapshot::updateCache()
 {
-    for (unsigned int i = 0; i < Processor::kNumCPURegisters; i++) {
-        Word value = cpu->getGPR(i);
-        if (gprCache[i] != value) {
-            gprCache[i] = value;
-            QModelIndex index = createIndex(i, COL_REGISTER_VALUE, RT_GENERAL);
-            Q_EMIT dataChanged(index, index);
-        }
-    }
+	for (unsigned int i = 0; i < Processor::kNumCPURegisters; i++) {
+		Word value = cpu->getGPR(i);
+		if (gprCache[i] != value) {
+			gprCache[i] = value;
+			QModelIndex index = createIndex(i, COL_REGISTER_VALUE, RT_GENERAL);
+			Q_EMIT dataChanged(index, index);
+		}
+	}
 
-    for (unsigned int i = 0; i < Processor::kNumCP0Registers; i++) {
-        Word value = cpu->getCP0Reg(i);
-        if (cp0Cache[i] != value) {
-            cp0Cache[i] = value;
-            QModelIndex index = createIndex(i, COL_REGISTER_VALUE, RT_CP0);
-            Q_EMIT dataChanged(index, index);
-        }
-    }
+	for (unsigned int i = 0; i < Processor::kNumCP0Registers; i++) {
+		Word value = cpu->getCP0Reg(i);
+		if (cp0Cache[i] != value) {
+			cp0Cache[i] = value;
+			QModelIndex index = createIndex(i, COL_REGISTER_VALUE, RT_CP0);
+			Q_EMIT dataChanged(index, index);
+		}
+	}
 
-    int row = 0;
-    for (SpecialRegisterInfo& sr : sprCache) {
-        Word value = sr.getter();
-        if (value != sr.value) {
-            sr.value = value;
-            QModelIndex index = createIndex(row, COL_REGISTER_VALUE, RT_OTHER);
-            Q_EMIT dataChanged(index, index);
-        }
-        row++;
-    }
+	int row = 0;
+	for (SpecialRegisterInfo& sr : sprCache) {
+		Word value = sr.getter();
+		if (value != sr.value) {
+			sr.value = value;
+			QModelIndex index = createIndex(row, COL_REGISTER_VALUE, RT_OTHER);
+			Q_EMIT dataChanged(index, index);
+		}
+		row++;
+	}
 }

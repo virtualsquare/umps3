@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 /*
  * uMPS - A general purpose computer system simulator
  *
@@ -23,7 +22,7 @@
 
 int main(int argc, char** argv)
 {
-    Application application(argc, argv);
+	Application application(argc, argv);
 
-    return application.exec();
+	return application.exec();
 }
