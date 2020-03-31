@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
+ * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -675,8 +675,8 @@ void MonitorWindow::showAboutInfo()
 		"<h3 style='margin-top: 0;'>License</h3>"
 		"<p style='margin: 0 0 0 10px;'>"
 		" &micro;MPS is free software, licensed under"
-		" the <a href='http://www.gnu.org/licenses/old-licenses/gpl-2.0.html'>GNU"
-		" General Public License, version 2</a>."
+		" the <a href='https://www.gnu.org/licenses/gpl-3.0.html'>GNU"
+		" General Public License, version 3</a>."
 		"</p>")
 	               .arg(PACKAGE_VERSION);
 
