@@ -18,7 +18,7 @@
             <cc:Work rdf:about="">
                 <dc:format>image/svg+xml</dc:format>
                 <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-                <dc:title/>
+                <dc:title></dc:title>
                 <cc:license rdf:resource="https://www.gnu.org/licenses/gpl-3.0.en.html"/>
             </cc:Work>
         </rdf:RDF>
@@ -33,15 +33,15 @@
         guidetolerance="10"
         inkscape:pageopacity="0"
         inkscape:pageshadow="2"
-        inkscape:window-width="1262"
-        inkscape:window-height="2075"
+        inkscape:window-width="3810"
+        inkscape:window-height="678"
         id="namedview14"
         showgrid="false"
         inkscape:zoom="10.727273"
-        inkscape:cx="-4.3644994"
-        inkscape:cy="9.0263903"
-        inkscape:window-x="1286"
-        inkscape:window-y="67"
+        inkscape:cx="-25.292466"
+        inkscape:cy="9.0263905"
+        inkscape:window-x="12"
+        inkscape:window-y="1464"
         inkscape:window-maximized="0"
         inkscape:current-layer="svg12"/>
     <path

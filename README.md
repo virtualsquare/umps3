@@ -1,4 +1,4 @@
-<h1><img src="src/frontends/qmps/data/icons/48x48/umps3.svg" alt="uMPS" align="center"> µMPS</h1>
+<h1><img src="src/frontends/qmps/data/icons/64x64/umps3.svg" alt="uMPS" align="center"> µMPS</h1>
 
 A complete virtual machine simulator based around the MIPS R2/3000 microprocessor.
 
@@ -78,5 +78,4 @@ N.B.: "install_manifest.txt" is generated during the installation process.
 µMPS is licensed under the GPLv3 license. [See LICENSE for more information](https://github.com/mattiabiondi/umps/blob/master/LICENSE).
 
 - "[Papirus Icons](https://git.io/papirus-icon-theme)" by [Papirus Development Team](https://github.com/PapirusDevelopmentTeam) is licensed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
-- "[Paper Icons](http://snwh.org/paper/icons)" by [Sam Hewitt](http://samuelhewitt.com/) is licensed under [CC-SA-4.0](http://creativecommons.org/licenses/by-sa/4.0/)
 - Logo and all other icons derived by [Mattia Biondi](https://github.com/mattiabiondi) from "[Papirus Icons](https://git.io/papirus-icon-theme)"
