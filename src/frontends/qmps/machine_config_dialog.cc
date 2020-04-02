@@ -71,8 +71,6 @@ MachineConfigDialog::MachineConfigDialog(MachineConfig* config, QWidget* parent)
 	layout->addWidget(buttonBox);
 
 	setLayout(layout);
-
-	validate();
 }
 
 QWidget* MachineConfigDialog::createGeneralTab()
@@ -125,12 +123,6 @@ QWidget* MachineConfigDialog::createGeneralTab()
 	}
 	if (ramtop) tlbFloorAddressList->setCurrentIndex(currentIndex-1);
 	layout->addWidget(tlbFloorAddressList, 4, 3);
-	connect(tlbFloorAddressList, SIGNAL(currentIndexChanged(int)), this, SLOT(validate()));
-
-	layout->addWidget(tlbFloorAddrWarningLabel = new QLabel, 4, 4);
-	QPalette pWarningTlb = tlbFloorAddrWarningLabel->palette();
-	pWarningTlb.setColor(tlbFloorAddrWarningLabel->foregroundRole(), Qt::darkYellow);
-	tlbFloorAddrWarningLabel->setPalette(pWarningTlb);
 
 	layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);
 	ramSizeSpinner = new QSpinBox();
@@ -331,17 +323,6 @@ void MachineConfigDialog::saveConfigChanges()
 
 	config->setLoadCoreEnabled(coreBootCheckBox->isChecked());
 	config->setSymbolTableASID(stabAsidEdit->getAsid());
-}
-
-void MachineConfigDialog::validate()
-{
-	int index = tlbFloorAddressList->currentIndex();
-
-	if (index == 0) {
-		tlbFloorAddrWarningLabel->setText("Warning:<br/>experimental");
-	} else {
-		tlbFloorAddrWarningLabel->setText("");
-	}
 }
 
 DeviceFileChooser::DeviceFileChooser(const QString& deviceClassName,

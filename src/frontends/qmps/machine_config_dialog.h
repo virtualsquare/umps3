@@ -32,7 +32,6 @@ class QSpinBox;
 class QComboBox;
 class QLineEdit;
 class QCheckBox;
-class QLabel;
 class AsidLineEdit;
 
 class MachineConfigDialog : public QDialog {
@@ -60,7 +59,6 @@ QComboBox* tlbFloorAddressList;
 QSpinBox* ramSizeSpinner;
 QCheckBox* coreBootCheckBox;
 AsidLineEdit* stabAsidEdit;
-QLabel* tlbFloorAddrWarningLabel;
 
 struct {
 	const char* description;
@@ -76,8 +74,6 @@ void getROMFileName(int index);
 void onDeviceClassChanged();
 
 void saveConfigChanges();
-
-void validate();
 };
 
 #endif // QMPS_MACHINE_CONFIG_DIALOG_H
