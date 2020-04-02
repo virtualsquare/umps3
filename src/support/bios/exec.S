@@ -167,7 +167,7 @@ LInitSecondaryProcessor:
  * $k1 is address of kernel branch address
  */
 LUTLBHandler:
-	li  $k1, KERNEL_UTLB_ADDR
+	li  $k1, TLB_REFILL_HANDLER
 	b   LSOldLNewArea
 
 /*
@@ -197,10 +197,10 @@ LEXCHandler:
 	subu	$k0, $k0, $k1
 	bltz	$k0, LPanic
 
-	/* Else: save processor state into BIOS data RAM space and pass
+	/* Else: save processor state into BIOS data page and pass
 	 * along handling to the kernel
 	 */
-	li  $k1, KERNEL_EXCPT_ADDR
+	li  $k1, EXCEPTION_HANDLER
 	b	LSOldLNewArea
 
 LBreakHandler:
@@ -226,7 +226,7 @@ LBreakHandler:
 	beq	  $k0, $0, LisKernel
 
 	/* If in user mode, pass along to kernel */
-	li  $k1, KERNEL_EXCPT_ADDR
+	li  $k1, EXCEPTION_HANDLER
 	b	LSOldLNewArea
 
 LisKernel:
@@ -249,7 +249,7 @@ LisKernel:
 	beq     $0, $k1, LHalt
 
 	/* any other break is passed up to SYS handler */
-	li  $k1, KERNEL_EXCPT_ADDR
+	li  $k1, EXCEPTION_HANDLER
 	b	LSOldLNewArea
 
 LFORK:
@@ -288,7 +288,7 @@ LLDST:
 
 
 /*
- * Save cpu (exception) state into BIOS data RAM space, load PC and SP
+ * Save cpu (exception) state into BIOS data page, load PC and SP
  *  and pass along handling to the kernel (address in $k1)
  */
 LSOldLNewArea:

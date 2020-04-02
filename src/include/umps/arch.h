@@ -36,6 +36,13 @@
 #define WS        WORD_SIZE
 
 #define BIOS_DATA_BASE  0x0FFFF000
+
+/* TLB-refill and general exceptions handlers */
+#define TLB_REFILL_HANDLER      0x0FFFF8C0
+#define TLB_REFILL_HANDLER_SP   0x0FFFF8C4
+#define EXCEPTION_HANDLER       0x0FFFF8C8
+#define EXCEPTION_HANDLER_SP    0x0FFFF8CC
+
 #define MMIO_BASE 0x10000000
 #define RAM_BASE  0x20000000
 
@@ -98,24 +105,20 @@
 #define BUS_REG_TIME_SCALE      0x10000024
 
 /* TLB floor address */
-#define TLB_FLOOR_ADDR              0x10000028
-
-/* TLB-refill and general exceptions handlers */
-#define KERNEL_UTLB_ADDR            0x1000002C
-#define KERNEL_EXCPT_ADDR           0x10000030
+#define TLB_FLOOR_ADDR          0x10000028
 
 /* Installed devices bitmap */
-#define IDEV_BITMAP_BASE        0x10000034
+#define IDEV_BITMAP_BASE        0x1000002C
 #define IDEV_BITMAP_END         (IDEV_BITMAP_BASE + N_EXT_IL * WS)
 #define IDEV_BITMAP_ADDR(line)  (IDEV_BITMAP_BASE + ((line) - DEV_IL_START) * WS)
 
 /* Interrupting devices bitmap */
-#define CDEV_BITMAP_BASE        0x10000048
+#define CDEV_BITMAP_BASE        0x10000040
 #define CDEV_BITMAP_END         (CDEV_BITMAP_BASE + N_EXT_IL * WS)
 #define CDEV_BITMAP_ADDR(line)  (CDEV_BITMAP_BASE + ((line) - DEV_IL_START) * WS)
 
 /* Device register area */
-#define DEV_REG_START           0x1000005C
+#define DEV_REG_START           0x10000054
 #define DEV_REG_ADDR(line, dev) (DEV_REG_START + ((line) - DEV_IL_START) * N_DEV_PER_IL * DEV_REG_SIZE + (dev) * DEV_REG_SIZE)
 
 /* End of memory mapped external device registers area */

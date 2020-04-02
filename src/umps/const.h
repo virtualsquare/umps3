@@ -139,14 +139,14 @@
 #define KSEG0TOP    0x20000000UL
 #define KUSEG2BASE  0x80000000UL
 
-// bus memory mapping constants (BIOS/BIOS data/device registers/BOOT/RAM)
+// bus memory mapping constants (BIOS/BIOS Data Page/device registers/BOOT/RAM)
 #define BIOSBASE    0x00000000UL
 #define BIOSDATABASE  0x0FFFF000UL
 #define DEVBASE     0x10000000UL
 #define BOOTBASE    0x1FC00000UL
 #define RAMBASE     0x20000000UL
 
-// size of bios data structure area (in words)
+// size of bios data page (in words)
 #define BIOSDATASIZE ((DEVBASE - BIOSDATABASE) / WORDLEN)
 
 // Processor structure register numbers

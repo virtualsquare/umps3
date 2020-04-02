@@ -61,8 +61,6 @@ typedef struct devregarea {
 	unsigned int intervaltimer;
 	unsigned int timescale;
 	unsigned int tlb_floor_addr;
-	unsigned int utlb_excpt;
-	unsigned int general_excpt;
 	unsigned int inst_dev[5];
 	unsigned int interrupt_dev[5];
 	devreg_t devreg[5][8];
