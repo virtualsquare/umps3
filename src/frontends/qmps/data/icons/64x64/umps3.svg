@@ -1,87 +1,173 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:cc="http://creativecommons.org/ns#"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:svg="http://www.w3.org/2000/svg"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    width="64"
-    height="64"
-    version="1"
-    id="svg44"
-    sodipodi:docname="umps3.svg"
-    inkscape:version="0.92.4 5da689c313, 2019-01-14">
-    <metadata id="metadata50">
-        <rdf:RDF>
-            <cc:Work rdf:about="">
-                <dc:format>image/svg+xml</dc:format>
-                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-                <dc:title/>
-                <cc:license rdf:resource="https://www.gnu.org/licenses/gpl-3.0.en.html"/>
-            </cc:Work>
-        </rdf:RDF>
-    </metadata>
-    <defs id="defs48"/>
-    <sodipodi:namedview
-        pagecolor="#ffffff"
-        bordercolor="#666666"
-        borderopacity="1"
-        objecttolerance="10"
-        gridtolerance="10"
-        guidetolerance="10"
-        inkscape:pageopacity="0"
-        inkscape:pageshadow="2"
-        inkscape:window-width="1896"
-        inkscape:window-height="2075"
-        id="namedview46"
-        showgrid="false"
-        inkscape:zoom="14.75"
-        inkscape:cx="1.3793428"
-        inkscape:cy="34.448064"
-        inkscape:window-x="1926"
-        inkscape:window-y="67"
-        inkscape:window-maximized="0"
-        inkscape:current-layer="svg44"/>
-    <g transform="matrix(4,0,0,3.9957542,1.8415547e-7,0.06792782)" id="g8-5-3" style="opacity:1;fill:#4f4f4f;fill-opacity:1">
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602539" width="1.5" height="16" x="11.75" y="-0.017000001" id="rect6-6-6"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="7.25" y="-1.110223e-16" id="rect2-3-1"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="9.5" y="0" id="rect4-5-2"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="5" y="1.2496771e-06" id="rect4-6-2-9"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="2.75" y="5.430083e-09" id="rect6-7-9-3"/>
-    </g>
-    <g transform="matrix(0,4,-3.9957542,0,63.932072,-1.8415547e-7)" id="g8-5" style="opacity:1;fill:#4f4f4f;fill-opacity:1">
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602539" width="1.5" height="16" x="11.75" y="-0.017000001" id="rect6-6"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="7.25" y="-1.110223e-16" id="rect2-3"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="9.5" y="0" id="rect4-5"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="5" y="1.2496771e-06" id="rect4-6-2"/>
-        <rect style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533" width="1.5" height="16" x="2.75" y="5.430083e-09" id="rect6-7-9"/>
-    </g>
-    <rect style="opacity:0.2;stroke-width:3.05882359" width="52" height="52" x="-59.52" y="-58" rx="2.8875294" ry="2.8875294" transform="matrix(0,-1,-1,0,0,0)" id="rect36"/>
-    <rect style="fill:#afafb1;fill-opacity:1;stroke-width:4.33333302" width="52" height="52" x="6.0000014" y="5.999999" rx="3.4666669" ry="3.4666669" id="rect18"/>
-    <path
-        style="opacity:0.2;fill:#ffffff;stroke-width:3.05882263"
-        d="m 8.8915042,5.9999998 c -1.600376,0 -2.891504,1.291129 -2.891504,2.891505 v 1.5294122 c 0,-1.6003762 1.291128,-2.8915042 2.891504,-2.8915042 H 55.109416 C 56.709164,7.5294128 58,8.8205408 58,10.420917 V 8.8915048 c 0,-1.600376 -1.290836,-2.891505 -2.890584,-2.891505 z"
-        id="path40"
-        inkscape:connector-curvature="0"/>
-    <path
-        inkscape:connector-curvature="0"
-        style="font-style:normal;font-weight:normal;font-size:14.30784416px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:0.2;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.43078494"
-        d="m 26.273436,39.296876 c 0.073,0.559877 0.08292,1.119809 0.10936,1.679689 0.624452,0.53158 1.328976,0.9712 2.125,1.296872 0.877512,0.3434 2.099804,0.515628 3.664064,0.515628 2.28916,0 4.274408,-0.17224 5.953124,-0.515628 1.716872,-0.30524 3.087064,-0.592284 4.117188,-0.859372 v -1.601564 c -1.030124,0.267092 -2.400316,0.554128 -4.117188,0.859376 -1.678716,0.3434 -3.663964,0.515624 -5.953124,0.515624 -1.56426,0 -2.786552,-0.17224 -3.664064,-0.515624 -0.83936,-0.343404 -1.58578,-0.802664 -2.234376,-1.375001 z m -4.515624,10.703125 v 1.601564 h 4.75 v -1.601564 z"
-        id="text837-7-6-7"/>
-    <text
-        xml:space="preserve"
-        style="font-style:normal;font-weight:normal;font-size:57.23137665px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:0.6;fill-opacity:1;stroke:none;stroke-width:1.43078494"
-        x="17.693457"
-        y="40.55479"
-        id="text837-7-6-2-2"
-        transform="scale(0.99995931,1.0000407)">
-        <tspan
-            sodipodi:role="line"
-            id="tspan835-0-0-0-3"
-            x="17.693457"
-            y="40.55479"
-            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill-opacity:1;stroke-width:1.43078494">µ</tspan>
-    </text>
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64"
+   height="64"
+   version="1"
+   id="svg44"
+   sodipodi:docname="umps3.svg"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14">
+  <metadata
+     id="metadata50">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <cc:license
+           rdf:resource="https://www.gnu.org/licenses/gpl-3.0.en.html" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs48" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1896"
+     inkscape:window-height="1028"
+     id="namedview46"
+     showgrid="false"
+     inkscape:zoom="2.6074563"
+     inkscape:cx="126.40113"
+     inkscape:cy="7.2381626"
+     inkscape:window-x="1926"
+     inkscape:window-y="67"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg44" />
+  <g
+     transform="matrix(4,0,0,3.9957542,1.8415547e-7,0.06792782)"
+     id="g8-5-3"
+     style="opacity:1;fill:#4f4f4f;fill-opacity:1">
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602539"
+       width="1.5"
+       height="16"
+       x="11.75"
+       y="-0.017000001"
+       id="rect6-6-6" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="7.25"
+       y="-1.110223e-16"
+       id="rect2-3-1" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="9.5"
+       y="0"
+       id="rect4-5-2" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="5"
+       y="1.2496771e-06"
+       id="rect4-6-2-9" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="2.75"
+       y="5.430083e-09"
+       id="rect6-7-9-3" />
+  </g>
+  <g
+     transform="matrix(0,4,-3.9957542,0,63.932072,-1.8415547e-7)"
+     id="g8-5"
+     style="opacity:1;fill:#4f4f4f;fill-opacity:1">
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602539"
+       width="1.5"
+       height="16"
+       x="11.75"
+       y="-0.017000001"
+       id="rect6-6" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="7.25"
+       y="-1.110223e-16"
+       id="rect2-3" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="9.5"
+       y="0"
+       id="rect4-5" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="5"
+       y="1.2496771e-06"
+       id="rect4-6-2" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;stroke-width:0.86602533"
+       width="1.5"
+       height="16"
+       x="2.75"
+       y="5.430083e-09"
+       id="rect6-7-9" />
+  </g>
+  <rect
+     style="opacity:0.2;stroke-width:3.05882359"
+     width="52"
+     height="52"
+     x="-59.52"
+     y="-58"
+     rx="2.8875294"
+     ry="2.8875294"
+     transform="matrix(0,-1,-1,0,0,0)"
+     id="rect36" />
+  <rect
+     style="fill:#afafb1;fill-opacity:1;stroke-width:4.33333302"
+     width="52"
+     height="52"
+     x="6.0000014"
+     y="5.999999"
+     rx="3.4666669"
+     ry="3.4666669"
+     id="rect18" />
+  <path
+     style="opacity:0.2;fill:#ffffff;stroke-width:3.05882263"
+     d="m 8.8915042,5.9999998 c -1.600376,0 -2.891504,1.291129 -2.891504,2.891505 v 1.5294122 c 0,-1.6003762 1.291128,-2.8915042 2.891504,-2.8915042 H 55.109416 C 56.709164,7.5294128 58,8.8205408 58,10.420917 V 8.8915048 c 0,-1.600376 -1.290836,-2.891505 -2.890584,-2.891505 z"
+     id="path40"
+     inkscape:connector-curvature="0" />
+  <path
+     inkscape:connector-curvature="0"
+     style="font-style:normal;font-weight:normal;font-size:14.30784416px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:0.2;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.43078494"
+     d="m 26.273436,39.296876 c 0.073,0.559877 0.08292,1.119809 0.10936,1.679689 0.624452,0.53158 1.328976,0.9712 2.125,1.296872 0.877512,0.3434 2.099804,0.515628 3.664064,0.515628 2.28916,0 4.274408,-0.17224 5.953124,-0.515628 1.716872,-0.30524 3.087064,-0.592284 4.117188,-0.859372 v -1.601564 c -1.030124,0.267092 -2.400316,0.554128 -4.117188,0.859376 -1.678716,0.3434 -3.663964,0.515624 -5.953124,0.515624 -1.56426,0 -2.786552,-0.17224 -3.664064,-0.515624 -0.83936,-0.343404 -1.58578,-0.802664 -2.234376,-1.375001 z m -4.515624,10.703125 v 1.601564 h 4.75 v -1.601564 z"
+     id="text837-7-6-7" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;font-size:57.23137665px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:0.6;fill-opacity:1;stroke:none;stroke-width:1.43078494"
+     x="17.693457"
+     y="40.55479"
+     id="text837-7-6-2-2"
+     transform="scale(0.99995931,1.0000407)"><tspan
+   sodipodi:role="line"
+   id="tspan835-0-0-0-3"
+   x="17.693457"
+   y="40.55479"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill-opacity:1;stroke-width:1.43078494">µ</tspan> </text>
 </svg>
