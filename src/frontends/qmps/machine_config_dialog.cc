@@ -137,8 +137,8 @@ QWidget* MachineConfigDialog::createGeneralTab()
 
 	layout->addWidget(new QLabel("<b>BIOS</b>"), 7, 0, 1, 3);
 
-	layout->addWidget(new QLabel("Bootstrap ROM:"), 8, 1);
-	romFileInfo[ROM_TYPE_BOOT].description = "Bootstrap ROM";
+	layout->addWidget(new QLabel("Bootstrap BIOS:"), 8, 1);
+	romFileInfo[ROM_TYPE_BOOT].description = "Bootstrap BIOS";
 	romFileInfo[ROM_TYPE_BOOT].lineEdit = new QLineEdit;
 	layout->addWidget(romFileInfo[ROM_TYPE_BOOT].lineEdit, 8, 3, 1, 2);
 	romFileInfo[ROM_TYPE_BOOT].lineEdit->setText(config->getROM(ROM_TYPE_BOOT).c_str());
@@ -147,8 +147,8 @@ QWidget* MachineConfigDialog::createGeneralTab()
 	fileChooserMapper->setMapping(fileChooserButton, ROM_TYPE_BOOT);
 	layout->addWidget(fileChooserButton, 8, 5);
 
-	layout->addWidget(new QLabel("Execution ROM:"), 9, 1);
-	romFileInfo[ROM_TYPE_BIOS].description = "Execution ROM";
+	layout->addWidget(new QLabel("Execution BIOS:"), 9, 1);
+	romFileInfo[ROM_TYPE_BIOS].description = "Execution BIOS";
 	romFileInfo[ROM_TYPE_BIOS].lineEdit = new QLineEdit;
 	layout->addWidget(romFileInfo[ROM_TYPE_BIOS].lineEdit, 9, 3, 1, 2);
 	romFileInfo[ROM_TYPE_BIOS].lineEdit->setText(config->getROM(ROM_TYPE_BIOS).c_str());
