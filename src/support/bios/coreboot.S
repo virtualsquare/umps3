@@ -77,53 +77,35 @@ coreboot:
 
 LCoreBootStart:
 	/*
-	 * Mapping all exception vectors to BIOS code
+	 * Mapping all exceptions to BIOS code
 	 * This is done resetting bit 22 in STATUS CP0 register
 	 * we also assure that kernel will start in kernel mode with
 	 * interrupts disabled: this is done zeroing bits 3 and 2.
 	 */
 	mfc0	$a0, $CP0_Status
-	li	$a1, STATUSMASK
-	and	$a0, $a0, $a1
+	li	  $a1, STATUSMASK
+	and   $a0, $a0, $a1
 	mtc0	$a0, $CP0_Status
+  
+  /*
+  * Setting Exception PCs, both for general exceptions and for TLB
+  * refills to cause a kernel panic(). This is done by loading
+  * panic() BIOS routine address into both PC fields
+  */
+  
+	li 	  $a0, BIOS_EXEC_HANDLERS_ADDRS
+	li 	  $a1, BIOSPANIC      /* panic() address */
+  sw    $a1, 0($a0)         /* set TLB_Refill handler addr */
+  sw    $a1, 8($a0)         /* Set exception handler addr  */
 
-	/*
-	 * Setting boot exception vectors into first page of RAM memory:
-	 * at first, we make all exceptions cause a kernel panic()
-	 * by loading panic() BIOS routine address into every PC field
-	 * of exception vectors.
-	 *
-	 * There are: 1 vector for interrupt, 1 for TLB memory management,
-	 * 1 for syscall and break (passup from BIOS), 1 for program traps
-	 * (all remaining exceptions),
-	 * for a total of 4 vectors; each contains two areas: old and
-	 * new; fill both PCs at start.
-	 *
-	 * Every vector area contains:
-	 * 1 for EntryHI, 1 for CAUSE,
-	 * 1 for STATUS, and 1 for EPC (old area) or PC (new area)
-	 * 29 words for GPR ($0, k0 & k1 are
-	 * excluded), 2 for HI & LO regs
-	 * total: 35 words of memory per area
-	 */
-
-	li 	$a0, BIOS_LEGACY_EXCVEC_BASE
-	li 	$a1, BIOSPANIC     /* panic() address */
-	li 	$a2, VECTAREANUM
-Lfor:
-	sw	$a1, VECTPCPOS($a0)
-	addiu	$a0, VECTSIZE
-	addi	$a2, -1
-	bgtz	$a2, Lfor
-
-	/* We use per/cpu bios reserved registers to point to the
-	   exception vector and some scratch RAM space */
-	li	$t0, BIOS_EXCVEC_BASE
-	li	$t1, BIOS_LEGACY_EXCVEC_BASE
+	/* We use per/cpu bios reserved registers to point to the   */
+	/*  BIOS exception vector and the Exception PCs/SPs */
+	li	$t0, BIOS_EXCPT_VECT_BASE
+	li	$t1, BIOS_DATA_PAGE_BASE
 	sw	$t1, 0($t0)
 
-	li	$t0, BIOS_SCRATCH_BASE
-	li	$t1, BIOS_LEGACY_SCRATCH_BASE
+	li	$t0, BIOS_PC_AREA_BASE
+	li	$t1, BIOS_EXEC_HANDLERS_ADDRS
 	sw	$t1, 0($t0)
 
 	/*

@@ -142,33 +142,37 @@ LHalt:
  * load the supplied processor state.
  */
 LInitSecondaryProcessor:
-	/* Set up a convenient pointer to some scratch RAM space */
-	li	$t0, BIOS_CPU_SCRATCH_RAM_SIZE
-	mfc0	$t1, $CP0_PRID
-	mult	$t0, $t1
-	mflo	$t0
-	li	$t1, BIOS_LEGACY_SCRATCH_BASE
-	subu	$t0, $t1, $t0
-
-	li	$t1, BIOS_SCRATCH_BASE
-	sw	$t0, 0($t1)
-
-	/* Initialize ptr to new/old areas */
-	lw	$t1, 8($t0)
-	li	$t2, BIOS_EXCVEC_BASE
-	sw	$t1, 0($t2)
-
-	/* Load a new state */
-	lw	$k0, 4($t0)
-	b	LLoadStart
+  /* Initialize ptr to exception state vector */
+  li    $t0, VECTSIZE
+  mfc0  $t1, $CP0_PRID
+  mult  $t0, $t1
+  mflo  $t0
+  li    $t2, BIOS_DATA_PAGE_BASE
+  add   $t0, $t0, $t2
+  li    $t2, BIOS_EXCPT_VECT_BASE
+  sw    $t0, 0($t2)
+  
+  /* Initialize ptr to PC/SP area */
+  li    $t0, 16
+  mult  $t0, $t1
+  mflo  $t0
+  li    $t1, BIOS_EXEC_HANDLERS_ADDRS
+  add   $t0, $t0, $t1
+  li    $t2, BIOS_PC_AREA_BASE
+  sw    $t0, 0($t2)
+  
+	/* Load the new state - address of start_state cached at start of exception vector */
+  li    $t0, BIOS_EXCPT_VECT_BASE
+	sw    $k0, 0($t0)
+	b     LLoadStart
 
 /*
  * Handle TLBL/TLBS refill misses
- * $k1 is address of kernel branch address
+ * $k1 is address of kernel branch address (TLB Refill handler)
  */
 LUTLBHandler:
-	li  $k1, TLB_REFILL_HANDLER
-	b   LSOldLNewArea
+	lw  $k1, BIOS_PC_AREA_BASE
+  b   LSaveExcptAndJmp
 
 /*
  * General exception handler
@@ -180,7 +184,7 @@ LEXCHandler:
 	/* Copy Cause.ExcCode to k0 and dispatch accordingly */
 	mfc0	$k0, $CP0_Cause
 	andi	$k0, $k0, CAUSE_EXCCODE_MASK
-	srl	$k0, CAUSE_EXCCODE_BIT
+	srl	  $k0, CAUSE_EXCCODE_BIT
 
 	/* cause 9 is BREAK */
 	addi  $k0, -9
@@ -193,21 +197,23 @@ LEXCHandler:
 	 * bug for BIOS).
 	 */
 	mfc0	$k0, $CP0_EPC
-	li	$k1, BIOS_LEGACY_EXCVEC_BASE
+	li	  $k1, BUS_REG_RAM_BASE
 	subu	$k0, $k0, $k1
 	bltz	$k0, LPanic
 
 	/* Else: save processor state into BIOS data page and pass
-	 * along handling to the kernel
+	 * along handling to the kernel. Put Addr of kernel PC handler's
+   * location in $k1
 	 */
-	li  $k1, EXCEPTION_HANDLER
-	b	LSOldLNewArea
+	lw    $k1, BIOS_PC_AREA_BASE
+  addi  $k1, $k1, 8
+	b     LSaveExcptAndJmp
 
 LBreakHandler:
 	/* If EPC address is in BIOS area, something in kernel or in BIOS
 	 * has gone horribly wrong (a BIOS bug probably). */
 	mfc0	$k0, $CP0_EPC
-	li	$k1, BIOS_LEGACY_EXCVEC_BASE
+	li	  $k1, BUS_REG_RAM_BASE
 	subu	$k0, $k0, $k1
 	bltz	$k0, LPanic
 
@@ -226,31 +232,33 @@ LBreakHandler:
 	beq	  $k0, $0, LisKernel
 
 	/* If in user mode, pass along to kernel */
-	li  $k1, EXCEPTION_HANDLER
-	b	LSOldLNewArea
+	li    $k1, BIOS_PC_AREA_BASE
+  addi  $k1, $k1, 8
+	b     LSaveExcptAndJmp
 
 LisKernel:
 	/* 0  is FORK(STATUS, EntryHI, PC, CAUSE) */
 	beq 	$0, $k1, LFORK
 
-	addi    $k1, -1
+	addi  $k1, -1
 
 	/* 1 is LDST */
-	beq 	$0, $k1, LLDST
+	beq   $0, $k1, LLDST
 
-	addi    $k1, -1
+	addi  $k1, -1
 
 	/* 2 is PANIC routine */
-	beq	$0, $k1, LPanic
+	beq   $0, $k1, LPanic
 
 	addi	$k1, -1
 
 	/* 3 is HALT routine */
-	beq     $0, $k1, LHalt
+	beq   $0, $k1, LHalt
 
 	/* any other break is passed up to SYS handler */
-	li  $k1, EXCEPTION_HANDLER
-	b	LSOldLNewArea
+	li    $k1, BIOS_PC_AREA_BASE
+  addi  $k1, $k1, 8
+	b     LSaveExcptAndJmp
 
 LFORK:
 	# $v0 is ENTRYHI, $a1 is STATUS, $a2 is new PC, $a3 is CAUSE
@@ -275,7 +283,7 @@ LFORK:
 
 	.set noreorder
 	.set nomacro
-	jr	$k1
+	jr	  $k1
 	rfe
 	.set reorder
 	.set macro
@@ -284,15 +292,16 @@ LFORK:
 LLDST:
 	# this means load from physical address in $a1
 	move	$k0, $a1
-	b	LLoadStart
+	b     LLoadStart
 
 
 /*
  * Save cpu (exception) state into BIOS data page, load PC and SP
- *  and pass along handling to the kernel (address in $k1)
+ *  and pass along handling to the kernel
+ *    Kernel handler address (PC) is in $k1 and SP is in $k1 + 4
  */
-LSOldLNewArea:
-	li  $k0, BIOS_DATA_BASE
+LSaveExcptAndJmp:
+	lw  $k0, BIOS_EXCPT_VECT_BASE
 LSave:
 	sw	$1, 16($k0)
 	sw	$v0, 20($k0)
@@ -327,43 +336,38 @@ LSave:
 	sw	$fp, 124($k0)
 	sw	$ra, 128($k0)
 
-	/* move kernel branch-to address to $a0 */
-	add   $a0, $0, $k1
-
-	mfhi	$k1
-	sw	$k1, 132($k0)
-	mflo	$k1
-	sw	$k1, 136($k0)
+	/* Need a third register use $t0 - temporarily */
+	mfhi	$t0
+	sw	  $t0, 132($k0)
+	mflo	$t0
+	sw	  $t0, 136($k0)
 	/* all processor registers saved */
 
 	/* gets EntryHI and stores it */
-	mfc0	$k1, $CP0_EntryHi
-	sw	$k1, 0($k0)
+	mfc0  $t0, $CP0_EntryHi
+	sw	  $t0, 0($k0)
 
 	/* gets CAUSE register and stores it */
-	mfc0    $k1, $CP0_Cause
-	sw      $k1, 4($k0)
+	mfc0  $t0, $CP0_Cause
+	sw    $t0, 4($k0)
 
 	/* and now save STATUS and EPC registers */
-	mfc0	$k1, $CP0_Status
-	sw	$k1, 8($k0)
-	mfc0    $k1, $CP0_EPC
-	sw      $k1, 12($k0)
+	mfc0  $t0, $CP0_Status
+	sw    $t0, 8($k0)
+	mfc0  $t0, $CP0_EPC
+	sw    $t0, 12($k0)
 
-    /* All registers saved. Load SP with RAMTOP */
-	/* get RAMTOP */
-	li 	$k0, BUS_REG_RAM_BASE
-	lw 	$k0, 0($k0)
-	li 	$k1, BUS_REG_RAM_SIZE
-	lw 	$k1, 0($k1)
-	add	$sp, $k0, $k1
+	/* Restore $t0  */
+  lw    $t0, 44($k0)
 
-	/* Restore $a0 and Pass Control along to kernel */
-	add $k1, $0, $a0
-	li  $k0, BIOS_DATA_BASE
-	lw  $a0, 28($k0)
-	lw  $k0, 0($k1)
-	jr  $k0
+  /* All registers saved */
+  
+  /* Load SP with supplied value */
+  lw    $sp, 4($k1)
+  
+	/* Pass Control along to kernel */
+  lw    $k1, 0($k1)
+  jr    $k1
 	nop
 
 /*
@@ -398,41 +402,42 @@ LLoadStart:
 
 	/* $k0 and $k1 are not saved so they are not loaded too */
 
-	lw	$gp, 116($k0)
-	lw	$sp, 120($k0)
-	lw	$fp, 124($k0)
-	lw	$ra, 128($k0)
+	lw	  $gp, 116($k0)
+	lw	  $sp, 120($k0)
+	lw	  $fp, 124($k0)
+	lw	  $ra, 128($k0)
 
-	lw	$k1, 132($k0)
+	lw	  $k1, 132($k0)
 	mthi	$k1
-	lw	$k1, 136($k0)
+	lw	  $k1, 136($k0)
 	mtlo	$k1
 
 	/* all processor registers loaded (almost) */
 
 	/* storing new EntryHI into CP0 register */
-	lw	$k1, 0($k0)
+	lw	  $k1, 0($k0)
 	mtc0	$k1, $CP0_EntryHi
 
 	/* storing new CAUSE into CP0 register */
-	lw	$k1, 4($k0)
+	lw	  $k1, 4($k0)
 	mtc0	$k1, $CP0_Cause
 
 	/* now load STATUS register */
-	lw	$k1, 8($k0)
+	lw	  $k1, 8($k0)
+  
 	/* This is for avoiding trouble if STATUS has (erroneously)
 	 * set bit 0/1. It would cause an immediate EXC trap or expose
 	 * BIOS to interrupts. */
 	srl 	$k1, 2
-	sll	$k1, 2
+	sll	  $k1, 2
 	mtc0	$k1, $CP0_Status
 
-	lw	$k1, 12($k0)
+	lw	  $k1, 12($k0)
 
 	/* load new PC and jump */
 	.set noreorder
 	.set nomacro
-	jr	$k1
+	jr    $k1
 	rfe
 	.set reorder
 	.set macro

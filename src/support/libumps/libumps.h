@@ -180,7 +180,7 @@ extern void PANIC(void);
 
 extern void HALT(void);
 
-extern void INITCPU(unsigned int cpuid, STATE_PTR start_state, STATE_PTR state_areas);
+extern void INITCPU(unsigned int cpuid, STATE_PTR start_state);
 
 extern int CAS(volatile unsigned int *atomic, unsigned int oldval, unsigned int newval);
 

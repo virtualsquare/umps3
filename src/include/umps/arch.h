@@ -35,14 +35,6 @@
 #define WORD_SIZE 4
 #define WS        WORD_SIZE
 
-#define BIOS_DATA_BASE  0x0FFFF000
-
-/* TLB-refill and general exceptions handlers */
-#define TLB_REFILL_HANDLER      0x0FFFF8C0
-#define TLB_REFILL_HANDLER_SP   0x0FFFF8C4
-#define EXCEPTION_HANDLER       0x0FFFF8C8
-#define EXCEPTION_HANDLER_SP    0x0FFFF8CC
-
 #define MMIO_BASE 0x10000000
 #define RAM_BASE  0x20000000
 

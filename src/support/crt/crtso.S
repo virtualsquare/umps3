@@ -22,6 +22,8 @@
 #include <umps/bios_defs.h>
 
 #define CORE_TEXT_VADDR 0x20001000
+#define KERNELSTACKSIZE 0x00001000
+
 
 	.text
 	.align	2
@@ -35,10 +37,10 @@ __start:
 	.mask	0x00000000, 0
 	.fmask	0x00000000, 0
 
-	/* computes stack bottom (last address of physical RAM)
+	/* computes stack bottom (end of first page of RAM)
 	   using $k0 and $k1 (k0 and k1) */
 	lw	$k0, BUS_REG_RAM_BASE
-	lw	$k1, BUS_REG_RAM_SIZE
+	li	$k1, KERNELSTACKSIZE
 	addu	$k0, $k0, $k1
 	addiu	$sp, $k0, -8
 
