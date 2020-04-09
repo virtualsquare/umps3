@@ -93,6 +93,7 @@ private:
 	QAction* newConfigAction;
 	QAction* loadConfigAction;
 	QAction* loadRecentConfigActions[Application::kMaxRecentConfigs];
+	QAction* clearRecentConfigsAction;
 	QAction* recentConfigSeparatorAction;
 
 	QAction* quitAction;
@@ -143,6 +144,8 @@ private:
 private Q_SLOTS:
 	void onCreateConfig();
 	void onLoadConfig();
+
+	void clearConfigs();
 	void onLoadRecentConfig();
 
 	void editConfig();

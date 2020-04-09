@@ -146,6 +146,11 @@ void MonitorWindow::createActions()
 		connect(loadRecentConfigActions[i], SIGNAL(triggered()), this, SLOT(onLoadRecentConfig()));
 	}
 
+	clearRecentConfigsAction = new QAction("Clear recent", this);
+	clearRecentConfigsAction->setStatusTip("Clear recent configurations");
+	connect(clearRecentConfigsAction, SIGNAL(triggered()), this, SLOT(clearConfigs()));
+	clearRecentConfigsAction->setVisible(false);
+
 	quitAction = new QAction("&Quit", this);
 	quitAction->setShortcut(QKeySequence("Ctrl+Q"));
 	quitAction->setStatusTip("Quit uMPS");
@@ -250,6 +255,7 @@ void MonitorWindow::createMenu()
 	simulatorMenu->addSeparator();
 	for (unsigned int i = 0; i < Application::kMaxRecentConfigs; i++)
 		simulatorMenu->addAction(loadRecentConfigActions[i]);
+	simulatorMenu->addAction(clearRecentConfigsAction);
 	simulatorMenu->addSeparator();
 	simulatorMenu->addAction(quitAction);
 
@@ -506,6 +512,22 @@ void MonitorWindow::updateRecentConfigList()
 	for (unsigned int i = files.size(); i < Application::kMaxRecentConfigs; i++) {
 		loadRecentConfigActions[i]->setVisible(false);
 		loadRecentConfigActions[i]->setData(QVariant());
+	}
+
+	clearRecentConfigsAction->setVisible(files.size());
+}
+
+void MonitorWindow::clearConfigs()
+{
+	QStringList recentFiles = Appl()->settings.value("RecentFiles").toStringList();
+	recentFiles.clear();
+	Appl()->settings.setValue("RecentFiles", recentFiles);
+	updateRecentConfigList();
+
+	if (configView == NULL) {
+		delete tabWidget->widget(TAB_INDEX_CONFIG_VIEW);
+		tabWidget->insertTab(0, createWelcomeTab(), QIcon(":/icons/system-22.svg"), "&Overview");
+		tabWidget->setCurrentIndex(TAB_INDEX_CONFIG_VIEW);
 	}
 }
 
