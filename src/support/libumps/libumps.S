@@ -432,15 +432,16 @@ LEAF_FUNC(INITCPU)
 	li	$t0, MCTL_BOOT_PC
 	li	$t1, 0x00000100
 	sw	$t1, 0($t0)
-  
-  /* Compute starting address for this CPUs stored exception vector
-  li    $t0, 140      /* 140 is the size of a state_t vector
-  mult  $t0, $a0
-  mflo  $t0
-  add   $t0, $t0, BIOS_DATA_PAGE_BASE
-  
-  /* store start_state at start of this CPU's stored exception vector
-  sw    $a1, 0($t0)
+
+	/* Compute starting address for this CPUs stored exception vector */
+	li	$t0, 140    /* 140 is the size of a state_t vector */
+	mult	$t0, $a0
+	mflo	$t0
+	li	$t1, BIOS_DATA_PAGE_BASE
+	add	$t0, $t1, $t0
+
+	/* store start_state at start of this CPU's stored exception vector */
+	sw	$a1, 0($t0)
 
 	.set	noreorder
 	li	$t0, MCTL_RESET_CPU
