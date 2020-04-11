@@ -226,13 +226,13 @@ static void elfError()
 static void printHelp()
 {
 	fprintf(stderr,
-	        "Usage: %s [-v] [-m] {-k | -b | -a} <file>\n"
+	        "%s syntax : %s [-v] [-m] {-k | -b | -a} <file>\n"
 	        "\n"
-	        "where:\n\n-v\tverbose operation\n-m\tmake map file <file>.stab.umps\n"
+	        "where:\n\t-v\tverbose operation\n\t-m\tmake map file <file>.stab.umps\n"
 	        "\n"
-	        "-k\tmake kernel core file <file>.core.umps + map file\n"
-	        "-b\tmake BIOS file <file>.rom.umps\n-a\tmake a.out file <file>.aout.umps\n",
-	        programName);
+	        "\t-k\tmake kernel core file <file>.core.umps + map file\n"
+	        "\t-b\tmake BIOS file <file>.rom.umps\n\t-a\tmake a.out file <file>.aout.umps\n\n",
+	        programName, programName);
 }
 
 inline uint32_t toTargetEndian(uint32_t x)

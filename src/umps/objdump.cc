@@ -167,8 +167,8 @@ int main(int argc, char * argv[])
 HIDDEN void showHelp(const char * prgName)
 {
 	fprintf(stderr, "%s syntax : %s [-h] [-d] [-x] [-b] [-a] <file>%s\n\n", prgName, prgName, MPSFILETYPE);
-	fprintf(stderr, "where:\n\n-h\tshow file header\n-d\tdisassemble .text area\n");
-	fprintf(stderr, "-b\tfull byte dump\n-x\tfull word dump\n-a\tall of the above\n\n");
+	fprintf(stderr, "where:\n\t-h\tshow file header\n\t-d\tdisassemble .text area\n");
+	fprintf(stderr, "\t-b\tfull byte dump\n\t-x\tfull word dump\n\t-a\tall of the above\n\n");
 }
 
 

@@ -114,18 +114,20 @@ int main(int argc, char* argv[])
 HIDDEN void showHelp(const char * prgName)
 {
 	fprintf(stderr, "%s syntax : %s {-d | -f} [parameters..]\n\n", prgName, prgName);
-	fprintf(stderr, "%s -d <diskfile%s> [cyl [head [sect [rpm [seekt [datas]]]]]]\n",prgName, MPSFILETYPE);
+	fprintf(stderr, "%s -d <diskfile>%s [cyl [head [sect [rpm [seekt [datas]]]]]]\n",prgName, MPSFILETYPE);
 	fprintf(stderr, "where:\n\tcyl = no. of cylinders\t\t\t[1..%u]\t(default = %u)\n", MAXCYL, diskDfl[CYLNUM]);
 	fprintf(stderr, "\thead = no. of heads\t\t\t[1..%u]\t(default = %u)\n", MAXHEAD, diskDfl[HEADNUM]);
 	fprintf(stderr, "\tsect = no. of sectors\t\t\t[1..%u]\t(default = %u)\n", MAXSECT, diskDfl[SECTNUM]);
 	fprintf(stderr, "\trpm = disk rotations per min.\t\t[%u..%u]\t(default = %.0f)\n", MINRPM, MAXRPM, 6E7F / diskDfl[ROTTIME]);
 	fprintf(stderr, "\tseekt = avg. cyl2cyl time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXSEEKTIME, diskDfl[SEEKTIME]);
 	fprintf(stderr, "\tdatas = sector data occupation %%\t[%u%%..%u%%]\t(default = %u%%)\n", MINDATAS, MAXDATAS, diskDfl[DATASECT]);
-	fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(default = %s%s)\n", diskDflFName, MPSFILETYPE);
-	fprintf(stderr, "\n%s -f <flashfile%s> [blocks [wt]]\n", prgName, MPSFILETYPE);
+	fprintf(stderr, "\t<diskfile> = disk image file name\t\t\t(example = %s%s)\n", diskDflFName, MPSFILETYPE);
+	fprintf(stderr, "\n%s -f <flashfile>%s <file> [blocks [wt]]\n", prgName, MPSFILETYPE);
 	fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
 	fprintf(stderr, "\twt = avg. write time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXWTIME, flashDfl[WTIME]);
-	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(default = %s%s)\n\n", flashDflFName, MPSFILETYPE);
+	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(example = %s%s)\n", flashDflFName, MPSFILETYPE);
+	fprintf(stderr, "\t<file> = file to be written\n\n");
+
 }
 
 
