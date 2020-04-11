@@ -38,7 +38,7 @@
 #include "umps/blockdev.h"
 
 
-// This method returns an empty (unitialized) 512 byte Block
+// This method returns an empty (unitialized) 4096 byte Block
 Block::Block()
 {
 }

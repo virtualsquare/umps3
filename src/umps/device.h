@@ -248,7 +248,7 @@ private:
 /**************************************************************************/
 
 
-// DiskDevice class allows to emulate a disk drive: each 512 byte sector
+// DiskDevice class allows to emulate a disk drive: each 4096 byte sector
 // is identified by (cyl, head, sect) set of disk coordinates;
 // (geometry and performance figures are loaded from disk image file).
 // Operations on sectors (R/W) require previous seek on the desired cylinder.
@@ -302,7 +302,7 @@ private:
 
 /**************************************************************************/
 
-// FlashDevice class allows to emulate a flash drive: each 512 byte block
+// FlashDevice class allows to emulate a flash drive: each 4096 byte block
 // is identified by one flash device coordinate;
 // (geometry and performance figures are loaded from flash device image file).
 // It also contains a block buffer of one block to speed up operations.

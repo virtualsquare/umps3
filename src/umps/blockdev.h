@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// This class implements the block devices' 512 byte sectors/flash devices blocks.
+// This class implements the block devices' 4096 byte sectors/flash devices blocks.
 // Each object contains a single buffer; methods are provided to read/write
 // these blocks from/to real files and to access to the word-sized contents.
 // This class is provided primarily to make DMA transfer easier and to
@@ -29,7 +29,7 @@ class Block
 {
 public:
 
-// This method returns an empty (unitialized) 512 byte Block
+// This method returns an empty (unitialized) 4096 byte Block
 	Block();
 
 // Object deletion is done by default handler

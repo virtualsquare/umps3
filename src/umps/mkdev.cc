@@ -326,7 +326,7 @@ HIDDEN bool decodeFlashP(int idx, unsigned int * par, const char * str)
 
 // This function creates the disk image file on the disk, prepending it with
 // a header containing geometry and performance figures.
-// A number of 512-byte empty blocks is created, depending on disk geometry.
+// A number of 4096-byte empty blocks is created, depending on disk geometry.
 // Returns an EXIT_SUCCESS/FAILURE code
 HIDDEN int writeDisk(const char * prg, const char * fname)
 {
@@ -373,7 +373,7 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 	FILE * rfile = NULL;
 	int ret = EXIT_SUCCESS;
 
-	unsigned int i, n = 0;
+	unsigned int i = 0;
 	Word blk[BLOCKSIZE];
 	Word flashid = FLASHFILEID;
 
@@ -402,7 +402,6 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 					blk[i] = 0UL;
 
 				if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0) {
-					n++;
 					// copy block to output file
 					fwrite((void *) blk, WORDLEN, BLOCKSIZE, ffile);
 				}
