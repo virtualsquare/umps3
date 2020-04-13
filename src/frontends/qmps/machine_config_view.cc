@@ -52,13 +52,17 @@ MachineConfigView::MachineConfigView(QWidget* parent)
 	tlbSizeLabel = new QLabel;
 	layout->addWidget(tlbSizeLabel, rows++, propertyValueColumn);
 
-	layout->addWidget(new QLabel("TLB floor address:"), rows, 1);
-	tlbFloorAddressLabel = new QLabel;
-	layout->addWidget(tlbFloorAddressLabel, rows++, propertyValueColumn);
-
 	layout->addWidget(new QLabel("RAM size:"), rows, 1);
 	ramSizeLabel = new QLabel;
 	layout->addWidget(ramSizeLabel, rows++, propertyValueColumn);
+
+	layout->addWidget(new QLabel("RAMTOP value:"), rows, 1);
+	ramtopLabel = new QLabel;
+	layout->addWidget(ramtopLabel, rows++, propertyValueColumn);
+
+	layout->addWidget(new QLabel("TLB floor address:"), rows, 1);
+	tlbFloorAddressLabel = new QLabel;
+	layout->addWidget(tlbFloorAddressLabel, rows++, propertyValueColumn);
 
 	layout->addWidget(new QLabel("Byte order:"), rows, 1);
 	QLabel* byteOrderLabel = new QLabel(BIGENDIANCPU ? "Big-endian" : "Little-endian");
@@ -121,12 +125,13 @@ void MachineConfigView::Update()
 	clockRateLabel->setText(QString("%1 MHz").arg(config->getClockRate()));
 	tlbSizeLabel->setNum((int) config->getTLBSize());
 
+	ramSizeLabel->setText(QString("%1 Frames").arg(config->getRamSize()));
+	ramtopLabel->setText(FormatAddress(RAMBASE + (config->getRamSize() * FRAMESIZE * FRAMEKB)));
+
 	if (tlbFloorAddr == MAXWORDVAL)
 		tlbFloorAddressLabel->setText("VM OFF");
 	else
 		tlbFloorAddressLabel->setText(FormatAddress(tlbFloorAddr));
-
-	ramSizeLabel->setText(QString("%1 Frames").arg(config->getRamSize()));
 
 	bootstrapROMLabel->setText(config->getROM(ROM_TYPE_BOOT).c_str());
 	executionROMLabel->setText(config->getROM(ROM_TYPE_BIOS).c_str());

@@ -41,8 +41,9 @@ static QString checkedFileName(const QString& fileName);
 QLabel* numCpusLabel;
 QLabel* clockRateLabel;
 QLabel* tlbSizeLabel;
-QLabel* tlbFloorAddressLabel;
 QLabel* ramSizeLabel;
+QLabel* ramtopLabel;
+QLabel* tlbFloorAddressLabel;
 
 QLabel* bootstrapROMLabel;
 QLabel* executionROMLabel;
