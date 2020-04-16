@@ -126,8 +126,8 @@ HIDDEN void showHelp(const char * prgName)
 	fprintf(stderr, "where:\n\tblocks = no. of blocks\t\t\t[1..0x%.6X]\t(default = %u)\n", MAXBLOCKS, flashDfl[BLOCKSNUM]);
 	fprintf(stderr, "\twt = avg. write time (microsecs.)\t[1..%u]\t(default = %u)\n", MAXWTIME, flashDfl[WTIME]);
 	fprintf(stderr, "\t<flashfile> = flash dev. image file name\t\t(example = %s%s)\n", flashDflFName, MPSFILETYPE);
-	fprintf(stderr, "\t<file> = file to be written\n\n");
-
+	fprintf(stderr, "\t<file> = file to be written\n");
+	fprintf(stderr, "\tnote: use /dev/null as <file> to create an empty image file\n\n");
 }
 
 
@@ -338,18 +338,18 @@ HIDDEN int writeDisk(const char * prg, const char * fname)
 	Word blk[BLOCKSIZE];
 	Word diskid = DISKFILEID;
 
-	// clears block
+	// clear block
 	for (i = 0; i < BLOCKSIZE; i++)
 		blk[i] = 0;
 
-	// tries to open image file and write header
+	// try to open image file and write header
 	if ((dfile = fopen(fname, "w")) == NULL || \
 	    fwrite((void *) &diskid, WORDLEN, 1, dfile) != 1 || \
 	    fwrite((void *) diskDfl, sizeof(unsigned int), DISKPNUM, dfile) != DISKPNUM)
 		ret = EXIT_FAILURE;
 	else
 	{
-		// writes empty blocks
+		// write empty blocks
 		for (i = 0; i < dfsize && ret != EXIT_FAILURE; i++)
 			if (fwrite((void *) blk, WORDLEN, BLOCKSIZE, dfile) != BLOCKSIZE)
 				ret = EXIT_FAILURE;
@@ -373,9 +373,14 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 	FILE * rfile = NULL;
 	int ret = EXIT_SUCCESS;
 
-	unsigned int i = 0;
+	unsigned int i, j;
+	unsigned int ffsize = flashDfl[BLOCKSNUM];
 	Word blk[BLOCKSIZE];
 	Word flashid = FLASHFILEID;
+
+	// clear block
+	for (i = 0; i < BLOCKSIZE; i++)
+		blk[i] = 0UL;
 
 	// tries to open image file and write header
 	if ((ffile = fopen(fname, "w")) == NULL || \
@@ -394,21 +399,32 @@ HIDDEN int writeFlash(const char * prg, const char * fname, const char * file)
 			// .alignment reasons
 			testForCore(rfile);
 
-			// splits file into blocks inside the flash device image
-			while (!feof(rfile))
-			{
-				// clear block
-				for (i = 0; i < BLOCKSIZE; i++)
-					blk[i] = 0UL;
+			for (j = 0; j < ffsize && ret != EXIT_FAILURE; j++) {
+				// split file into blocks inside the flash device image
+				if (!feof(rfile)) {
+					// read block from input file
+					if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) != BLOCKSIZE)
+						if (ferror(rfile))
+							ret = EXIT_FAILURE;
 
-				if (fread((void *) blk, WORDLEN, BLOCKSIZE, rfile) > 0) {
-					// copy block to output file
-					fwrite((void *) blk, WORDLEN, BLOCKSIZE, ffile);
+					// write block to output file
+					if (fwrite((void *) blk, WORDLEN, BLOCKSIZE, ffile) != BLOCKSIZE)
+						ret = EXIT_FAILURE;
+
+					// clear block
+					for (i = 0; i < BLOCKSIZE; i++)
+						blk[i] = 0UL;
+				} else {
+					// write empty block
+					if (fwrite((void *) blk, WORDLEN, BLOCKSIZE, ffile) != BLOCKSIZE)
+						ret = EXIT_FAILURE;
 				}
 			}
+			if (!feof(rfile))
+				fprintf(stderr, "%s : error writing flash device file image %s : file %s truncated\n", prg, fname, file);
 			fclose(rfile);
 		}
-		// tries to close flash device image file
+		// try to close flash device image file
 		if (fclose(ffile) != 0)
 			ret = EXIT_FAILURE;
 	}
@@ -442,7 +458,7 @@ HIDDEN bool StrToWord(const char * str, Word * value)
 	char * endp;
 	bool valid = true;
 
-	// tries to convert the string into a unsigned long
+	// try to convert the string into a unsigned long
 	*value = strtoul(str, &endp, 0);
 
 	if (endp != NULL)
