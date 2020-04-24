@@ -2,7 +2,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
- * Copyright (C) 2020 Mattia Biondi
+ * Copyright (C) 2020 Mattia Biondi, Mikey Goldweber
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,13 +86,13 @@ LCoreBootStart:
 	li	  $a1, STATUSMASK
 	and   $a0, $a0, $a1
 	mtc0	$a0, $CP0_Status
-  
+
   /*
   * Setting Exception PCs, both for general exceptions and for TLB
   * refills to cause a kernel panic(). This is done by loading
   * panic() BIOS routine address into both PC fields
   */
-  
+
 	li 	  $a0, BIOS_EXEC_HANDLERS_ADDRS
 	li 	  $a1, BIOSPANIC      /* panic() address */
   sw    $a1, 0($a0)         /* set TLB_Refill handler addr */
