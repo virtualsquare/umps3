@@ -126,19 +126,19 @@ void CodeView::loadCode()
 				codeLoaded = true;
 			}
 		}
-	} else if (pc >= KSEGOS_BOOT_BASE) {
+	} else if (pc >= KSEG0_BOOT_BASE) {
 		Word bootSize;
 		machine->ReadMemory(BUS_REG_BOOT_SIZE, &bootSize);
-		if (pc <= KSEGOS_BOOT_BASE + bootSize - WS) {
-			startPC = KSEGOS_BOOT_BASE;
+		if (pc <= KSEG0_BOOT_BASE + bootSize - WS) {
+			startPC = KSEG0_BOOT_BASE;
 			endPC = startPC + bootSize - WS;
 			codeLoaded = true;
 		}
 	} else {
 		Word biosSize;
 		machine->ReadMemory(BUS_REG_BIOS_SIZE, &biosSize);
-		if (pc <= KSEGOS_BIOS_BASE + biosSize - WS) {
-			startPC = KSEGOS_BIOS_BASE;
+		if (pc <= KSEG0_BIOS_BASE + biosSize - WS) {
+			startPC = KSEG0_BIOS_BASE;
 			endPC = startPC + biosSize - WS;
 			codeLoaded = true;
 		}

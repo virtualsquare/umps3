@@ -39,10 +39,10 @@
 #define RAM_BASE  0x20000000
 
 /* Segment-related constants */
-#define KSEGOS_BASE        0x00000000
-#define KSEGOS_BIOS_BASE   0x00000000
-#define KSEGOS_BOOT_BASE   0x1FC00000
-#define KUSEG2_BASE        0x80000000
+#define KSEG0_BASE        0x00000000
+#define KSEG0_BIOS_BASE   0x00000000
+#define KSEG0_BOOT_BASE   0x1FC00000
+#define KUSEG_BASE        0x80000000
 
 /* Device register size */
 #define DEV_REG_SIZE_W   4

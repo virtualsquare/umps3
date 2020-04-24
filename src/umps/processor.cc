@@ -783,7 +783,7 @@ bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
 	machine->HandleVMAccess(ENTRYHI_GET_ASID(cpreg[ENTRYHI]), vaddr, accType, this);
 
 	// address validity and bounds check
-	if (BADADDR(vaddr) || (InUserMode() && (INBOUNDS(vaddr, KSEG0BASE, KUSEG2BASE)))) {
+	if (BADADDR(vaddr) || (InUserMode() && (INBOUNDS(vaddr, KSEG0BASE, KUSEGBASE)))) {
 		// bad offset or kernel segment access from user mode
 		*paddr = MAXWORDVAL;
 
@@ -797,7 +797,7 @@ bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
 
 		return true;
 	} else if (INBOUNDS(vaddr, KSEG0BASE, tlbFloorAddress)) {
-		// no bad offset; if vaddr < KUSEG2BASE the processor is surely
+		// no bad offset; if vaddr < KUSEGBASE the processor is surely
 		// in kernelMode
 		// valid access to KSEG0 area
 		*paddr = vaddr;
@@ -805,7 +805,7 @@ bool Processor::mapVirtual(Word vaddr, Word * paddr, Word accType)
 	}
 
 	// The access is in user mode to user space, or in kernel mode
-	// to KSEGOS or KSEG2/3 spaces.
+	// to KSEG0 or KUSEG spaces.
 
 	unsigned int index;
 	if (probeTLB(&index, cpreg[ENTRYHI], vaddr)) {

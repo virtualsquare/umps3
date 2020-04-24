@@ -137,7 +137,7 @@
 // segments base addresses
 #define KSEG0BASE   0x00000000UL
 #define KSEG0TOP    0x20000000UL
-#define KUSEG2BASE  0x80000000UL
+#define KUSEGBASE  0x80000000UL
 
 // bus memory mapping constants (BIOS/BIOS Data Page/device registers/BOOT/RAM)
 #define BIOSBASE    0x00000000UL

@@ -37,11 +37,11 @@ const char* GetSymbolicAddress(const SymbolTable* symbolTable,
 {
 	if (address >= RAM_BASE) {
 		return symbolTable->Probe(asid, address, !onlyFunctions, offset);
-	} else if (address >= KSEGOS_BOOT_BASE) {
-		*offset = address - KSEGOS_BOOT_BASE;
+	} else if (address >= KSEG0_BOOT_BASE) {
+		*offset = address - KSEG0_BOOT_BASE;
 		return kBootSpaceName;
 	} else {
-		*offset = address - KSEGOS_BASE;
+		*offset = address - KSEG0_BASE;
 		return kBiosSpaceName;
 	}
 }
