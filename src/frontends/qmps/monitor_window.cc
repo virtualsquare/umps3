@@ -682,7 +682,7 @@ void MonitorWindow::showAboutInfo()
 	QString text = QString(
 		"<h2>&micro;MPS %1</h2>"
 		"<em>An educational computer system emulator</em>"
-		"<h4><a href='https://github.com/mattiabiondi/umps'>github.com/mattiabiondi/umps</a></h4>"
+		"<h4><a href='https://github.com/virtualsquare/umps3'>github.com/virtualsquare/umps3</a></h4>"
 		"Copyright &copy; 1998-2020 &micro;MPS authors"
 		"<hr />"
 		"<h3 style='margin-top: 0;'>Credits</h3>"

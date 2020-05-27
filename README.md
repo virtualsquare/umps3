@@ -2,7 +2,7 @@
 
 A complete virtual machine simulator based around the MIPS R2/3000 microprocessor.
 
-Please report any bugs you find by [creating an issue ticket](https://github.com/mattiabiondi/umps/issues/new) here on GitHub.
+Please report any bugs you find by [creating an issue ticket](https://github.com/virtualsquare/umps3/issues/new) here on GitHub.
 Make sure you include steps on how to reproduce it.
 
 ## Table of Contents
@@ -51,7 +51,7 @@ Known prefixes are:
 
 ### Building from source
 
-Please [report any problems](https://github.com/mattiabiondi/umps/issues/new) you run into when building the project.
+Please [report any problems](https://github.com/virtualsquare/umps3/issues/new) you run into when building the project.
 
 Get the source code, from the root of the source tree run:
 ```sh
@@ -75,7 +75,7 @@ N.B.: "install_manifest.txt" is generated during the installation process.
 
 ## License
 
-µMPS is licensed under the GPLv3 license. [See LICENSE for more information](https://github.com/mattiabiondi/umps/blob/master/LICENSE).
+µMPS is licensed under the GPLv3 license. [See LICENSE for more information](https://github.com/virtualsquare/umps3/blob/master/LICENSE).
 
 - "[Papirus Icons](https://git.io/papirus-icon-theme)" by [Papirus Development Team](https://github.com/PapirusDevelopmentTeam) is licensed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.en.html)
 - Logo and all other icons derived by [Mattia Biondi](https://github.com/mattiabiondi) from "[Papirus Icons](https://git.io/papirus-icon-theme)"
