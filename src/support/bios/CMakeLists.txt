@@ -1,4 +1,4 @@
-set(ROM_TYPES coreboot tapeboot exec)
+set(ROM_TYPES coreboot exec)
 
 foreach(TYPE ${ROM_TYPES})
         install(FILES ${TYPE}.S
@@ -13,7 +13,7 @@ foreach(TYPE ${ROM_TYPES})
                 COMMAND ${XCGCC} -c -EB ${BIOS_CPPFLAGS} ${BIOS_CFLAGS} -o
                         ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.eb ${TYPE}.S
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-                        
+
         add_custom_target(${TYPE}.el ALL
                 COMMAND ${XCGCC} -c -EL ${BIOS_CPPFLAGS} ${BIOS_CFLAGS} -o
                         ${CMAKE_CURRENT_BINARY_DIR}/${TYPE}.el ${TYPE}.S
