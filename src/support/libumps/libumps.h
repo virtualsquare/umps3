@@ -102,34 +102,17 @@ extern void TLBCLR(void);
 extern void WAIT(void);
 
 
-/* This function requires BIOS intervention, and is valid _only_ in kernel
- * mode: otherwise it causes a program trap. It may be used to start
- * a new process
+/* This function allows a current process to change its operating mode,
+ * turning on/off interrupt masks, turning on user mode, and at the same time
+ * changing the location of execution.
+ * It is available only in kernel mode, thru a BIOS routine
+ * (otherwise it causes a break).
+ * It updates processor status, PC and stack pointer _completely_,
+ * in one atomic operation.
+ * It has no meaningful return value.
  */
 
-/* This function load a processor state from memory: there is no valid
- * return value.  New process may use status, EntryHI, pc and CAUSE as actual
- * arguments if call is carefully built, since $4, $5, and $6 (a0, a1, a2)
- * registers are not loaded from memory, but are passed as they are to
- * new process, while $7 (a3) is loaded with CAUSE value from processor
- * state in memory.
- * Keep in mind that $2 (v0) register is used by routine itself and it is
- * not loaded from memory image nor have a meaningful starting value for the
- * new process this routine starts.
- *
- * This is NOT an atomic operation: the processor state is loaded register
- * by register from memory, and at the end a BIOS routine will be called to
- * load the critical CAUSE, STATUS, EntryHI and PC registers in one atomic
- * operation: so, this call is interruptible (in a clean way) or cause a
- * trap (for example, a memory access error if pointer is not correctly
- * set).
- * If called from user state, it will trap ONLY at BIOS call, loading the
- * general registers with new/random values (if no other errors intervene);
- * this will corrupt the calling process state, but it does not harm system
- * security a bit (I thought I said you to use it only in kernel mode...)
- */
-
-extern unsigned int FORK(unsigned int entryhi, unsigned int status, unsigned int pc, STATE_PTR statep);
+extern unsigned int SSJMP (unsigned int stackPtr, unsigned int status, unsigned int pc);
 
 
 /* This function may be called from kernel or from user mode with CPU 0
@@ -157,12 +140,12 @@ extern unsigned int STST(STATE_PTR statep);
 /* This function may be used to restart an interrupted/blocked process,
  * reloading it from a physical address passed as argument.
  * It is available only in kernel mode, thru a BIOS routine
- * (otherwise it causes a trap).
+ * (otherwise it causes a break).
  * It updates processor status _completely_, in one atomic operation.
  * It has no meaningful return value: $2 (v0) register is used for
  * BIOS call, but it is reloaded too.
- * Remember that it is programmer's task to increment OLD area PC where
- * needed  (e.g. syscall handling)
+ * Remember that it is programmer's task to increment PC where
+ * needed (e.g. syscall handling)
  */
 
 extern unsigned int LDST(STATE_PTR statep);

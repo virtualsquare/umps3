@@ -41,13 +41,13 @@ func:	.frame	$sp, 0, $ra;                    \
 
 #define DEFINE_CP0_GETTER(suffix, reg)          \
 LEAF_FUNC(get ## suffix);                       \
-	.set noreorder;                         \
-	.set nomacro;                           \
+	.set	noreorder;                         \
+	.set	nomacro;                           \
 	nop;                                    \
 	mfc0	$v0, reg;                       \
 	nop;                                    \
-	.set reorder;                           \
-	.set macro;                             \
+	.set	reorder;                           \
+	.set	macro;                             \
 	jr	$ra;                            \
 END_LEAF_FUNC(get ## suffix)
 
@@ -79,7 +79,6 @@ END_LEAF_FUNC(set ## suffix)
 	.set noat
 	.align 2
 
-
 /*
  * This function cause a system call trap.
  * System call code is in $a0, return value in $v0.
@@ -88,13 +87,13 @@ END_LEAF_FUNC(set ## suffix)
  * syscall
  */
 LEAF_FUNC(SYSCALL)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	nop
 	syscall
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(SYSCALL)
 
@@ -130,13 +129,13 @@ DEFINE_CP0_SETTER(CAUSE, $CP0_Cause)
  * TLBWR instruction wrapper
  */
 LEAF_FUNC(TLBWR)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	nop
 	tlbwr
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(TLBWR)
 
@@ -144,13 +143,13 @@ END_LEAF_FUNC(TLBWR)
  * TLBWI instruction wrapper
  */
 LEAF_FUNC(TLBWI)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	nop
 	tlbwi
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(TLBWI)
 
@@ -158,13 +157,13 @@ END_LEAF_FUNC(TLBWI)
  * TLBP instruction wrapper
  */
 LEAF_FUNC(TLBP)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	nop
 	tlbp
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(TLBP)
 
@@ -173,13 +172,13 @@ END_LEAF_FUNC(TLBP)
  * Reads TLB entry at INDEX and returns result in ENTRYHI and ENTRYLO
  */
 LEAF_FUNC(TLBR)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	nop
 	tlbr
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(TLBR)
 
@@ -187,13 +186,13 @@ END_LEAF_FUNC(TLBR)
  * TLBCLR instruction wrapper
  */
 LEAF_FUNC(TLBCLR)
- 	.set noreorder
- 	.set nomacro
+ 	.set	noreorder
+ 	.set	nomacro
  	nop
  	mtc0	$a0, $4
  	nop
- 	.set reorder
- 	.set macro
+ 	.set	reorder
+ 	.set	macro
  	jr	$ra
 END_LEAF_FUNC(TLBCLR)
 
@@ -225,80 +224,36 @@ LEAF_FUNC(CAS)
 END_LEAF_FUNC(CAS)
 
 /*
- * FORK
+ * SSJMP
  *
  * SYNOPSIS:
- * void FORK(unsigned int entryhi, unsigned FORK
- *           int status, unsigned int pc, state_t *statep)
+ *	void SSJMP(unsigned int stackPtr, unsigned int status, unsigned int pc)
  *
- * This function loads a processor state from memory and start
- * executing it. It changes processor state completely, and it is
- * NOT an atomic operation (see interface for description).
+ * This function forces a processor to change its operating mode reloading
+ * SP ($a0), status ($a1) and PC ($a2) registers: it works only in
+ * kernel mode. There is no real return: $a1 is used as BIOS
+ * argument, but it is reloaded too.
  */
-LEAF_FUNC(FORK)
-	/* first registers loaded are HI and LO */
-	lw	$1, 132($a3)
-	mthi	$1
-	lw	$1, 136($a3)
-	mtlo	$1
+LEAF_FUNC(SSJMP)
+	move	$a3, $a2
+	move	$a2, $a1
+	move	$a1, $a0
 
-	lw	$1, 16($a3)
-
-	/* register $v0 itself is not loaded */
-
-	lw	$v1, 24($a3)
-
-	/* registers $a0..$a3 are not loaded too */
-
-	lw	$t0, 44($a3)
-	lw	$t1, 48($a3)
-	lw	$t2, 52($a3)
-	lw	$t3, 56($a3)
-	lw	$t4, 60($a3)
-	lw	$t5, 64($a3)
-	lw	$t6, 68($a3)
-	lw	$t7, 72($a3)
-	lw	$s0, 76($a3)
-	lw	$s1, 80($a3)
-	lw	$s2, 84($a3)
-	lw	$s3, 88($a3)
-	lw	$s4, 92($a3)
-	lw	$s5, 96($a3)
-	lw	$s6, 100($a3)
-	lw	$s7, 104($a3)
-	lw	$t8, 108($a3)
-	lw	$t9, 112($a3)
-
-	/* $k0 and $k1 are not saved so they are not loaded too */
-
-	lw	$gp, 116($a3)
-	lw	$sp, 120($a3)
-	lw	$fp, 124($a3)
-	lw	$ra, 128($a3)
-	/* all processor registers loaded (almost) */
-
-	/* load CAUSE from memory to $a3 (a3) */
-	lw	$a3, 4($a3)
-
-	/* move $a0 to $v0 to use $a0 as EXEC call parameter */
-	move 	$v0, $a0
-
-	.set noreorder
-	.set nomacro
-	li	$a0, BIOS_SRV_FORK
+	.set	noreorder
+	.set	nomacro
+	li	$a0, BIOS_SRV_SSJMP
 	break
 	nop
-	.set reorder
-	.set macro
-
-	jr	$ra
-END_LEAF_FUNC(FORK)
+	.set	reorder
+	.set	macro
+	jr $ra
+END_LEAF_FUNC(SSJMP)
 
 /*
  * STST
  *
  * SYNOPSIS:
- * void STST(state t *statep)
+ *	void STST(state t *statep)
  *
  * This function will save processor status to memory block pointed by
  * register $a0 (a0), and return PC value of instruction immediately
@@ -306,7 +261,7 @@ END_LEAF_FUNC(FORK)
  * PC field itself is intentionally left at 0 value
  */
 LEAF_FUNC(STST)
-	.set noat
+	.set	noat
 	sw	$1, 16($a0)
 	sw	$v0, 20($a0)
 
@@ -373,13 +328,13 @@ END_LEAF_FUNC(STST)
  * HALT
  */
 LEAF_FUNC(HALT)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	li	$a0, BIOS_SRV_HALT
 	break
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(HALT)
 
@@ -387,13 +342,13 @@ END_LEAF_FUNC(HALT)
  * PANIC
  */
 LEAF_FUNC(PANIC)
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	li	$a0, BIOS_SRV_PANIC
 	break
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 	jr	$ra
 END_LEAF_FUNC(PANIC)
 
@@ -401,23 +356,23 @@ END_LEAF_FUNC(PANIC)
  * LDST
  *
  * SYNOPSIS:
- *     void LDST(state t *statep)
+ *	void LDST(state t *statep)
  *
  * This function forces the complete reload of processor state from
  * vector state area pointed by argument in $a0 (a0): it works only in
- * kernel mode. There is  no real return: $a1 is used as BIOS
+ * kernel mode. There is no real return: $a1 is used as BIOS
  * argument, but it is reloaded too.
  */
 LEAF_FUNC(LDST)
 	move	$a1, $a0
 
-	.set noreorder
-	.set nomacro
+	.set	noreorder
+	.set	nomacro
 	li	$a0, BIOS_SRV_LDST
 	break
 	nop
-	.set reorder
-	.set macro
+	.set	reorder
+	.set	macro
 
 	jr	$ra
 END_LEAF_FUNC(LDST)
@@ -426,7 +381,7 @@ END_LEAF_FUNC(LDST)
  * INITCPU
  *
  * SYNOPSIS:
- *     void INITCPU(u32 cpu_id, state t *start_state)
+ *	void INITCPU(u32 cpu_id, state t *start_state)
  */
 LEAF_FUNC(INITCPU)
 	li	$t0, MCTL_BOOT_PC
