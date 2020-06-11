@@ -247,7 +247,10 @@ void MachineConfig::setTLBSize(Word size)
 
 void MachineConfig::setTLBFloorAddress(Word addr)
 {
-	tlbFloorAddress = addr;
+	if (addr == MINWORDVAL)
+		tlbFloorAddress = RAMBASE + (getRamSize() * FRAMESIZE * FRAMEKB);
+	else
+		tlbFloorAddress = addr;
 }
 
 void MachineConfig::setROM(ROMType type, const std::string& fileName)

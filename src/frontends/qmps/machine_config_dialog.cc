@@ -111,17 +111,23 @@ QWidget* MachineConfigDialog::createGeneralTab()
 	currentIndex = 0;
 	bool ramtop = true;
 	for (unsigned int val : MachineConfig::TLB_FLOOR_ADDRESS) {
-		if (val == MAXWORDVAL)
+		switch (val) {
+		case MINWORDVAL:
+			tlbFloorAddressList->addItem("RAMTOP");
+			break;
+		case MAXWORDVAL:
 			tlbFloorAddressList->addItem("VM OFF");
-		else
+			break;
+		default:
 			tlbFloorAddressList->addItem(FormatAddress(val));
+		}
 		if (config->getTLBFloorAddress() == val) {
 			tlbFloorAddressList->setCurrentIndex(currentIndex);
 			ramtop = false;
 		}
 		currentIndex++;
 	}
-	if (ramtop) tlbFloorAddressList->setCurrentIndex(currentIndex-1);
+	if (ramtop) tlbFloorAddressList->setCurrentIndex(0);
 	layout->addWidget(tlbFloorAddressList, 4, 3);
 
 	layout->addWidget(new QLabel("RAM Size (Frames):"), 5, 1);

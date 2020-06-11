@@ -60,7 +60,7 @@ MachineConfigView::MachineConfigView(QWidget* parent)
 	ramtopLabel = new QLabel;
 	layout->addWidget(ramtopLabel, rows++, propertyValueColumn);
 
-	layout->addWidget(new QLabel("TLB floor address:"), rows, 1);
+	layout->addWidget(new QLabel("TLB Floor Address:"), rows, 1);
 	tlbFloorAddressLabel = new QLabel;
 	layout->addWidget(tlbFloorAddressLabel, rows++, propertyValueColumn);
 
@@ -120,15 +120,18 @@ void MachineConfigView::Update()
 {
 	const MachineConfig* config = Appl()->getConfig();
 	Word tlbFloorAddr = config->getTLBFloorAddress();
+	Word ramtop = RAMBASE + (config->getRamSize() * FRAMESIZE * FRAMEKB);
 
 	numCpusLabel->setNum((int) config->getNumProcessors());
 	clockRateLabel->setText(QString("%1 MHz").arg(config->getClockRate()));
 	tlbSizeLabel->setNum((int) config->getTLBSize());
 
 	ramSizeLabel->setText(QString("%1 Frames").arg(config->getRamSize()));
-	ramtopLabel->setText(FormatAddress(RAMBASE + (config->getRamSize() * FRAMESIZE * FRAMEKB)));
+	ramtopLabel->setText(FormatAddress(ramtop));
 
-	if (tlbFloorAddr == MAXWORDVAL)
+	if (tlbFloorAddr == ramtop)
+		tlbFloorAddressLabel->setText("RAMTOP");
+	else if (tlbFloorAddr == MAXWORDVAL)
 		tlbFloorAddressLabel->setText("VM OFF");
 	else
 		tlbFloorAddressLabel->setText(FormatAddress(tlbFloorAddr));
