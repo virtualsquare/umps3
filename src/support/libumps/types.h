@@ -2,6 +2,7 @@
  * uMPS - A general purpose computer system simulator
  *
  * Copyright (C) 2004 Mauro Morsiani
+ * Copyright (C) 2020 Mikey Goldweber
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,6 +67,13 @@ typedef struct devregarea {
 	devreg_t devreg[5][8];
 } devregarea_t;
 
+/* Pass Up Vector */
+typefef struct passupvector {
+	unsigned int tlb_refll_handler;
+	unsigned int tlb_refll_stackPtr;
+	unsigned int execption_handler;
+	unsigned int exception_stackPtr;
+} passupvector_t;
 
 #define STATE_GPR_LEN 29
 

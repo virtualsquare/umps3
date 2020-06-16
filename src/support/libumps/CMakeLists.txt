@@ -21,7 +21,7 @@ set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libumps.o
 	DESTINATION ${UMPS_LIB_DIR})
 
-install(FILES libumps.h ${CMAKE_CURRENT_BINARY_DIR}/libumps.e types.h
+install(FILES libumps.h ${CMAKE_CURRENT_BINARY_DIR}/libumps.e const.h types.h
 	DESTINATION ${UMPS_INCLUDE_DIR})
 
 install(FILES libumps.S
