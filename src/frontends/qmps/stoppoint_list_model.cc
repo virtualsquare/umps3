@@ -254,7 +254,7 @@ QVariant StoppointListModel::data(const QModelIndex& index, int role) const
 Qt::ItemFlags StoppointListModel::flags(const QModelIndex& index) const
 {
 	if (!index.isValid())
-		return 0;
+		return Qt::NoItemFlags;
 
 	switch (index.column()) {
 	case COLUMN_STOPPOINT_ID:

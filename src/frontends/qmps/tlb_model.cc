@@ -71,7 +71,7 @@ TLBModel::TLBModel(Word cpuId, QObject* parent)
 Qt::ItemFlags TLBModel::flags(const QModelIndex& index) const
 {
 	if (!index.isValid())
-		return 0;
+		return Qt::NoItemFlags;
 
 	return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }

@@ -242,7 +242,7 @@ bool RegisterSetSnapshot::setData(const QModelIndex& index, const QVariant& vari
 Qt::ItemFlags RegisterSetSnapshot::flags(const QModelIndex& index) const
 {
 	if (!index.isValid())
-		return 0;
+		return Qt::NoItemFlags;
 
 	if (index.internalId() == 0)
 		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
@@ -256,7 +256,7 @@ Qt::ItemFlags RegisterSetSnapshot::flags(const QModelIndex& index) const
 		AssertNotReached();
 	}
 
-	return 0;
+	return Qt::NoItemFlags;
 }
 
 void RegisterSetSnapshot::reset()

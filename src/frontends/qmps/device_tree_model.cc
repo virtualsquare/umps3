@@ -203,7 +203,7 @@ QVariant DeviceTreeModel::data(const QModelIndex& index, int role) const
 Qt::ItemFlags DeviceTreeModel::flags(const QModelIndex& index) const
 {
 	if (!index.isValid())
-		return 0;
+		return Qt::NoItemFlags;
 
 	// FIXME: Should the items here really be disabled?
 #if 0
