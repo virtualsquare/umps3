@@ -68,10 +68,10 @@ typedef struct devregarea {
 } devregarea_t;
 
 /* Pass Up Vector */
-typefef struct passupvector {
-	unsigned int tlb_refll_handler;
-	unsigned int tlb_refll_stackPtr;
-	unsigned int execption_handler;
+typedef struct passupvector {
+	unsigned int tlb_refill_handler;
+	unsigned int tlb_refill_stackPtr;
+	unsigned int exception_handler;
 	unsigned int exception_stackPtr;
 } passupvector_t;
 
