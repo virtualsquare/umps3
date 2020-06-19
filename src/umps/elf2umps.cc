@@ -355,9 +355,9 @@ static void elf2aout(bool isCore)
 
 	// Obtain segment info
 	bool foundDataSeg = false;
-	uint8_t* dataBuf = NULL;;
+	uint8_t* dataBuf = NULL;
 	bool foundTextSeg = false;
-	uint8_t* textBuf = NULL;;
+	uint8_t* textBuf = NULL;
 
 	for (size_t i = 0; i < phtSize; i++) {
 		if (pht[i].p_type != PT_LOAD)
