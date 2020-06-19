@@ -20,9 +20,10 @@
 
 #include "stoppoint_list_model.h"
 
+#include <cassert>
+
 #include <QtDebug>
 
-#include "base/debug.h"
 #include "umps/stoppoint.h"
 #include "umps/symbol_table.h"
 #include "umps/types.h"
@@ -245,7 +246,8 @@ QVariant StoppointListModel::data(const QModelIndex& index, int role) const
 		break;
 
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	return QVariant();

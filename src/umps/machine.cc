@@ -20,10 +20,10 @@
 
 #include "umps/machine.h"
 
+#include <cassert>
 #include <cstdlib>
 
 #include "base/lang.h"
-#include "base/debug.h"
 
 #include "umps/types.h"
 #include "umps/const.h"
@@ -172,7 +172,8 @@ void Machine::HandleBusAccess(Word pAddr, Word access, Processor* cpu)
 		break;
 
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	// Check for traced ranges
@@ -211,7 +212,8 @@ void Machine::HandleVMAccess(Word asid, Word vaddr, Word access, Processor* cpu)
 		break;
 
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 }
 

@@ -20,11 +20,10 @@
 
 #include "qmps/register_set_snapshot.h"
 
+#include <cassert>
 #include <boost/bind.hpp>
 
-#include "base/debug.h"
 #include "base/lang.h"
-
 #include "umps/disassemble.h"
 #include "umps/systembus.h"
 #include "qmps/application.h"
@@ -118,7 +117,10 @@ int RegisterSetSnapshot::rowCount(const QModelIndex& parent) const
 		case RT_OTHER:
 			return sprCache.size();
 		default:
-			AssertNotReached();
+			// Assert not reached
+			assert(0);
+			// Error
+			return -1;
 		}
 	} else {
 		// Leaf items have no children.
@@ -182,7 +184,8 @@ QVariant RegisterSetSnapshot::data(const QModelIndex& index, int role) const
 				}
 
 			default:
-				AssertNotReached();
+				// Assert not reached
+				assert(0);
 			}
 		} else if (role == Qt::FontRole) {
 			return Appl()->getMonospaceFont();
@@ -233,7 +236,8 @@ bool RegisterSetSnapshot::setData(const QModelIndex& index, const QVariant& vari
 		break;
 
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	return true;
@@ -253,7 +257,8 @@ Qt::ItemFlags RegisterSetSnapshot::flags(const QModelIndex& index) const
 	case COL_REGISTER_VALUE:
 		return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	return Qt::NoItemFlags;

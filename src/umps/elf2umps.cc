@@ -43,7 +43,6 @@
 
 #include <libelf.h>
 
-#include "base/debug.h"
 #include "base/bit_tricks.h"
 #include "umps/aout.h"
 #include "umps/blockdev_params.h"
@@ -196,7 +195,8 @@ int main(int argc, char** argv)
 		elf2aout(true);
 		break;
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	if (fileId == COREFILEID || createMap)

@@ -20,9 +20,9 @@
 
 #include "umps/mpic.h"
 
+#include <cassert>
 #include <boost/bind.hpp>
 
-#include "base/debug.h"
 #include "umps/machine_config.h"
 #include "umps/systembus.h"
 #include "umps/processor.h"
@@ -139,7 +139,8 @@ Word InterruptController::Read(Word addr, const Processor* cpu) const
 		}
 	}
 
-	AssertNotReached();
+	// Assert not reached
+	assert(0);
 
 	return 0;
 }

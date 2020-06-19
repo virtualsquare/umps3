@@ -20,6 +20,7 @@
 
 #include "qmps/terminal_view.h"
 
+#include <cassert>
 #include <string>
 
 #include <QFontMetrics>
@@ -27,7 +28,6 @@
 #include <QTextStream>
 
 #include "base/lang.h"
-#include "base/debug.h"
 #include "umps/device.h"
 #include "qmps/application.h"
 

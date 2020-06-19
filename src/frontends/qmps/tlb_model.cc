@@ -20,7 +20,8 @@
 
 #include "qmps/tlb_model.h"
 
-#include "base/debug.h"
+#include <cassert>
+
 #include "umps/processor.h"
 #include "umps/processor_defs.h"
 #include "umps/utility.h"
@@ -152,7 +153,8 @@ bool TLBModel::setData(const QModelIndex& index, const QVariant& value, int role
 		cpu->setTLBLo(index.row(), value.value<Word>());
 		break;
 	default:
-		AssertNotReached();
+		// Assert not reached
+		assert(0);
 	}
 
 	return true;

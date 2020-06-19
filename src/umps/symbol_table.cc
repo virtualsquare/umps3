@@ -20,6 +20,7 @@
 
 #include "umps/symbol_table.h"
 
+#include <cassert>
 #include <string.h>
 #include <stdio.h>
 
@@ -29,7 +30,6 @@
 #include <functional>
 #include <boost/bind.hpp>
 
-#include "base/debug.h"
 #include "umps/const.h"
 #include "umps/utility.h"
 #include "umps/blockdev_params.h"

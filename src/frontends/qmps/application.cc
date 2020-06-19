@@ -20,11 +20,12 @@
 
 #include "qmps/application.h"
 
+#include <cassert>
+
 #include <QFileInfo>
 #include <QDir>
 #include <QMessageBox>
 
-#include "base/debug.h"
 #include "umps/error.h"
 #include "qmps/monitor_window.h"
 

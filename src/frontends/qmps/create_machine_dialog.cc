@@ -20,6 +20,8 @@
 
 #include "qmps/create_machine_dialog.h"
 
+#include <cassert>
+
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -28,8 +30,6 @@
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QDir>
-
-#include "base/debug.h"
 
 CreateMachineDialog::CreateMachineDialog(QWidget* parent)
 	: QDialog(parent)

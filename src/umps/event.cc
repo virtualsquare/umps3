@@ -30,10 +30,10 @@
 
 #include "umps/event.h"
 
+#include <cassert>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "base/debug.h"
 #include "umps/const.h"
 #include "umps/utility.h"
 #include "umps/time_stamp.h"

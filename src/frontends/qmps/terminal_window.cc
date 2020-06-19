@@ -20,6 +20,8 @@
 
 #include "qmps/terminal_window.h"
 
+#include <cassert>
+
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QIcon>
@@ -27,7 +29,6 @@
 #include <QPushButton>
 #include <QCheckBox>
 
-#include "base/debug.h"
 #include "umps/types.h"
 #include "umps/device.h"
 #include "qmps/application.h"
