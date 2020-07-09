@@ -237,8 +237,8 @@ LBreakHandler:
 	b	LSaveExcptAndJmp
 
 LisKernel:
-	/* 0 is SSJMP(stackPtr, STATUS, PC) */
-	beq	$0, $k1, LSSJMP
+	/* 0 is LDCXT(stackPtr, STATUS, PC) */
+	beq	$0, $k1, LLDCXT
 
 	addi	$k1, -1
 
@@ -260,7 +260,7 @@ LisKernel:
 	addi	$k1, $k1, 8
 	b	LSaveExcptAndJmp
 
-LSSJMP:
+LLDCXT:
 	# $a1 is stackPtr, $a2 is new STATUS, $a3 is PC
 
 	# STATUS preparation

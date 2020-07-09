@@ -112,7 +112,7 @@ extern void WAIT(void);
  * It has no meaningful return value.
  */
 
-extern unsigned int SSJMP (unsigned int stackPtr, unsigned int status, unsigned int pc);
+extern unsigned int LDCXT (unsigned int stackPtr, unsigned int status, unsigned int pc);
 
 
 /* This function may be called from kernel or from user mode with CPU 0

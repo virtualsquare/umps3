@@ -224,30 +224,30 @@ LEAF_FUNC(CAS)
 END_LEAF_FUNC(CAS)
 
 /*
- * SSJMP
+ * LDCXT
  *
  * SYNOPSIS:
- *	void SSJMP(unsigned int stackPtr, unsigned int status, unsigned int pc)
+ *	void LDCXT(unsigned int stackPtr, unsigned int status, unsigned int pc)
  *
  * This function forces a processor to change its operating mode reloading
  * SP ($a0), status ($a1) and PC ($a2) registers: it works only in
  * kernel mode. There is no real return: $a1 is used as BIOS
  * argument, but it is reloaded too.
  */
-LEAF_FUNC(SSJMP)
+LEAF_FUNC(LDCXT)
 	move	$a3, $a2
 	move	$a2, $a1
 	move	$a1, $a0
 
 	.set	noreorder
 	.set	nomacro
-	li	$a0, BIOS_SRV_SSJMP
+	li	$a0, BIOS_SRV_LDCXT
 	break
 	nop
 	.set	reorder
 	.set	macro
 	jr $ra
-END_LEAF_FUNC(SSJMP)
+END_LEAF_FUNC(LDCXT)
 
 /*
  * STST
