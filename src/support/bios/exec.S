@@ -277,6 +277,7 @@ LSSJMP:
 
 	# get new PC and jump
 	move	$k1, $a3
+	move	$t9, $a3
 
 	.set	noreorder
 	.set	nomacro
