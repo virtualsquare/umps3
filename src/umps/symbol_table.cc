@@ -41,7 +41,7 @@ static const unsigned int STRBUFSIZE = 64;
 #define NOTFOUND -1
 
 // This method builds a Symbol object, given its description as produced by
-// elf2mps utility; no format check, since it's fixed
+// elf2umps utility; no format check, since it's fixed
 Symbol::Symbol(const char* sName, const char* sInfo)
 {
 	sNamep = new char [strlen(sName) + 1];
@@ -102,7 +102,7 @@ void Symbol::setSize(Word size)
 }
 
 // This method builds a symbol table from .stab file fName produced by
-// elf2mps utility
+// elf2umps utility
 SymbolTable::SymbolTable(Word asid, const char* fName)
 	: asid(asid)
 {

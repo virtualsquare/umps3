@@ -35,7 +35,7 @@
  *
  * All zero-filled spaces are skipped, code lines are numbered with proper
  * (virtual) address, and byte/word dumps are tagged with file offsets.
- * 
+ *
  ****************************************************************************/
 
 #include <stdio.h>
@@ -60,7 +60,7 @@ static const size_t AOUTENTNUM = 10;
 #define WBUFSIZE    4
 #define CBUFSIZE    16
 
-// .aout header field names (copied from elf2mps.cc)
+// .aout header field names (copied from elf2umps.cc)
 HIDDEN const char* const aoutName[] = {
 	"",
 	"Program (virtual) starting address",

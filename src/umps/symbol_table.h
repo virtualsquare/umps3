@@ -41,7 +41,7 @@ public:
 	};
 
 // This method builds a Symbol object, given its description as produced by
-// elf2mps utility; no format check, since it's fixed
+// elf2umps utility; no format check, since it's fixed
 	Symbol(const char* sName, const char* sInfo);
 	~Symbol();
 
@@ -101,7 +101,7 @@ private:
 class SymbolTable {
 public:
 // This method builds a symbol table from .stab file fName produced by
-// elf2mps utility
+// elf2umps utility
 	SymbolTable(Word asid, const char * fName);
 
 	~SymbolTable();
