@@ -1,0 +1,95 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "UMPS3\-ELF2UMPS" "1" "July 2020" "" ""
+.
+.SH "NAME"
+\fBumps3\-elf2umps\fR \- The umps3\-elf2umps object file conversion utility
+.
+.SH "SYNOPSIS"
+\fBumps3\-elf2umps\fR [\fIOPTIONS\fR] \-k \fIFILE\fR
+.
+.br
+\fBumps3\-elf2umps\fR [\fIOPTIONS\fR] \-b \fIFILE\fR
+.
+.br
+\fBumps3\-elf2umps\fR [\fIOPTIONS\fR] \-a \fIFILE\fR
+.
+.SH "DESCRIPTION"
+The command\-line \fBumps3\-elf2umps\fR utility is used to convert the ELF formatted executable and object files produced by the gcc cross\-platform development tools into the \fB\.aout\fR, \fB\.core\fR, and \fB\.rom\fR formatted files required by \fBuMPS3\fR\.
+.
+.P
+A successful conversion will produce a file by the name of \fBfile\.core\.umps\fR, \fBfile\.rom\.umps\fR, or \fBfile\.aout\.umps\fR accordingly\.
+.
+.P
+A \fB\.stab\fR file is a text file containing a one\-line uMPS3\-specific header and the contents of the symbol table from the ELF\-formatted input file\. It is used by the uMPS3 simulator to map \fB\.text\fR and \fB\.data\fR locations to their symbolic, i\.e\. kernel/OS source code, names\. Hence the automatic generation of the \fB\.stab\fR file whenever a \fB\.core\fR file is produced\. Since \fB\.stab\fR files are text files one can also examine/modify them using traditional text\-processing tools\.
+.
+.P
+In addition to its utility in tracking down errors in the \fBumps3\-elf2umps\fR program (which hopefully no longer exist), the \fI\-v\fR flag is of general interest since it illustrates which ELF sections were found and produced and the resulting header data for \fB\.core\fR and \fB\.aout\fR files\. For \fB\.rom\fR files, the \fI\-v\fR flag also displays the BIOS code size obtained during file conversion\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-v\fR
+Optional flag to produce verbose output during the conversion process\.
+.
+.TP
+\fB\-m\fR
+Optional flag to generate the \fB\.stab\fR symbol table map file associated with \fIFILE\fR\.
+.
+.TP
+\fB\-k\fR
+Flag to produce a \fB\.core\fR formatted file\.
+.
+.br
+This flag can only be used with an executable file\.
+.
+.br
+A \fB\.stab\fR file is automatically produced with this option\.
+.
+.TP
+\fB\-b\fR
+Flag to produce a \fB\.rom\fR formatted file\.
+.
+.br
+This flag can only be used with an object file that does not contain relocations\.
+.
+.TP
+\fB\-a\fR
+Flag to produce a \fB\.aout\fR formatted file\.
+.
+.br
+This flag can only be used with an executable file\.
+.
+.SH "FILES"
+\fIFILE\fR is the executable or object file to be converted\.
+.
+.SH "AUTHOR"
+Mauro Morsiani
+.
+.br
+Tomislav Jonjic \fItjonjic@gmail\.com\fR
+.
+.br
+Contributors can be listed on GitHub\.
+.
+.SH "BUGS"
+Report issues on GitHub: \fIhttps://github\.com/virtualsquare/umps3\fR
+.
+.SH "SEE ALSO"
+\fBumps3\fR(1), \fBumps3\-mkdev\fR(1), \fBumps3\-objdump\fR(1)
+.
+.P
+Full documentation at: \fIhttps://github\.com/virtualsquare/umps3\fR
+.
+.br
+Project wiki: \fIhttps://wiki\.virtualsquare\.org/#!umps/umps\.md\fR
+.
+.SH "COPYRIGHT"
+2004, Mauro Morsiani
+.
+.br
+2010\-2011, Tomislav Jonjic \fItjonjic@gmail\.com\fR
+.
+.br
+

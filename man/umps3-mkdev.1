@@ -1,0 +1,127 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "UMPS3\-MKDEV" "1" "July 2020" "" ""
+.
+.SH "NAME"
+\fBumps3\-mkdev\fR \- The umps3\-mkdev device creation utility
+.
+.SH "SYNOPSIS"
+\fBumps3\-mkdev\fR \-d \fIDISKFILE\fR [\fIDISKOPTIONS\fR]
+.
+.br
+\fBumps3\-mkdev\fR \-f \fIFLASHFILE\fR \fIFILE\fR [\fIFLASHOPTIONS\fR]
+.
+.SH "DESCRIPTION"
+The command\-line \fBumps3\-mkdev\fR utility is used to create the files that represent disk and flash devices\.
+.
+.TP
+\fBDISKS\fR
+Disks in uMPS3 are "direct access" nonvolatile read/write devices\. The \fBumps3\-mkdev\fR utility allows one to create an empty disk only; this way an OS developer may elect any desired disk data organization\.
+.
+.br
+The created \fIDISKFILE\fR represents the entire disk contents, even when empty\. Hence this file may be very large\. It is recommended to create small disks which can be used to represent a little portion of an otherwise very large disk unit\.
+.
+.br
+As with real disks, differing performance statistics result in differing simulated drive performance\. E\.g\. a faster rotation speed results in less latency delay and a smaller sector data occupancy percentage results in shorter read/write times\.
+.
+.br
+The default values for all these parameters are shown when entering the \fBumps3\-mkdev\fR alone without any parameters\.
+.
+.TP
+\fBFLASH DEVICES\fR
+Flash devices in uMPS3 are "random access" nonvolatile read/write devices\. A uMPS3 flash device is essentially equivalent to a seek\-free one\-dimensional disk drive\. The \fBumps3\-mkdev\fR utility allows one to create both slow flash devices (e\.g\. USB stick) or fast flash devices (e\.g\. SSDs)\. Furthermore, the utility allows one to create both empty flash devices as well as ones preloaded with a specific file\.
+.
+.br
+The created \fIFLASHFILE\fR represents the entire device contents, even when empty\. Hence this file may be very large\. It is recommended to create small flash devices which can be used to represent a little portion of an otherwise very large device\.
+.
+.br
+uMPS3 caps the maximum block size for flash devices at 2^24\. This translates to a maximum device size of 64GB\.
+.
+.br
+As with real flash devices, read operations are faster than write operations\. The read speed for uMPS3 flash devices is fixed at 75% of the device\'s write time in microseconds\.
+.
+.br
+The default values for all these parameters are shown when entering the \fBumps3\-mkdev\fR alone without any parameters\.
+.
+.SH "OPTIONS"
+\fI\-d\fR instructs the utility to build a disk file image\.
+.
+.br
+\fI\-f\fR instructs the utility to build a flash device file image\.
+.
+.SH "FILES"
+\fIDISKFILE\fR is the name of the disk file image to be created\.
+.
+.P
+\fIFLASHFILE\fR is the name of the flash device file image to be created\.
+.
+.P
+\fIFILE\fR is the name of the file to be preloaded onto the device beginning with block 0\. If one wishes to create an empty flash device but still specify some of the additional parameters, use \fB/dev/null\fR as the \fIFILE\fR argument\. To load a flash device with a collection of files, it is recommended to initially create a single \fB\.tar\fR file from the collection and then use this single \fB\.tar\fR file for this parameter\. We recommend the \fB\.tar\fR file format due to its simple structure\.
+.
+.SH "DISKOPTIONS"
+[\fICYL\fR [\fIHEAD\fR [\fISECT\fR [\fIRPM\fR [\fISEEKT\fR [\fIDATAS\fR]]]]]]
+.
+.br
+.
+.TP
+\fBCYL\fR
+Number of cylinders: [1\.\.65535], default = 32
+.
+.TP
+\fBHEAD\fR
+Number of heads/surfaces: [1\.\.255], default = 2
+.
+.TP
+\fBSECT\fR
+Number of 4KB sectors/tracks: [1\.\.255], default = 8
+.
+.TP
+\fBRPM\fR
+Disk rotations per minute: [360\.\.10800], default = 3600
+.
+.TP
+\fBSEEKT\fR
+Average cylinder to cylinder seek time in microseconds: [1\.\.10000], default = 100
+.
+.TP
+\fBDATAS\fR
+Sector data occupation %: [10%\.\.90%], default = 80%
+.
+.SH "FLASHOPTIONS"
+[\fIBLOCKS\fR [\fIWT\fR]]
+.
+.TP
+\fBBLOCKS\fR
+Number of blocks: [1\.\.0xFFFFFF], default = 512
+.
+.TP
+\fBWT\fR
+Average write time in microseconds: [1\.\.10000], default = 1000
+.
+.SH "AUTHOR"
+Mauro Morsiani
+.
+.br
+Mattia Biondi \fImattiabiondi1@gmail\.com\fR
+.
+.br
+Contributors can be listed on GitHub\.
+.
+.SH "BUGS"
+Report issues on GitHub: \fIhttps://github\.com/virtualsquare/umps3\fR
+.
+.SH "SEE ALSO"
+\fBumps3\fR(1), \fBumps3\-elf2umps\fR(1), \fBumps3\-objdump\fR(1)
+.
+.P
+Full documentation at: \fIhttps://github\.com/virtualsquare/umps3\fR
+.
+.br
+Project wiki: \fIhttps://wiki\.virtualsquare\.org/#!umps/umps\.md\fR
+.
+.SH "COPYRIGHT"
+2004, Mauro Morsiani
+.
+.br
+2020, Mattia Biondi \fImattiabiondi1@gmail\.com\fR

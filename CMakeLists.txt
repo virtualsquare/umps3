@@ -74,6 +74,7 @@ if(${Qt5_VERSION_MINOR} LESS 11)
 endif()
 
 add_subdirectory(src)
+add_subdirectory(man)
 
 add_custom_target(uninstall ${CMAKE_COMMAND} -P
         "${PROJECT_SOURCE_DIR}/Uninstall.cmake")
