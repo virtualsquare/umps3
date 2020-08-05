@@ -56,7 +56,7 @@ It is recommended to create small flash devices which can be used to represent a
 uMPS3 caps the maximum block size for flash devices at 2\^24.
 This translates to a maximum device size of 64GB.<br/>
 As with real flash devices, read operations are faster than write operations.
-The read speed for uMPS3 flash devices is fixed at 75% of the device's write time in microseconds.<br/>
+The read speed for uMPS3 flash devices is fixed at 75% of the device write time in microseconds.<br/>
 The default values for all these parameters are shown when entering the `umps3-mkdev` alone without any parameters.
 
 ## OPTIONS
