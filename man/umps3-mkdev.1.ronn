@@ -2,7 +2,7 @@ umps3-mkdev(1) -- The umps3-mkdev device creation utility
 ====
 
 <!--
-.\" Copyright (C) 2020 Mattia Biondi, Mikey Goldweber
+.\" Copyright (C) 2020 Mattia Biondi, Mikey Goldweber, Renzo Davoli
 .\"
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License,
