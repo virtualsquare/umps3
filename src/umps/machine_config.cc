@@ -209,12 +209,12 @@ bool MachineConfig::Validate(std::list<std::string>* errors) const
 	bool isValid = true;
 	if (romFiles[ROM_TYPE_BOOT].empty()) {
 		if (errors)
-			errors->push_back("Bootstrap ROM file not set");
+			errors->push_back("Bootstrap BIOS file not set");
 		isValid = false;
 	}
 	if (romFiles[ROM_TYPE_BIOS].empty()) {
 		if (errors)
-			errors->push_back("BIOS ROM file not set");
+			errors->push_back("Execution BIOS file not set");
 		isValid = false;
 	}
 	if (romFiles[ROM_TYPE_STAB].empty()) {

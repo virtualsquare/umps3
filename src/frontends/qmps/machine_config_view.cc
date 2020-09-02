@@ -72,11 +72,11 @@ MachineConfigView::MachineConfigView(QWidget* parent)
 
 	layout->addWidget(new QLabel("<b>BIOS</b>"), rows++, 0, 1, headerColumnSpan);
 
-	layout->addWidget(new QLabel("Bootstrap ROM:"), rows, 1);
+	layout->addWidget(new QLabel("Bootstrap BIOS:"), rows, 1);
 	bootstrapROMLabel = new QLabel;
 	layout->addWidget(bootstrapROMLabel, rows++, propertyValueColumn);
 
-	layout->addWidget(new QLabel("Execution ROM:"), rows, 1);
+	layout->addWidget(new QLabel("Execution BIOS:"), rows, 1);
 	executionROMLabel = new QLabel;
 	layout->addWidget(executionROMLabel, rows++, propertyValueColumn);
 
