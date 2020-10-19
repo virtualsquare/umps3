@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.virtualsquare.umps3</id>
+
+  <name>µMPS3</name>
+  <summary>Virtual machine simulator based around the MIPS R2/3000 microprocessor</summary>
+
+  <metadata_license>CC-BY-SA-4.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <description>
+    <p>
+      µMPS is an educational computer system architecture and an accompanying emulator designed from the ground up to achieve the right trade-off between simplicity and elegance on one side, and realism on the other. This makes µMPS ideally suited for use in education, such as hands-on operating systems or computer architecture university courses.
+    </p>
+    <p>
+      The µMPS processor implements the MIPS I instruction set, and can therefore be supported out of the box by existing MIPS compilers. The architecture details a complete set of I/O devices (terminals, disks, flash devices, printers, and network adapters) that feature a clean, consistent, programming interface.
+    </p>
+    <p>
+      The emulator comes with built-in debugging features and an easy to use graphical user interface. Apart from the emulator itself, several support utilities are provided that can get you quickly started in developing programs for µMPS.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">org.virtualsquare.umps3.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://wiki.virtualsquare.org/education/pictures/umps3-1.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://wiki.virtualsquare.org/education/pictures/umps3-2.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://wiki.virtualsquare.org/education/pictures/umps3-3.png</image>
+    </screenshot>
+  </screenshots>
+</component>
