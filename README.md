@@ -51,6 +51,10 @@ Due to the pedagogically driven changes implemented in µMPS3, this latest versi
 
 ## How to install
 
+<a href="https://repology.org/project/umps3/versions">
+    <img src="https://repology.org/badge/vertical-allrepos/umps3.svg" alt="Packaging status" align="right">
+</a>
+
 µMPS3 was already packaged for the distros listed below.
 If you can't find your distro here, you will have to [build from source](#building-from-source).
 
@@ -77,17 +81,20 @@ $ sudo apt install umps3
 
 ### Debian
 
-The [official µMPS3 package](https://ftp-master.debian.org/new/umps3_3.0.1-2.html) is currently waiting in the [NEW queue](https://wiki.debian.org/NewQueue).
+#### Debian Unstable ("sid")
 
-In the meantime, you can install µMPS3 by manually adding the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) on your **Debian** system.
-
-#### Debian 10 Stable ("buster")
-
-If you are using **Debian 10 ("buster")**, you need to:
-
-1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 18.04 (Bionic Beaver)](https://releases.ubuntu.com/18.04/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
+If you are using **Debian Unstable ("sid")**, you can install the [official µMPS3 package](https://packages.debian.org/sid/umps3) using:
 ```bash
-$ echo 'deb http://ppa.launchpad.net/virtualsquare/umps/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/virtualsquare-ubuntu-umps-bionic.list 
+$ sudo apt install umps3
+```
+
+#### Debian 11 Testing ("bullseye")
+
+If you are using **Debian 11 Testing ("bullseye")**, you need to:
+
+1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 20.04 (Focal Fossa)](https://releases.ubuntu.com/focal/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
+```bash
+$ echo 'deb http://ppa.launchpad.net/virtualsquare/umps/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/virtualsquare-ubuntu-umps-focal.list 
 ```
 2. import the [signing key](https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xBB8957296BD01F6CA96B5C88046AB1F65C49333A):
 ```bash
@@ -102,13 +109,13 @@ $ sudo apt update
 $ sudo apt install umps3
 ```
 
-#### Debian 11 Testing ("bullseye") and Unstable ("sid")
+#### Debian 10 Stable ("buster")
 
-If you are using **Debian 11 Testing ("bullseye")** or **Unstable ("sid")**, you need to:
+If you are using **Debian 10 ("buster")**, you need to:
 
-1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 20.04 (Focal Fossa)](https://releases.ubuntu.com/focal/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
+1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 18.04 (Bionic Beaver)](https://releases.ubuntu.com/18.04/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
 ```bash
-$ echo 'deb http://ppa.launchpad.net/virtualsquare/umps/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/virtualsquare-ubuntu-umps-focal.list 
+$ echo 'deb http://ppa.launchpad.net/virtualsquare/umps/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/virtualsquare-ubuntu-umps-bionic.list 
 ```
 2. import the [signing key](https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xBB8957296BD01F6CA96B5C88046AB1F65C49333A):
 ```bash
