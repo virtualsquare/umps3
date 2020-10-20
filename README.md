@@ -52,7 +52,7 @@ Due to the pedagogically driven changes implemented in µMPS3, this latest versi
 
 ## Screenshots
 
-<img src="https://wiki.virtualsquare.org/education/pictures/umps3-1.png" alt="screenshot 1" width="33%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-2.png" alt="screenshot 2" width="33%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-3.png" alt="screenshot 3" width="33%"/>
+<img src="https://wiki.virtualsquare.org/education/pictures/umps3-1.png" alt="screenshot 1" width="32%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-2.png" alt="screenshot 2" width="32%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-3.png" alt="screenshot 3" width="32%"/>
 
 ## How to install
 
