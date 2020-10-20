@@ -25,6 +25,7 @@ Make sure you include steps on how to reproduce it.
 ## Table of Contents
 
 * [Introduction](#introduction)
+* [Screenshots](#screenshots)
 * [How to install](#how-to-install)
   * [Ubuntu](#ubuntu)
   * [Debian](#debian)
@@ -48,6 +49,10 @@ Apart from the emulator itself, several support utilities are provided that can 
 Due to the pedagogically driven changes implemented in µMPS3, this latest version is **NOT** backward compatible with either µMPS2 or µMPS(1).
 
 [Learn more about µMPS](https://wiki.virtualsquare.org/#!education/umps.md)
+
+## Screenshots
+
+<img src="https://wiki.virtualsquare.org/education/pictures/umps3-1.png" alt="screenshot 1" width="33%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-2.png" alt="screenshot 2" width="33%"/> <img src="https://wiki.virtualsquare.org/education/pictures/umps3-3.png" alt="screenshot 3" width="33%"/>
 
 ## How to install
 
