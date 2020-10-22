@@ -5,7 +5,7 @@
   <name>µMPS3</name>
   <summary>Virtual machine simulator based around the MIPS R2/3000 microprocessor</summary>
 
-  <metadata_license>CC-BY-SA-4.0</metadata_license>
+  <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
   <description>
