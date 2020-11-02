@@ -1,6 +1,6 @@
 <p align=center>
   <a href="https://wiki.virtualsquare.org/#!education/umps.md">
-    <img alt="µMPS3" src="https://raw.githubusercontent.com/virtualsquare/umps3/master/src/frontends/qmps/data/icons/64x64/umps3.svg">
+    <img alt="µMPS3" src="https://raw.githubusercontent.com/virtualsquare/umps3/master/src/frontends/qmps/data/icons/64x64/org.virtualsquare.umps3.svg">
   </a>
 </p>
 
