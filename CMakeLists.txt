@@ -17,7 +17,7 @@ configure_file(config.h.in config.h)
 # Check for MIPS cross toolchain
 set(XT_PREFIXES ${MIPS_TOOL_PREFIX})
 if(NOT XT_PREFIXES)
-        set(XT_PREFIXES mips-sde-elf-)
+        set(XT_PREFIXES mips-sde-elf- mips64-linux-gnu-)
         if(WORDS_BIGENDIAN)
                 set(XT_PREFIXES mips-linux-gnu- mips-linux-
                         mips-elf- ${XT_PREFIXES})

@@ -158,6 +158,7 @@ Apart from the dependencies listed above, you will also need a MIPS cross toolch
 CMakelists.txt will do its best to detect one; if that fails, you can pass the toolchain tool prefix to `cmake` using `-DMIPS_TOOL_PREFIX=PREFIX`.
 Known prefixes are:
 - `mips-sde-elf-`
+- `mips64-linux-gnu-`
 - `mips(el)-elf-`
 - `mips(el)-linux-`
 - `mips(el)-linux-gnu-`
@@ -165,6 +166,11 @@ Known prefixes are:
 For example, on **Debian** and [derivatives](https://www.debian.org/derivatives/) (e.g. **Ubuntu**, **Pop!_OS**):
 ```sh
 $ sudo apt install git build-essential cmake qtbase5-dev libelf-dev libboost-dev libsigc++-2.0-dev gcc-mipsel-linux-gnu
+```
+
+On **Fedora**:
+```sh
+$ sudo dnf install git make gcc-c++ cmake qt5-qtbase-devel qt5-qtsvg elfutils-libelf-devel boost-devel libsigc++20-devel gcc-mips64-linux-gnu
 ```
 
 #### Get the source code
