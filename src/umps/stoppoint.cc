@@ -143,7 +143,7 @@ std::string StoppointSet::ToString(bool sorted) const
 			result.append(it->second->ToString());
 		}
 	} else {
-		for (const Stoppoint::Ptr p : points) {
+		for (const Stoppoint::Ptr& p : points) {
 			if (!first)
 				result.append(",\n ");
 			first = false;
