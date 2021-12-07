@@ -20,7 +20,7 @@
 
 #include "umps/mp_controller.h"
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "base/lang.h"
 #include "umps/machine_config.h"
@@ -28,6 +28,8 @@
 #include "umps/processor.h"
 #include "umps/systembus.h"
 #include "umps/arch.h"
+
+using namespace boost::placeholders;
 
 MPController::MPController(const MachineConfig* config, Machine* machine)
 	: config(config),

@@ -21,11 +21,13 @@
 #include "umps/mpic.h"
 
 #include <cassert>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "umps/machine_config.h"
 #include "umps/systembus.h"
 #include "umps/processor.h"
+
+using namespace boost::placeholders;
 
 InterruptController::InterruptController(const MachineConfig* config, SystemBus* bus)
 	: config(config),

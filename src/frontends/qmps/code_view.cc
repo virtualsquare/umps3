@@ -23,7 +23,7 @@
 
 #include <list>
 #include <iterator>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <QByteArray>
 #include <QFont>
@@ -45,6 +45,8 @@
 #include "qmps/stoppoint_list_model.h"
 #include "qmps/code_view_priv.h"
 #include "qmps/ui_utils.h"
+
+using namespace boost::placeholders;
 
 CodeView::CodeView(Word cpuId)
 	: QPlainTextEdit(),

@@ -36,7 +36,7 @@
 #include <string.h>
 #include <errno.h>
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <umps/const.h>
 #include "umps/types.h"
@@ -54,6 +54,7 @@
 #include "umps/vde_network.h"
 #include "umps/machine.h"
 
+using namespace boost::placeholders;
 
 // last operation result description
 HIDDEN const char* const opResult[2] = {

@@ -21,12 +21,14 @@
 #include "qmps/register_set_snapshot.h"
 
 #include <cassert>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "base/lang.h"
 #include "umps/disassemble.h"
 #include "umps/systembus.h"
 #include "qmps/application.h"
+
+using namespace boost::placeholders;
 
 const char* const RegisterSetSnapshot::headers[RegisterSetSnapshot::N_COLUMNS] = {
 	"Register",

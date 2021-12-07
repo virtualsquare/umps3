@@ -21,7 +21,7 @@
 #include "qmps/trace_browser.h"
 
 #include <cctype>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include <QAction>
 #include <QtEndian>
@@ -40,6 +40,8 @@
 #include "qmps/debug_session.h"
 #include "qmps/hex_view.h"
 #include "qmps/trace_browser_priv.h"
+
+using namespace boost::placeholders;
 
 TraceBrowser::TraceBrowser(QAction* insertTraceAct, QAction* removeTraceAct,
                            QWidget* parent)

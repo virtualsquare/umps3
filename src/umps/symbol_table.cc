@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <iterator>
 #include <functional>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "umps/const.h"
 #include "umps/utility.h"
@@ -39,6 +39,8 @@
 static const unsigned int STRBUFSIZE = 64;
 
 #define NOTFOUND -1
+
+using namespace boost::placeholders;
 
 // This method builds a Symbol object, given its description as produced by
 // elf2umps utility; no format check, since it's fixed
