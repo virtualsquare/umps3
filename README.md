@@ -67,6 +67,11 @@ If you create a package for any other distribution, please consider contributing
 
 ### Ubuntu
 
+If you are using **Ubuntu 21.04 Hirsute Hippo**, **21.10 Impish Indri** or **22.04 Jammy Jellyfish**, you can install the [official µMPS3 package](https://packages.ubuntu.com/impish/umps3) using:
+```bash
+$ sudo apt install umps3
+```
+
 If you are using **Ubuntu 20.04 Focal Fossa**, **18.04 Bionic Beaver** or **16.04 Xenial Xerus** ([Checking your Ubuntu Version](https://help.ubuntu.com/community/CheckingYourUbuntuVersion)) or [derivatives](https://wiki.ubuntu.com/DerivativeTeam/Derivatives) (e.g. **Linux Mint**), you need to:
 
 1. enable [Universe](https://help.ubuntu.com/community/Repositories/Ubuntu)
@@ -86,37 +91,12 @@ $ sudo apt install umps3
 
 ### Debian
 
-#### Debian Unstable ("sid")
-
-If you are using **Debian Unstable ("sid")**, you can install the [official µMPS3 package](https://packages.debian.org/sid/umps3) using:
+If you are using **Debian 11 Stable ("bullseye")**, **Debian 12 Testing ("bookworm")** or **Debian Unstable ("sid")**, you can install the [official µMPS3 package](https://packages.debian.org/bullseye/umps3) using:
 ```bash
 $ sudo apt install umps3
 ```
 
-#### Debian 11 Testing ("bullseye")
-
-If you are using **Debian 11 Testing ("bullseye")**, you need to:
-
-1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 20.04 (Focal Fossa)](https://releases.ubuntu.com/focal/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
-```bash
-$ echo 'deb http://ppa.launchpad.net/virtualsquare/umps/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/virtualsquare-ubuntu-umps-focal.list 
-```
-2. import the [signing key](https://keyserver.ubuntu.com/pks/lookup?fingerprint=on&op=index&search=0xBB8957296BD01F6CA96B5C88046AB1F65C49333A):
-```bash
-$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 046AB1F65C49333A
-```
-3. re-synchronize the package index files:
-```bash
-$ sudo apt update
-```
-4. install 
-```bash
-$ sudo apt install umps3
-```
-
-#### Debian 10 Stable ("buster")
-
-If you are using **Debian 10 ("buster")**, you need to:
+If you are using **Debian 10 Oldstable ("buster")**, you need to:
 
 1. add the [virtualsquare/umps PPA](https://launchpad.net/~virtualsquare/+archive/ubuntu/umps) for the [Ubuntu 18.04 (Bionic Beaver)](https://releases.ubuntu.com/18.04/) version to your [Apt sources configuration file](https://wiki.debian.org/SourcesList):
 ```bash
