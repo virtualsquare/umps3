@@ -44,7 +44,7 @@
 #define HIDDEN          static
 #define EOS             '\0'
 
-#define NULL            ((void *)0xFFFFFFFF)
+#define NULL            ((void *)0)
 
 /* device interrupts */
 #define DISKINT         3
