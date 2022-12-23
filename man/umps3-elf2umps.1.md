@@ -1,6 +1,3 @@
-umps3-elf2umps(1) -- The umps3-elf2umps object file conversion utility
-====
-
 <!--
 .\" Copyright (C) 2020 Mattia Biondi, Mikey Goldweber, Renzo Davoli
 .\"
@@ -25,14 +22,17 @@ umps3-elf2umps(1) -- The umps3-elf2umps object file conversion utility
 .\" MA 02110-1301 USA.
 .\"
 -->
+# NAME
 
-## SYNOPSIS
+`umps3-elf2umps` -- The umps3-elf2umps object file conversion utility
 
-`umps3-elf2umps` [<OPTIONS>] -k <FILE><br/>
-`umps3-elf2umps` [<OPTIONS>] -b <FILE><br/>
-`umps3-elf2umps` [<OPTIONS>] -a <FILE>
+# SYNOPSIS
 
-## DESCRIPTION
+`umps3-elf2umps` [*OPTIONS*] -k *FILE*\
+`umps3-elf2umps` [*OPTIONS*] -b *FILE*\
+`umps3-elf2umps` [*OPTIONS*] -a *FILE*
+
+# DESCRIPTION
 
 The command-line `umps3-elf2umps` utility is used to convert the ELF formatted executable and object files produced by the gcc cross-platform development tools into the `.aout`, `.core`, and `.rom` formatted files required by `uMPS3`.
 
@@ -43,52 +43,52 @@ It is used by the uMPS3 simulator to map `.text` and `.data` locations to their 
 Hence the automatic generation of the `.stab` file whenever a `.core` file is produced.
 Since `.stab` files are text files one can also examine/modify them using traditional text-processing tools.
 
-In addition to its utility in tracking down errors in the `umps3-elf2umps` program (which hopefully no longer exist), the <-v> flag is of general interest since it illustrates which ELF sections were found and produced and the resulting header data for `.core` and `.aout` files.
-For `.rom` files, the <-v> flag also displays the BIOS code size obtained during file conversion.
+In addition to its utility in tracking down errors in the `umps3-elf2umps` program (which hopefully no longer exist), the *-v* flag is of general interest since it illustrates which ELF sections were found and produced and the resulting header data for `.core` and `.aout` files.
+For `.rom` files, the *-v* flag also displays the BIOS code size obtained during file conversion.
 
-## OPTIONS
+# OPTIONS
 
-  * `-v`:
-     Optional flag to produce verbose output during the conversion process.
+  `-v`
+:  Optional flag to produce verbose output during the conversion process.
 
-  * `-m`:
-     Optional flag to generate the `.stab` symbol table map file associated with <FILE>.
+  `-m`
+:  Optional flag to generate the `.stab` symbol table map file associated with *FILE*.
 
-  * `-k`:
-     Flag to produce a `.core` formatted file.<br/>
-     This flag can only be used with an executable file.<br/>
-     A `.stab` file is automatically produced with this option.
+  `-k`
+:  Flag to produce a `.core` formatted file.
+:  This flag can only be used with an executable file.
+:  A `.stab` file is automatically produced with this option.
 
-  * `-b`:
-     Flag to produce a `.rom` formatted file.<br/>
-     This flag can only be used with an object file that does not contain relocations.
+  `-b`
+:  Flag to produce a `.rom` formatted file.
+:  This flag can only be used with an object file that does not contain relocations.
 
-  * `-a`:
-     Flag to produce a `.aout` formatted file.<br/>
-     This flag can only be used with an executable file.
+  `-a`
+:  Flag to produce a `.aout` formatted file.\
+:  This flag can only be used with an executable file.
 
-## FILES
+# FILES
 
-<FILE> is the executable or object file to be converted.
+*FILE* is the executable or object file to be converted.
 
-## AUTHOR
+# AUTHOR
 
-Mauro Morsiani<br/>
-Tomislav Jonjic <tjonjic@gmail.com><br/>
+Mauro Morsiani\
+Tomislav Jonjic *tjonjic@gmail.com*\
 Contributors can be listed on GitHub.
 
-## BUGS
+# BUGS
 
-Report issues on GitHub: <https://github.com/virtualsquare/umps3>
+Report issues on GitHub: *https://github.com/virtualsquare/umps3*
 
-## SEE ALSO
+# SEE ALSO
 
 **umps3**(1), **umps3-mkdev**(1), **umps3-objdump**(1)
 
-Full documentation at: <https://github.com/virtualsquare/umps3><br/>
-Project wiki: <https://wiki.virtualsquare.org/#!umps/umps.md>
+Full documentation at: *https://github.com/virtualsquare/umps3*\
+Project wiki: *https://wiki.virtualsquare.org/#!umps/umps.md*
 
-## COPYRIGHT
+# COPYRIGHT
 
-2004, Mauro Morsiani<br/>
-2010-2011, Tomislav Jonjic <tjonjic@gmail.com><br/>
+2004, Mauro Morsiani\
+2010-2011, Tomislav Jonjic *tjonjic@gmail.com*\

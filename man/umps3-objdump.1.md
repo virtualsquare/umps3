@@ -1,6 +1,3 @@
-umps3-objdump(1) -- The umps3-objdump object file analysis utility
-====
-
 <!--
 .\" Copyright (C) 2020 Mattia Biondi, Mikey Goldweber, Renzo Davoli
 .\"
@@ -25,12 +22,15 @@ umps3-objdump(1) -- The umps3-objdump object file analysis utility
 .\" MA 02110-1301 USA.
 .\"
 -->
+# NAME
 
-## SYNOPSIS
+`umps3-objdump` -- The umps3-objdump object file analysis utility
 
-`umps3-objdump` [<OPTIONS>] <FILE>
+# SYNOPSIS
 
-## DESCRIPTION
+`umps3-objdump` [*OPTIONS*] *FILE*
+
+# DESCRIPTION
 
 The command-line `umps3-objdump` utility is used to analyze object files created by the `umps3-elf2umps` utility.
 
@@ -40,48 +40,58 @@ This utility performs the same functions as `mipsel-linux-gnu-objdump` (or `mips
 
 The output from `umps3-objdump` is directed to stdout.
 
-## OPTIONS
+# OPTIONS
 
-  * `-h`:
-     Optional flag to show the `.aout` program header, if present.
+  `-h`
+:  Optional flag to show the `.aout` program header, if present.
 
-  * `-d`:
-     Optional flag to "disassemble" and display the `.text` area in <FILE>.<br/>
-     This is an "assembly" dump of the code, thus it will contain load and branch delay slots; differing from the machine language version of the same code.
+  `-d`
+:  Optional flag to "disassemble" and display the `.text` area in *FILE*.\
 
-  * `-x`:
-     Optional flag to produce a complete little-endian format hexadecimal word dump of <FILE>.<br/>
-     Zero-filled blocks will be skipped and marked with \*asterisks\*.<br/>
-     The output will appear identical regardless of whether <FILE> is little-endian or big-endian.
+  ` `
+:  This is an "assembly" dump of the code, thus it will contain load and branch delay slots; differing from the machine language version of the same code.
 
-  * `-b`:
-     Optional flag to produce a complete byte dump of <FILE>.<br/>
-     Zero-filled blocks will be skipped and marked with \*asterisks\*.<br/>
-     Unlike with the <-x> flag, the endian-format of the output will depend on the endianness of <FILE>; i.e. if <FILE> is big-endian than the output will be big-endian.
+  `-x`
+:  Optional flag to produce a complete little-endian format hexadecimal word dump of *FILE*.\
 
-  * `-a`:
-     Flag to perform all of the above optional operations.
+  ` `
+:  Zero-filled blocks will be skipped and marked with \*asterisks\*.\
 
-## FILES
+  ` `
+:  The output will appear identical regardless of whether *FILE* is little-endian or big-endian.
 
-<FILE> is the `.core`, `.rom`, or `.aout` object file to be analyzed.
+  `-b`
+:  Optional flag to produce a complete byte dump of *FILE*.\
 
-## AUTHOR
+  ` `
+:  Zero-filled blocks will be skipped and marked with \*asterisks\*.\
 
-Mauro Morsiani<br/>
+  ` `
+:  Unlike with the *-x* flag, the endian-format of the output will depend on the endianness of *FILE*; i.e. if *FILE* is big-endian than the output will be big-endian.
+
+  `-a`
+:  Flag to perform all of the above optional operations.
+
+# FILES
+
+*FILE* is the `.core`, `.rom`, or `.aout` object file to be analyzed.
+
+# AUTHOR
+
+Mauro Morsiani\
 Contributors can be listed on GitHub.
 
-## BUGS
+# BUGS
 
-Report issues on GitHub: <https://github.com/virtualsquare/umps3>
+Report issues on GitHub: *https://github.com/virtualsquare/umps3*
 
-## SEE ALSO
+# SEE ALSO
 
 **umps3**(1), **umps3-elf2umps**(1), **umps3-mkdev**(1)
 
-Full documentation at: <https://github.com/virtualsquare/umps3><br/>
-Project wiki: <https://wiki.virtualsquare.org/#!umps/umps.md>
+Full documentation at: *https://github.com/virtualsquare/umps3*\
+Project wiki: *https://wiki.virtualsquare.org/#!umps/umps.md*
 
-## COPYRIGHT
+# COPYRIGHT
 
-2004, Mauro Morsiani<br/>
+2004, Mauro Morsiani\

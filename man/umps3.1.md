@@ -1,6 +1,3 @@
-umps3(1) -- Virtual machine simulator based around the MIPS R2/3000 microprocessor
-====
-
 <!--
 .\" Copyright (C) 2020 Mattia Biondi, Mikey Goldweber, Renzo Davoli
 .\"
@@ -25,12 +22,15 @@ umps3(1) -- Virtual machine simulator based around the MIPS R2/3000 microprocess
 .\" MA 02110-1301 USA.
 .\"
 -->
+# NAME
 
-## SYNOPSIS
+`umps3` -- Virtual machine simulator based around the MIPS R2/3000 microprocessor
 
-`umps3` [<CONFIGURATION>]
+# SYNOPSIS
 
-## DESCRIPTION
+`umps3` [*CONFIGURATION*]
+
+# DESCRIPTION
 
 `uMPS` is an educational computer system architecture and an accompanying emulator designed from the ground up to achieve the right trade-off between simplicity and elegance on one side, and realism on the other. This makes `uMPS` ideally suited for use in education, such as hands-on operating systems or computer architecture university courses.
 
@@ -38,26 +38,26 @@ The uMPS processor implements the MIPS I instruction set, and can therefore be s
 
 The emulator comes with built-in debugging features and an easy to use graphical user interface. Apart from the emulator itself, several support utilities are provided that can get you quickly started in developing programs for `uMPS`.
 
-## AUTHOR
+# AUTHOR
 
-Mauro Morsiani<br/>
-Tomislav Jonjic <tjonjic@gmail.com><br/>
-Mattia Biondi <mattiabiondi1@gmail.com><br/>
+Mauro Morsiani,\
+Tomislav Jonjic *tjonjic@gmail.com*,\
+Mattia Biondi *mattiabiondi1@gmail.com*,\
 Contributors can be listed on GitHub.
 
-## BUGS
+# BUGS
 
-Report issues on GitHub: <https://github.com/virtualsquare/umps3>
+Report issues on GitHub: *https://github.com/virtualsquare/umps3*
 
-## SEE ALSO
+# SEE ALSO
 
 **umps3-elf2umps**(1), **umps3-mkdev**(1), **umps3-objdump**(1)
 
-Full documentation at: <https://github.com/virtualsquare/umps3><br/>
-Project wiki: <https://wiki.virtualsquare.org/#!umps/umps.md>
+Full documentation at: *https://github.com/virtualsquare/umps3**br/*
+Project wiki: *https://wiki.virtualsquare.org/#!umps/umps.md*
 
-## COPYRIGHT
+# COPYRIGHT
 
-2004, Mauro Morsiani<br/>
-2010-2011, Tomislav Jonjic <tjonjic@gmail.com><br/>
-2020, Mattia Biondi <mattiabiondi1@gmail.com>
+2004, Mauro Morsiani,\
+2010-2011, Tomislav Jonjic *tjonjic@gmail.com*,\
+2020, Mattia Biondi *mattiabiondi1@gmail.com*
